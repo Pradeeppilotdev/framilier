@@ -1,0 +1,328 @@
+[
+  {
+    "label": "unstaked_70000_estimate",
+    "probe": "declared-VERIFY-budget",
+    "timestamp": "2026-11-05T21:50:36.378Z",
+    "limitation": "Increasing the declared VERIFY limit does not increase the wallet's validation work. Estimates do not prove admission; admission does not prove inclusion. This single-entity probe does not establish per-entity isolation.",
+    "gateway": "https://altmempoolgateway.forshtat.com/rpc",
+    "chainId": 1337,
+    "sidecarVersion": "skandha/v4.1.1-",
+    "noteOnVersion": "web3_clientVersion at the gateway identifies the sidecar, not necessarily the underlying execution client revision.",
+    "workshopCommit": "bcfe02a196ca97b6fb0d1044db9d0b4c673831fc",
+    "blockBefore": "0x6381e",
+    "wallet": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+    "stakeRegistry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
+    "stake": {
+      "amountWei": "0",
+      "unstakeDelaySec": 0,
+      "withdrawTime": "0",
+      "note": "Registry evidence only: effective staked eligibility also depends on this node's configured minimums and reputation."
+    },
+    "verifyFrameDeclaredGas": "70000",
+    "signatureAccounting": "Protocol signature-validation costs may be added to the VERIFY frame budget. These probe values are not exact total-prefix thresholds.",
+    "actualValidationWork": "Unchanged: the workshop wallet's clean signature-check-and-approve path. No loops, cryptographic workload amplification, or storage violation.",
+    "nonce": "8",
+    "balanceWei": "30000000000000000",
+    "candidateHash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+    "submissionRequested": false,
+    "estimate": {
+      "ok": false,
+      "error": {
+        "code": -32507,
+        "message": "Invalid frame transaction signature"
+      }
+    },
+    "outcome": "ESTIMATE_ONLY_NOT_ADMISSION"
+  },
+  {
+    "label": "unstaked_70000_submit",
+    "probe": "declared-VERIFY-budget",
+    "timestamp": "2026-11-05T21:51:57.336Z",
+    "limitation": "Increasing the declared VERIFY limit does not increase the wallet's validation work. Estimates do not prove admission; admission does not prove inclusion. This single-entity probe does not establish per-entity isolation.",
+    "gateway": "https://altmempoolgateway.forshtat.com/rpc",
+    "chainId": 1337,
+    "sidecarVersion": "skandha/v4.1.1-",
+    "noteOnVersion": "web3_clientVersion at the gateway identifies the sidecar, not necessarily the underlying execution client revision.",
+    "workshopCommit": "bcfe02a196ca97b6fb0d1044db9d0b4c673831fc",
+    "blockBefore": "0x6382c",
+    "wallet": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+    "stakeRegistry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
+    "stake": {
+      "amountWei": "0",
+      "unstakeDelaySec": 0,
+      "withdrawTime": "0",
+      "note": "Registry evidence only: effective staked eligibility also depends on this node's configured minimums and reputation."
+    },
+    "verifyFrameDeclaredGas": "70000",
+    "signatureAccounting": "Protocol signature-validation costs may be added to the VERIFY frame budget. These probe values are not exact total-prefix thresholds.",
+    "actualValidationWork": "Unchanged: the workshop wallet's clean signature-check-and-approve path. No loops, cryptographic workload amplification, or storage violation.",
+    "nonce": "8",
+    "balanceWei": "30000000000000000",
+    "candidateHash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+    "submissionRequested": true,
+    "estimate": {
+      "ok": false,
+      "error": {
+        "code": -32507,
+        "message": "Invalid frame transaction signature"
+      }
+    },
+    "admission": {
+      "accepted": true,
+      "hash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087"
+    },
+    "explorer": "https://explorer.altmempool.wtf/tx/0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087?node=https%3A%2F%2Faltmempoolgateway.forshtat.com%2Frpc",
+    "outcome": "ADMITTED_NO_RECEIPT_WITHIN_120_SECONDS",
+    "sidecarStatus": {
+      "tx": {
+        "chainId": "0x539",
+        "nonceKeys": [
+          "0x0"
+        ],
+        "nonceSeq": "0x8",
+        "sender": "0x259bb3F281DA40F23A54d0e1d76883CAFf89b568",
+        "frames": [
+          {
+            "mode": "0x1",
+            "flags": "0x3",
+            "target": null,
+            "limits": {
+              "execution": "0x11170",
+              "state": "0x0"
+            },
+            "value": "0x0",
+            "data": "0x"
+          },
+          {
+            "mode": "0x2",
+            "flags": "0x0",
+            "target": "0x82C805924fbf9Ba95c5Eb0F15Cbaa40912eBCb4F",
+            "limits": {
+              "execution": "0xc350",
+              "state": "0x0"
+            },
+            "value": "0x0",
+            "data": "0x"
+          }
+        ],
+        "signatures": [
+          {
+            "scheme": "0x1",
+            "signer": "0x82C805924fbf9Ba95c5Eb0F15Cbaa40912eBCb4F",
+            "msg": "0x",
+            "signature": "0x00b974282c5c51c8083013bb18556215567e7e87a1af728e07b1adaa50d1e87909588a805ebadfcac519e0030a40214dc5c50ca9e9ec54000c12184a9bd5fd6fa0"
+          }
+        ],
+        "fees": {
+          "maxPriorityFeePerGas": "0x77359400",
+          "maxFeePerGas": "0x77359400",
+          "maxFeePerBlobGas": "0x0"
+        },
+        "blobVersionedHashes": [],
+        "recentRootReferences": []
+      },
+      "sender": "0x259bb3F281DA40F23A54d0e1d76883CAFf89b568",
+      "payer": "0x259bb3F281DA40F23A54d0e1d76883CAFf89b568",
+      "status": "New"
+    },
+    "nextStep": "Stop here and debug this hash with step_11_debug. Do not queue more budget probes while this account's transaction remains pending.",
+    "exitCode": 2
+  },
+  {
+    "label": "unstaked_70000_primary_inclusion",
+    "gateway": "https://altmempool.forshtat.com/rpc",
+    "verifyFrameDeclaredGas": "70000",
+    "candidateHash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+    "outcome": "MINED_ALL_FRAMES_SUCCEEDED",
+    "receipt": {
+      "blockHash": "0xa1b3c709cff53b88b37637aab201b1e50688189a642cb438be7a0b2ba1998132",
+      "blockNumber": "0x63865",
+      "contractAddress": null,
+      "cumulativeGasUsed": "0x7607",
+      "effectiveGasPrice": "0x77359400",
+      "frameReceipts": [
+        {
+          "gasUsed": "0x2761",
+          "logs": [],
+          "stateGasUsed": "0x0",
+          "status": "0x1"
+        },
+        {
+          "gasUsed": "0xbb8",
+          "logs": [],
+          "stateGasUsed": "0x0",
+          "status": "0x1"
+        }
+      ],
+      "from": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+      "gasUsed": "0x7607",
+      "logs": [],
+      "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "payer": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+      "status": "0x1",
+      "to": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+      "transactionHash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+      "transactionIndex": "0x0",
+      "type": "0x6"
+    }
+  },
+  {
+    "label": "unstaked_500001_submit",
+    "probe": "declared-VERIFY-budget",
+    "timestamp": "2026-11-05T21:58:17.051Z",
+    "limitation": "Increasing the declared VERIFY limit does not increase the wallet's validation work. Estimates do not prove admission; admission does not prove inclusion. This single-entity probe does not establish per-entity isolation.",
+    "gateway": "https://altmempool.forshtat.com/rpc",
+    "chainId": 1337,
+    "sidecarVersion": "skandha/v4.1.1-",
+    "noteOnVersion": "web3_clientVersion at the gateway identifies the sidecar, not necessarily the underlying execution client revision.",
+    "workshopCommit": "bcfe02a196ca97b6fb0d1044db9d0b4c673831fc",
+    "blockBefore": "0x6386b",
+    "wallet": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+    "stakeRegistry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
+    "stake": {
+      "amountWei": "0",
+      "unstakeDelaySec": 0,
+      "withdrawTime": "0",
+      "note": "Registry evidence only: effective staked eligibility also depends on this node's configured minimums and reputation."
+    },
+    "verifyFrameDeclaredGas": "500001",
+    "signatureAccounting": "Protocol signature-validation costs may be added to the VERIFY frame budget. These probe values are not exact total-prefix thresholds.",
+    "actualValidationWork": "Unchanged: the workshop wallet's clean signature-check-and-approve path. No loops, cryptographic workload amplification, or storage violation.",
+    "nonce": "9",
+    "balanceWei": "29939570000000000",
+    "candidateHash": "0xb20e67f46be173033532aec0103fb41e56ecd1160904f6852aa6ccd5c24bdc6e",
+    "submissionRequested": true,
+    "estimate": {
+      "ok": false,
+      "error": {
+        "code": -32602,
+        "message": "validation prefix execution gas sum 500001 + signature-verification cost 2800 = 502801 exceeds MAX_VERIFY_GAS 100000"
+      }
+    },
+    "admission": {
+      "accepted": false,
+      "error": {
+        "code": -32602,
+        "message": "validation prefix execution gas sum 500001 + signature-verification cost 2800 = 502801 exceeds MAX_VERIFY_GAS 100000"
+      }
+    },
+    "outcome": "RPC_REJECTION_INSPECT_ERROR",
+    "nextStep": "Run yarn step_11_debug 0xb20e67f46be173033532aec0103fb41e56ecd1160904f6852aa6ccd5c24bdc6e. A failed RPC reply is not automatically a budget-limit finding. Do not resubmit after a transport failure until the hash is checked.",
+    "exitCode": 2
+  },
+  {
+    "label": "staked_70000_submit",
+    "probe": "declared-VERIFY-budget",
+    "timestamp": "2026-11-05T22:01:00.611Z",
+    "limitation": "Increasing the declared VERIFY limit does not increase the wallet's validation work. Estimates do not prove admission; admission does not prove inclusion. This single-entity probe does not establish per-entity isolation.",
+    "gateway": "https://altmempool.forshtat.com/rpc",
+    "chainId": 1337,
+    "sidecarVersion": "skandha/v4.1.1-",
+    "noteOnVersion": "web3_clientVersion at the gateway identifies the sidecar, not necessarily the underlying execution client revision.",
+    "workshopCommit": "bcfe02a196ca97b6fb0d1044db9d0b4c673831fc",
+    "blockBefore": "0x63886",
+    "wallet": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+    "stakeRegistry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
+    "stake": {
+      "amountWei": "12000000000000000",
+      "unstakeDelaySec": 86400,
+      "withdrawTime": "0",
+      "note": "Registry evidence only: effective staked eligibility also depends on this node's configured minimums and reputation."
+    },
+    "verifyFrameDeclaredGas": "70000",
+    "signatureAccounting": "Protocol signature-validation costs may be added to the VERIFY frame budget. These probe values are not exact total-prefix thresholds.",
+    "actualValidationWork": "Unchanged: the workshop wallet's clean signature-check-and-approve path. No loops, cryptographic workload amplification, or storage violation.",
+    "nonce": "11",
+    "balanceWei": "17341065000000000",
+    "candidateHash": "0x7fdd1fa5027c3505086173565442ff9b18e539f6cdb4c25b35afee333b81b589",
+    "submissionRequested": true,
+    "estimate": {
+      "ok": false,
+      "error": {
+        "code": -32507,
+        "message": "Invalid frame transaction signature"
+      }
+    },
+    "admission": {
+      "accepted": true,
+      "hash": "0x7fdd1fa5027c3505086173565442ff9b18e539f6cdb4c25b35afee333b81b589"
+    },
+    "explorer": "https://explorer.altmempool.wtf/tx/0x7fdd1fa5027c3505086173565442ff9b18e539f6cdb4c25b35afee333b81b589?node=https%3A%2F%2Faltmempool.forshtat.com%2Frpc",
+    "receipt": {
+      "blockHash": "0x64f97578c4182e693898ae64446095ac868528d1120b8091d7602f0bdce71f89",
+      "blockNumber": "0x6388a",
+      "contractAddress": null,
+      "cumulativeGasUsed": "0x7613",
+      "effectiveGasPrice": "0x77359400",
+      "frameReceipts": [
+        {
+          "gasUsed": "0x2761",
+          "logs": [],
+          "stateGasUsed": "0x0",
+          "status": "0x1"
+        },
+        {
+          "gasUsed": "0xbb8",
+          "logs": [],
+          "stateGasUsed": "0x0",
+          "status": "0x1"
+        }
+      ],
+      "from": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+      "gasUsed": "0x7613",
+      "logs": [],
+      "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "payer": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+      "status": "0x1",
+      "to": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+      "transactionHash": "0x7fdd1fa5027c3505086173565442ff9b18e539f6cdb4c25b35afee333b81b589",
+      "transactionIndex": "0x0",
+      "type": "0x6"
+    },
+    "outcome": "MINED_ALL_FRAMES_SUCCEEDED"
+  },
+  {
+    "label": "staked_500001_submit",
+    "probe": "declared-VERIFY-budget",
+    "timestamp": "2026-11-05T22:01:42.544Z",
+    "limitation": "Increasing the declared VERIFY limit does not increase the wallet's validation work. Estimates do not prove admission; admission does not prove inclusion. This single-entity probe does not establish per-entity isolation.",
+    "gateway": "https://altmempool.forshtat.com/rpc",
+    "chainId": 1337,
+    "sidecarVersion": "skandha/v4.1.1-",
+    "noteOnVersion": "web3_clientVersion at the gateway identifies the sidecar, not necessarily the underlying execution client revision.",
+    "workshopCommit": "bcfe02a196ca97b6fb0d1044db9d0b4c673831fc",
+    "blockBefore": "0x6388d",
+    "wallet": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+    "stakeRegistry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
+    "stake": {
+      "amountWei": "12000000000000000",
+      "unstakeDelaySec": 86400,
+      "withdrawTime": "0",
+      "note": "Registry evidence only: effective staked eligibility also depends on this node's configured minimums and reputation."
+    },
+    "verifyFrameDeclaredGas": "500001",
+    "signatureAccounting": "Protocol signature-validation costs may be added to the VERIFY frame budget. These probe values are not exact total-prefix thresholds.",
+    "actualValidationWork": "Unchanged: the workshop wallet's clean signature-check-and-approve path. No loops, cryptographic workload amplification, or storage violation.",
+    "nonce": "12",
+    "balanceWei": "17280611000000000",
+    "candidateHash": "0x05e6c89a3da54e7bc1e58f44704c5ec2953d9e57452bf565196d5c288c6ca8b0",
+    "submissionRequested": true,
+    "estimate": {
+      "ok": false,
+      "error": {
+        "code": -32602,
+        "message": "validation prefix execution gas sum 500001 + signature-verification cost 2800 = 502801 exceeds MAX_VERIFY_GAS 100000"
+      }
+    },
+    "admission": {
+      "accepted": false,
+      "error": {
+        "code": -32602,
+        "message": "validation prefix execution gas sum 500001 + signature-verification cost 2800 = 502801 exceeds MAX_VERIFY_GAS 100000"
+      }
+    },
+    "outcome": "RPC_REJECTION_INSPECT_ERROR",
+    "nextStep": "Run yarn step_11_debug 0x05e6c89a3da54e7bc1e58f44704c5ec2953d9e57452bf565196d5c288c6ca8b0. A failed RPC reply is not automatically a budget-limit finding. Do not resubmit after a transport failure until the hash is checked.",
+    "exitCode": 2
+  }
+]

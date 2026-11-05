@@ -1,0 +1,44 @@
+{
+  "at": "2026-11-05T21:56:13.321Z",
+  "endpoint": "https://altmempool.forshtat.com/rpc",
+  "sameTransactionHash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+  "reason": "Gateway has zero connected peers; transaction absent from primary sidecar",
+  "response": {
+    "http": 200,
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087"
+  },
+  "receipt": {
+    "blockHash": "0xa1b3c709cff53b88b37637aab201b1e50688189a642cb438be7a0b2ba1998132",
+    "blockNumber": "0x63865",
+    "contractAddress": null,
+    "cumulativeGasUsed": "0x7607",
+    "effectiveGasPrice": "0x77359400",
+    "frameReceipts": [
+      {
+        "gasUsed": "0x2761",
+        "logs": [],
+        "stateGasUsed": "0x0",
+        "status": "0x1"
+      },
+      {
+        "gasUsed": "0xbb8",
+        "logs": [],
+        "stateGasUsed": "0x0",
+        "status": "0x1"
+      }
+    ],
+    "from": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+    "gasUsed": "0x7607",
+    "logs": [],
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "payer": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+    "status": "0x1",
+    "to": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+    "transactionHash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+    "transactionIndex": "0x0",
+    "type": "0x6"
+  },
+  "currentStatus": "OnChain"
+}

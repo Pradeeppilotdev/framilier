@@ -1,0 +1,195 @@
+{
+  "project": "StakeLane",
+  "recordedAt": "2026-11-05T22:03:34.646Z",
+  "status": "CONFIRMED_COMBINED_100K_CAP",
+  "source": {
+    "repository": "https://github.com/forshtat/mempool-workshop",
+    "revision": "bcfe02a196ca97b6fb0d1044db9d0b4c673831fc",
+    "acquiredVia": "Pinned GitHub source archive",
+    "localPath": "mempool-workshop/",
+    "probeSha256": "cdee789d1555bbaab429fee89d2998114c738220675f3a2dc43e3af21c5ae282"
+  },
+  "localValidation": {
+    "typecheck": "PASS (probe included)",
+    "upstreamTests": {
+      "filesPassed": 14,
+      "testsPassed": 57
+    },
+    "installedDependencies": "124 locked tarballs verified against lockfile SHA-1; offline frozen-lockfile installation; install scripts disabled",
+    "liveRuntime": "Compiled ESM using explicit in-process entry-point adapters; unchanged RPC, signing, contracts and validation logic; see runtime-adapter-notes.json"
+  },
+  "connection": {
+    "chainId": 1337,
+    "activeSidecar": "https://altmempool.forshtat.com/rpc",
+    "initialGateway": "https://altmempoolgateway.forshtat.com/rpc",
+    "initialGatewayPeers": 0,
+    "sidecarClientVersion": "skandha/v4.1.1-",
+    "executionClientVersion": "ethrex/v23.0.0-eip8141-tracer-9aa3645d795945c64400f41a70aace0edfa7f383/x86_64-unknown-linux-gnu/rustc-v1.93.1",
+    "stakingRegistry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
+    "minStakeWei": "10000000000000000",
+    "minUnstakeDelay": 0
+  },
+  "funding": {
+    "route": "User-directed documented shared genesis-account transfer",
+    "documentation": "https://docs.altmempool.wtf/guides/devnet/#getting-funds",
+    "source": "0x5544596212F91984C986A919C8026DF0576816f9",
+    "recipient": "0x82C805924fbf9Ba95c5Eb0F15Cbaa40912eBCb4F",
+    "amountWei": "100000000000000000",
+    "hash": "0x7b8d87824391915c7b5d5686d5c8d581d66cfbf386cf30c4b5de0ea0f796cd1d",
+    "outcome": "MINED_AND_FUNDED",
+    "gasUsed": "0x31f38"
+  },
+  "participant": {
+    "address": "0x82C805924fbf9Ba95c5Eb0F15Cbaa40912eBCb4F",
+    "balanceWei": "69989521962000000",
+    "statePreservedLocally": true
+  },
+  "wallet": {
+    "address": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+    "balanceWei": "17280611000000000",
+    "nonce": "12",
+    "stake": {
+      "amountWei": "12000000000000000",
+      "unstakeDelaySec": 86400,
+      "withdrawTime": "0",
+      "note": "Registry evidence only: effective staked eligibility also depends on this node's configured minimums and reputation."
+    },
+    "reputation": {
+      "status": "OK",
+      "opsSeen": 4,
+      "opsIncluded": 4,
+      "isStaked": true
+    }
+  },
+  "budgetResults": [
+    {
+      "stake": "unstaked",
+      "declaredVerifyGas": 70000,
+      "outcome": "MINED_ALL_FRAMES_SUCCEEDED",
+      "hash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+      "receipt": {
+        "blockHash": "0xa1b3c709cff53b88b37637aab201b1e50688189a642cb438be7a0b2ba1998132",
+        "blockNumber": "0x63865",
+        "contractAddress": null,
+        "cumulativeGasUsed": "0x7607",
+        "effectiveGasPrice": "0x77359400",
+        "frameReceipts": [
+          {
+            "gasUsed": "0x2761",
+            "logs": [],
+            "stateGasUsed": "0x0",
+            "status": "0x1"
+          },
+          {
+            "gasUsed": "0xbb8",
+            "logs": [],
+            "stateGasUsed": "0x0",
+            "status": "0x1"
+          }
+        ],
+        "from": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+        "gasUsed": "0x7607",
+        "logs": [],
+        "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "payer": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+        "status": "0x1",
+        "to": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+        "transactionHash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+        "transactionIndex": "0x0",
+        "type": "0x6"
+      }
+    },
+    {
+      "stake": "unstaked",
+      "declaredVerifyGas": 500001,
+      "outcome": "RPC_REJECTION_INSPECT_ERROR",
+      "hash": "0xb20e67f46be173033532aec0103fb41e56ecd1160904f6852aa6ccd5c24bdc6e",
+      "error": {
+        "code": -32602,
+        "message": "validation prefix execution gas sum 500001 + signature-verification cost 2800 = 502801 exceeds MAX_VERIFY_GAS 100000"
+      }
+    },
+    {
+      "stake": "staked",
+      "declaredVerifyGas": 70000,
+      "outcome": "MINED_ALL_FRAMES_SUCCEEDED",
+      "hash": "0x7fdd1fa5027c3505086173565442ff9b18e539f6cdb4c25b35afee333b81b589",
+      "receipt": {
+        "blockHash": "0x64f97578c4182e693898ae64446095ac868528d1120b8091d7602f0bdce71f89",
+        "blockNumber": "0x6388a",
+        "contractAddress": null,
+        "cumulativeGasUsed": "0x7613",
+        "effectiveGasPrice": "0x77359400",
+        "frameReceipts": [
+          {
+            "gasUsed": "0x2761",
+            "logs": [],
+            "stateGasUsed": "0x0",
+            "status": "0x1"
+          },
+          {
+            "gasUsed": "0xbb8",
+            "logs": [],
+            "stateGasUsed": "0x0",
+            "status": "0x1"
+          }
+        ],
+        "from": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+        "gasUsed": "0x7613",
+        "logs": [],
+        "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "payer": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+        "status": "0x1",
+        "to": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+        "transactionHash": "0x7fdd1fa5027c3505086173565442ff9b18e539f6cdb4c25b35afee333b81b589",
+        "transactionIndex": "0x0",
+        "type": "0x6"
+      }
+    },
+    {
+      "stake": "staked",
+      "declaredVerifyGas": 500001,
+      "outcome": "RPC_REJECTION_INSPECT_ERROR",
+      "hash": "0x05e6c89a3da54e7bc1e58f44704c5ec2953d9e57452bf565196d5c288c6ca8b0",
+      "error": {
+        "code": -32602,
+        "message": "validation prefix execution gas sum 500001 + signature-verification cost 2800 = 502801 exceeds MAX_VERIFY_GAS 100000"
+      }
+    }
+  ],
+  "notRun": [
+    {
+      "declaredVerifyGas": 1000001,
+      "reason": "Stopped after a clear explicit 100000 combined cap was reproduced for both unstaked and staked cases."
+    }
+  ],
+  "storageControl": {
+    "unstaked": "Rejected by canonical mempool and sidecar for foreign-storage access",
+    "staked": "Accepted and mined",
+    "stakedTransaction": "0x8ac90c1927cbd0c91d20537630fb440eaaa949ba56f3105921f7a89527e2d1c5"
+  },
+  "estimatorObservation": "The estimator returned Invalid frame transaction signature for clean probes that actual admission accepted and the chain later mined. Estimator responses were not treated as admission verdicts.",
+  "routingObservation": "The initial gateway admitted the baseline but had zero connected peers. The primary sidecar had no record of it. Resubmitting the exact same transaction to the documented primary sidecar led to inclusion; subsequent probes used that endpoint.",
+  "observedRule": {
+    "executionGas": 500001,
+    "signatureVerificationGas": 2800,
+    "total": 502801,
+    "maxVerifyGas": 100000,
+    "rejectionStage": "structure",
+    "errorCode": -32602,
+    "sameForStakedAndUnstaked": true
+  },
+  "actualVerificationWork": {
+    "description": "Unchanged workshop signature-check-and-approve path; no amplified workload",
+    "unstakedVerifyFrameGasUsed": 10081,
+    "stakedVerifyFrameGasUsed": 10081
+  },
+  "conclusion": "The primary public sidecar admits and includes the 70000 declared-VERIFY baseline. It rejects 500001 with an explicit transaction-wide prefix-plus-signatures cap of 100000, including when the wallet is staked and its reputation is OK. This establishes the observed deployment behavior, not performance of genuinely expensive verification or per-entity isolation.",
+  "nextStep": "Implement the pinned per-entity accounting rule in a sidecar and establish a compatible inclusion route. Keep real expensive verification and multi-entity isolation as separate subsequent tests.",
+  "resume": {
+    "workingDirectory": "mempool-workshop/",
+    "statePolicy": "Use the existing participant state. Do not rerun step_1_check: it resets deployed-address records.",
+    "endpoint": "https://altmempool.forshtat.com/rpc",
+    "keysIncluded": false
+  }
+}

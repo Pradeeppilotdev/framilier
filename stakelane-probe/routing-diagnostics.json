@@ -1,0 +1,63 @@
+[
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "gateway_peers",
+      "response": {
+        "http": 200,
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": []
+      }
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "primary_chain",
+      "response": {
+        "http": 200,
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0x539"
+      }
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "primary_status",
+      "response": {
+        "http": 200,
+        "jsonrpc": "2.0",
+        "id": 1,
+        "error": {
+          "message": "Frame transaction not found",
+          "code": -32600
+        }
+      }
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "name": "primary_config",
+      "response": {
+        "http": 200,
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "chainId": 1337,
+          "flags": {
+            "testingMode": false,
+            "redirectRpc": true
+          },
+          "minStake": "10000000000000000",
+          "minUnstakeDelay": 0,
+          "rpcEndpointSubmitMethod": "eth_sendBundle",
+          "stakingRegistryAddress": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f"
+        }
+      }
+    }
+  }
+]

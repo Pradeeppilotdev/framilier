@@ -1,0 +1,27 @@
+# Downloaded upstream dependency, including its private participant state.
+/mempool-workshop/
+
+# Local keys, credentials and participant state must stay on this machine.
+.workshop-state.json
+.workshop-state*.json
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Dependencies, compiled adapters, caches and logs.
+node_modules/
+.runtime/
+.yarnrc
+.yarn-cache/
+coverage/
+*.tsbuildinfo
+*.log
+.DS_Store
+
+# Downloadable checkpoints are kept outside the Git project.
+*.zip
+*.tar
+*.tar.gz
+*.tgz

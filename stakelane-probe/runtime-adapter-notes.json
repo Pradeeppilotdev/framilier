@@ -1,0 +1,25 @@
+{
+  "sourceRevision": "bcfe02a196ca97b6fb0d1044db9d0b4c673831fc",
+  "adaptations": [
+    "Compiled TypeScript to ESM for in-process execution in network-capable JavaScript runtime",
+    "Workshop runStep uses executeStep and gated unchanged, takes explicit arguments, returns result instead of exiting process",
+    "Step entry points await and export their result",
+    "Probe takes explicit arguments, reports exitCode, returns redacted report, records known archive revision without spawning git"
+  ],
+  "validation": [
+    "TypeScript check passed with probe included",
+    "57 upstream tests in 14 files passed"
+  ],
+  "unchanged": [
+    "RPC methods",
+    "Signing",
+    "Deployed bytecode",
+    "Admission logic",
+    "Receipt checks"
+  ],
+  "configurationChanges": {
+    "gatewayUrl": "https://altmempool.forshtat.com/rpc",
+    "reason": "Documented primary sidecar; initial workshop gateway had zero peers",
+    "participantState": "CLI and compiled runtime share the same local state file"
+  }
+}

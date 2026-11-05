@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-05T22:02:07.797Z",
+  "reputation": {
+    "status": "OK",
+    "opsSeen": 4,
+    "opsIncluded": 4,
+    "isStaked": true
+  },
+  "participantBalanceWei": "69989521962000000",
+  "walletBalanceWei": "17280611000000000",
+  "walletNonce": "12",
+  "nodeMinStakeWei": "10000000000000000",
+  "nodeMinUnstakeDelay": 0,
+  "executionClientVersion": "ethrex/v23.0.0-eip8141-tracer-9aa3645d795945c64400f41a70aace0edfa7f383/x86_64-unknown-linux-gnu/rustc-v1.93.1"
+}

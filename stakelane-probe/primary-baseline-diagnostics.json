@@ -1,0 +1,227 @@
+{
+  "head": {
+    "http": 200,
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": "0x63866"
+  },
+  "detail": {
+    "http": 200,
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "hash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+      "entry": {
+        "txHash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+        "sender": "0x259bb3F281DA40F23A54d0e1d76883CAFf89b568",
+        "payer": "0x259bb3F281DA40F23A54d0e1d76883CAFf89b568",
+        "nonce": "0x8",
+        "nonceKeys": [
+          "0x0"
+        ],
+        "status": "OnChain",
+        "frames": 2,
+        "maxFeePerGas": "0x77359400",
+        "submittedTime": 1793915772640,
+        "lastUpdatedTime": 1793915864247,
+        "source": "rpc",
+        "tx": {
+          "chainId": "0x539",
+          "nonceKeys": [
+            "0x0"
+          ],
+          "nonceSeq": "0x8",
+          "sender": "0x259bb3F281DA40F23A54d0e1d76883CAFf89b568",
+          "frames": [
+            {
+              "mode": 1,
+              "flags": 3,
+              "target": null,
+              "limits": {
+                "execution": "0x11170",
+                "state": "0x0"
+              },
+              "value": "0x0",
+              "data": "0x"
+            },
+            {
+              "mode": 2,
+              "flags": 0,
+              "target": "0x82C805924fbf9Ba95c5Eb0F15Cbaa40912eBCb4F",
+              "limits": {
+                "execution": "0xc350",
+                "state": "0x0"
+              },
+              "value": "0x0",
+              "data": "0x"
+            }
+          ],
+          "signatures": [
+            {
+              "scheme": 1,
+              "signer": "0x82C805924fbf9Ba95c5Eb0F15Cbaa40912eBCb4F",
+              "msg": "0x",
+              "signature": "0x00b974282c5c51c8083013bb18556215567e7e87a1af728e07b1adaa50d1e87909588a805ebadfcac519e0030a40214dc5c50ca9e9ec54000c12184a9bd5fd6fa0"
+            }
+          ],
+          "fees": {
+            "maxPriorityFeePerGas": "0x77359400",
+            "maxFeePerGas": "0x77359400",
+            "maxFeePerBlobGas": "0x0"
+          },
+          "blobVersionedHashes": [],
+          "recentRootReferences": []
+        },
+        "transaction": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087"
+      },
+      "admission": {
+        "id": 1556,
+        "txHash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+        "sender": "0x259bb3F281DA40F23A54d0e1d76883CAFf89b568",
+        "nonce": "0x8",
+        "nonceKeys": [
+          "0x0"
+        ],
+        "at": 1793915772613,
+        "source": "rpc",
+        "outcome": "included",
+        "checks": [
+          {
+            "rule": "gas-limit",
+            "verdict": "pass"
+          },
+          {
+            "rule": "recent-root",
+            "verdict": "pass"
+          },
+          {
+            "rule": "prefix",
+            "verdict": "pass"
+          },
+          {
+            "rule": "structure",
+            "verdict": "pass"
+          },
+          {
+            "rule": "signature",
+            "verdict": "pass"
+          },
+          {
+            "rule": "simulation",
+            "verdict": "pass"
+          },
+          {
+            "rule": "trace-alignment",
+            "verdict": "pass"
+          },
+          {
+            "rule": "OP-061",
+            "verdict": "pass"
+          },
+          {
+            "rule": "execution",
+            "verdict": "pass"
+          },
+          {
+            "rule": "trace-alignment",
+            "frameIndex": 0,
+            "entity": "payer",
+            "verdict": "pass"
+          },
+          {
+            "rule": "out-of-gas",
+            "frameIndex": 0,
+            "entity": "payer",
+            "verdict": "pass"
+          },
+          {
+            "rule": "OP-011",
+            "frameIndex": 0,
+            "entity": "payer",
+            "verdict": "pass"
+          },
+          {
+            "rule": "create",
+            "frameIndex": 0,
+            "entity": "payer",
+            "verdict": "pass"
+          },
+          {
+            "rule": "storage",
+            "frameIndex": 0,
+            "entity": "payer",
+            "verdict": "pass"
+          },
+          {
+            "rule": "COD-010",
+            "frameIndex": 0,
+            "entity": "payer",
+            "verdict": "pass"
+          },
+          {
+            "rule": "entrypoint-access",
+            "frameIndex": 0,
+            "entity": "payer",
+            "verdict": "pass"
+          },
+          {
+            "rule": "mempool",
+            "verdict": "pass"
+          }
+        ],
+        "frames": [
+          {
+            "mode": 1,
+            "flags": 3,
+            "target": null,
+            "limits": {
+              "execution": "0x11170",
+              "state": "0x0"
+            },
+            "value": "0x0",
+            "data": "0x"
+          },
+          {
+            "mode": 2,
+            "flags": 0,
+            "target": "0x82C805924fbf9Ba95c5Eb0F15Cbaa40912eBCb4F",
+            "limits": {
+              "execution": "0xc350",
+              "state": "0x0"
+            },
+            "value": "0x0",
+            "data": "0x"
+          }
+        ],
+        "frameStatuses": [
+          "success",
+          "success"
+        ],
+        "includer": "0x5544596212f91984c986a919c8026df0576816f9"
+      },
+      "events": [
+        {
+          "seq": 4462,
+          "txHash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+          "at": 1793915773154,
+          "kind": "admitted",
+          "status": "New"
+        },
+        {
+          "seq": 4518,
+          "txHash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+          "at": 1793915854610,
+          "kind": "statusChanged",
+          "status": "Submitted"
+        },
+        {
+          "seq": 4523,
+          "txHash": "0xa4d0e092219006ae1ce2f18c700484d24d01eda8aefe7e058110fdc13a1da087",
+          "at": 1793915864247,
+          "kind": "included",
+          "status": "OnChain"
+        }
+      ]
+    }
+  }
+}
