@@ -97,7 +97,7 @@ export class Eth {
     // RPC/gossip copies, including identical requests still waiting in a queue.
     const task = Promise.resolve().then(async () => {
       const known = await this.mempoolService.getEntryByHash(txHash);
-      if (known && known.status !== MempoolEntryStatus.Cancelled) return txHash;
+      if (known?.txHash === txHash && known.status !== MempoolEntryStatus.Cancelled) return txHash;
       const receivedAt = now();
       const collector = new CheckCollector();
       try {

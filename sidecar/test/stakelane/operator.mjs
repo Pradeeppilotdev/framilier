@@ -49,6 +49,21 @@ export async function verifyReport(directory) {
   const comparison = JSON.parse(await readFile(path.join(dir, "comparison.json"), "utf8"));
   assert.equal(comparison.format, 1, "unsupported report format");
   assert.equal(comparison.chainId, 8141337, "unexpected evidence chain");
+  const modes = ["off", "fifo", "fair"];
+  assert.ok(["complete", "baseline-only", "incomplete", "failed", "running"].includes(comparison.status), "unknown report status");
+  assert.ok(Array.isArray(comparison.requestedModes) && comparison.requestedModes.length > 0 &&
+    comparison.requestedModes.every(mode => modes.includes(mode)) &&
+    new Set(comparison.requestedModes).size === comparison.requestedModes.length, "invalid requested modes");
+  assert.ok(comparison.policies && typeof comparison.policies === "object" && !Array.isArray(comparison.policies), "invalid policies");
+  for (const [mode, arm] of Object.entries(comparison.policies)) {
+    assert.ok(comparison.requestedModes.includes(mode), "unrequested policy");
+    assert.ok(arm && ["measured", "failed", "unavailable", "in-progress"].includes(arm.status), "unknown policy status");
+  }
+  if (comparison.status === "baseline-only") {
+    assert.deepEqual(comparison.requestedModes, ["off"], "baseline-only must request only off");
+    assert.deepEqual(Object.keys(comparison.policies), ["off"], "baseline-only must contain only off");
+    assert.equal(comparison.policies.off.status, "measured", "baseline-only requires measured off policy");
+  }
   let reference;
   let measured = 0;
   for (const [mode, arm] of Object.entries(comparison.policies)) {

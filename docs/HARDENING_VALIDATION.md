@@ -86,3 +86,13 @@ A separate fresh private chain with `STAKELANE_HASH_ROUNDS=1` passed the inclusi
 The workload is a synthetic Keccak hash chain with 993,512 VERIFY gas, not a real privacy protocol or post-quantum wallet. Admission timings exclude signing, setup, mining and the maintenance window. Maintenance is deliberately deferred during timed initial admission; mixed-path capacity is covered by regression tests, not a production load benchmark. The execution and sidecar binary/build hashes identify what ran; fingerprints and saved receipts improve reproducibility but are not independent attestations.
 
 There is no guarantee of starvation freedom if an underlying task never settles. A node-wide execution budget cannot control direct requests to an independently exposed ethrex API. Per-sender controls can be bypassed with more identities; sender names are not authenticated before validation. No claims of production security, Sybil resistance, measured inclusion-latency improvement or guaranteed prizes are made.
+
+
+## Follow-up: duplicate lookup race and report status
+
+Two later review findings were corrected locally after commit `8de92f3`:
+
+- `getEntryByHash` now verifies the slot entry still has the requested hash, preventing an old index from returning a fee-bump replacement during concurrent writes. Admission independently checks the returned hash before its duplicate shortcut.
+- Offline verification validates report/arm statuses and requested policy names. `baseline-only` must request and contain only a measured `off` arm; mixed failed comparison arms cannot be labeled a successful baseline.
+
+All **450 executor tests** and **17 operator/evidence tests** passed, including a replacement interleaving regression, admission defense and malformed-status cases. The archived benchmark records remain unchanged and their verification still passes. The performance experiments above describe their recorded build fingerprints; these follow-up changes have not been rebenchmarked. No new commit, push or PR was performed for this follow-up.

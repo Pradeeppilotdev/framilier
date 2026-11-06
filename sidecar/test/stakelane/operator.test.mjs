@@ -30,6 +30,36 @@ test("offline report rejects modified statistics", async () => {
   } finally { await rm(dir, { recursive: true, force: true }); }
 });
 
+test("baseline-only verification accepts only a measured off-only request", async () => {
+  const directory = fileURLToPath(new URL("../../evidence/compare/run-2/", import.meta.url));
+  const valid = await verifyReport(directory);
+  assert.equal(valid.status, "baseline-only");
+  assert.equal(valid.measuredPolicies, 1);
+  const original = JSON.parse(await readFile(path.join(directory, "comparison.json")));
+  const mutations = [
+    r => { r.requestedModes = ["off", "fifo", "fair"]; r.policies.fifo = { status: "failed" }; r.policies.fair = { status: "failed" }; },
+    r => { r.policies.fair = { status: "failed" }; },
+    r => { r.policies.off.status = "failed"; },
+    r => { r.status = "success"; },
+    r => { r.requestedModes = ["off", "off"]; },
+    r => { r.policies.off.status = "success"; },
+  ];
+  const dir = await mkdtemp(path.join(tmpdir(), "stakelane-status-test-"));
+  try {
+    await writeFile(path.join(dir, "off.json"), await readFile(path.join(directory, "off.json")));
+    for (const mutate of mutations) {
+      const report = structuredClone(original);
+      mutate(report);
+      await writeFile(path.join(dir, "comparison.json"), JSON.stringify(report));
+      await assert.rejects(verifyReport(dir));
+    }
+    const cli = fileURLToPath(new URL("./operator.mjs", import.meta.url));
+    const result = spawnSync(process.execPath, [cli, "report", dir, "--verify", "--json"], { encoding: "utf8" });
+    assert.equal(result.status, 1);
+    assert.doesNotMatch(result.stdout, /"verified":true/);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
+
 test("CLI help and doctor provide actionable output without starting a chain", () => {
   const cli = fileURLToPath(new URL("./operator.mjs", import.meta.url));
   const help = spawnSync(process.execPath, [cli, "--help"], { encoding: "utf8" });

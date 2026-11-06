@@ -119,7 +119,10 @@ export class MempoolService {
       .get<string>(`${this.FRAMETX_HASHES_COLLECTION_PREFIX}${hash}`)
       .catch(() => null);
     if (!key) return null;
-    return this.findByKey(key);
+    const entry = await this.findByKey(key);
+    // Replacement updates the slot before removing the old hash index. A read
+    // spanning those writes must not return the replacement for the old hash.
+    return entry?.txHash === hash ? entry : null;
   }
 
   async getNewEntriesSorted(size: number, offset = 0): Promise<MempoolEntry[]> {

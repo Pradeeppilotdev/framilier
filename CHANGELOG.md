@@ -2,6 +2,8 @@
 
 ## Unreleased — admission hardening
 
+- Follow-up: validate the requested hash across replacement races and strictly validate baseline-only report status/policies; regression suites now cover 450 executor and 17 operator/evidence cases.
+
 - Share bounded simulation capacity across admission, estimates and maintenance.
 - Bound sender backlogs and coalesce duplicate RPC/gossip admissions before simulation.
 - Preserve pending entries when revalidation infrastructure fails.

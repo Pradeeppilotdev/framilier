@@ -154,8 +154,17 @@ describe("Eth.sendFrameTransaction", () => {
     release({ validation: { roleStakes: {}, mempoolMembership: {} }, simulation: {} });
     expect(await first).toBe(await second);
     expect(addFrameTx).toHaveBeenCalledTimes(1);
-    known.mockResolvedValue({ status: 0 });
+    known.mockResolvedValue({ status: 0, txHash: keccak256(encodeRawFrameTx(tx)) });
     await eth.sendFrameTransaction(tx);
+    expect(simulate).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not acknowledge a different transaction returned by a racing hash lookup", async () => {
+    const simulate = vi.fn().mockRejectedValue(new Error("validation rejected the requested transaction"));
+    const eth = buildEth({ frameTxSimulationService: { simulate }, mempoolService: {
+      getEntryByHash: vi.fn().mockResolvedValue({ status: 0, txHash: `0x${"ff".repeat(32)}` }),
+    } });
+    await expect(eth.sendFrameTransaction(validTx())).rejects.toThrow("validation rejected");
     expect(simulate).toHaveBeenCalledTimes(1);
   });
 
