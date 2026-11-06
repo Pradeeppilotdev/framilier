@@ -5,7 +5,7 @@ StakeLane is for alternative-mempool node operators measuring the trade-off betw
 ## Prerequisites
 
 - Node.js 20.12 or newer; Node 24 LTS is recommended.
-- Bun 1.3.14.
+- Bun 1.x from 1.3.14 onward. The contributor used 1.3.14 on Linux and the Mac review used 1.4.4.
 - The Linux or macOS native ethrex executable from commit `9aa3645d795945c64400f41a70aace0edfa7f383`. See [private setup](SIDECAR.md#reproduce-the-mined-transaction). The Linux executable used for the new comparisons comes from `ghcr.io/forshtat/eip8141-devnet@sha256:c9a7770f892e02255999e1c0ffd596ecee704d9175c2480811ccdcfa1c2224c6`.
 
 From the repository root:
@@ -19,7 +19,7 @@ export STAKELANE_ETHREX_BIN=/absolute/path/to/ethrex
 ./stakelane doctor
 ```
 
-If Bun is not on PATH, set `STAKELANE_BUN_BIN=/absolute/path/to/bun`. `doctor` checks versions and built files and explains missing prerequisites. It does not submit transactions or start a node. It checks the ethrex version string; record the binary hash in comparison evidence rather than treating a version string as cryptographic verification.
+For runtime checks, Bun is selected from `STAKELANE_BUN_BIN`, `sidecar/.runtime/bin/bun`, then `PATH`. Use a Bun executable on your shell’s `PATH` for the install and build commands above. `doctor` checks prerequisites locally. It recognizes the pinned ethrex revision in the version output or the recorded SHA-256 of the tested Apple Silicon binary when its version omits the revision.
 
 On Linux amd64 with Docker, the pinned image avoids a Rust source build. These commands extract its executable without starting an execution container:
 
@@ -71,7 +71,7 @@ The example startup config explicitly enables fair scheduling:
 }
 ```
 
-The library default remains off for backward compatibility. Use `skandha_config.admissionScheduler` to check the live instance. It also reports `maxWaitingPerSender`, which is the smaller of 16 and the global waiting limit. A sender cannot fill all 64 waiting positions by itself. FIFO retains arrival-order dispatch; fair rotates eligible senders while preserving each sender's arrival order.
+The library default remains off for backward compatibility. Use `skandha_config.admissionScheduler` to check the live instance. It also reports `maxWaitingPerSender`, which is the smaller of 16 and the global waiting limit. With the example settings, one sender can occupy at most 16 of the 64 waiting positions. FIFO retains arrival-order dispatch; fair rotates eligible senders while preserving each sender's arrival order.
 
 When enabled, every `FrameTxSimulationService` invocation also shares a total execution budget equal to `schedulerSlots`. Admission, estimation and maintenance have separately bounded waiting lanes and rotate fairly. Estimates plus maintenance may occupy at most `slots - 1` active positions when there is more than one slot, reserving at least one position for admission rather than auxiliary work. Existing admissions can still occupy that position. Slots count managed requests, not a guaranteed one-to-one mapping to execution CPU threads. With one slot there is no capacity to reserve; rotation provides eventual service when tasks complete. A slot remains occupied until its underlying work settles, including when a caller disconnects.
 

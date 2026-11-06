@@ -8,7 +8,7 @@
 - Correct transient storage write aggregation and validation.
 - Recover public submission journals using identical signed bytes after observation.
 - Add operator doctor, quick/full presets, output/JSON options and verified offline reports.
-- Document runtime scope, AI assistance and manual GitHub submission.
+- Document the private-chain setup and the operator demo.
 - Current verification and experiments: [hardening validation](docs/HARDENING_VALIDATION.md).
 
 ## Public 1M admission — 2026-11-06

@@ -2,7 +2,7 @@
 
 ## Current operator workflow
 
-See [the operator guide](OPERATOR.md) for dependency checks, quick/full comparisons, offline reports, shared simulation limits and recovery behavior. See [hardening validation](HARDENING_VALIDATION.md) for current test outcomes; the records below describe earlier checkpoints.
+See [the operator guide](OPERATOR.md) for dependency checks, quick/full comparisons, offline reports, shared simulation limits and recovery behavior. See [hardening validation](HARDENING_VALIDATION.md) for the contributor’s Linux run and the Mac review checks. The records below describe the earlier checkpoints.
 
 ## Budget accounting
 

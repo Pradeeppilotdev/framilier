@@ -6,27 +6,30 @@ The sidecar supports **off**, **FIFO** and **fair** policies. Fair mode rotates 
 
 ## Run and verify
 
-Install Node.js 20.12+ (24 LTS recommended), Bun 1.3.14 and the [pinned ethrex binary](docs/SIDECAR.md#reproduce-the-mined-transaction), then:
+To inspect the published experiments from a fresh clone, use Node.js 20.12 or newer. This command reads the checked-in samples and recomputes the report.
 
 ```sh
-cd sidecar
-bun install --frozen-lockfile
-bun run build
-cd ..
-export STAKELANE_ETHREX_BIN=/absolute/path/to/ethrex
-./stakelane doctor
-./stakelane compare --preset quick --output ./results/smoke-001
-./stakelane compare --preset full --output ./results/full-001
-./stakelane report ./results/full-001 --verify
+./stakelane report sidecar/evidence/hardening/full-1 --verify
 ```
 
-Quick is a two-round smoke test, not a p95 performance study. Full runs 20 measured rounds at bursts 1,4,8 plus idle and excluded warm-ups on disposable loopback chains. The command reports B's admission p50/p95, A's batch completion time and verified receipt counts. An output directory must be new. [Operator guide and failure recovery](docs/OPERATOR.md) · [90-second demo](DEMO.md) · [Validation and current evidence](docs/HARDENING_VALIDATION.md)
+To run a live demo, build the sidecar with Bun and provide the pinned ethrex executable for your platform. The CLI creates and funds its own wallets on a private loopback chain. [One-time setup](docs/OPERATOR.md#prerequisites)
+
+```sh
+./stakelane doctor
+./stakelane compare --rounds 1 --bursts 8
+```
+
+For 20 measured rounds per condition, use `./stakelane compare --preset full`. Read wallet B’s admission time alongside wallet A’s batch completion time. [Operator guide](docs/OPERATOR.md) · [Recorded demo walkthrough](DEMO.md)
 
 ## Evidence and scope
 
-Historical matched-workload experiments measured approximately 11 ms idle versus 129 ms under a valid burst. The separate concurrency profile measured 12.8 versus 129.2 ms and located most of the delay before B's traced simulation. These demonstrate contention, not a scheduler benefit. The committed historical comparison runs are explicitly incomplete/baseline-only. A new complete 20-round comparison on Linux measured B median **420.7 → 175.6 ms** at burst 8, while A batch median rose **480.8 → 545.7 ms**. The reverse-order eight-heavy repeat measured **378.3 → 168.9 ms**, with A batch median **401.1 → 487.4 ms**. All **1,620 measured transactions** across both experiments mined. [Results, raw samples and limitations](docs/HARDENING_VALIDATION.md). Do not infer this policy effect from the old contention numbers.
+| Local experiment, burst of eight | Policies compared | B admission | A median batch time |
+| --- | --- | ---: | ---: |
+| Apple Silicon, original scheduler at `7d052e7` | FIFO → fair | p95 678.0 → 238.2 ms | 593.2 → 622.1 ms |
+| Linux, contributor’s PR #4 build | Off → fair | median 420.7 → 175.6 ms | 480.8 → 545.7 ms |
+| Linux, same build, reversed policy order | Off → fair | median 378.3 → 168.9 ms | 401.1 → 487.4 ms |
 
-The workload is a synthetic Keccak hash chain, not an implemented privacy withdrawal. Local receipts establish private inclusion after admission timing; public admission alone does not establish mining. Saved-report verification checks arithmetic and input/build consistency, not independent authentication of historical execution.
+Each policy and burst size had 20 measured rounds. The Linux runs recorded 1,620 measured inclusions across private chains. The workload is a synthetic Keccak hash chain. Timers end at admission, and receipts establish inclusion afterward. The review changes have a separate local smoke check. [Original Mac comparison](docs/BUILDER_BENCHMARK.md#scheduler-comparison-on-6-november-2026) · [Linux measurements and limitations](docs/HARDENING_VALIDATION.md)
 
 ## Inherited code and team additions
 
@@ -35,7 +38,7 @@ The workload is a synthetic Keccak hash chain, not an implemented privacy withdr
 | Workshop sidecar, codec, staking/reputation services, relay and explorer | Per-entity budget accounting, scheduler, shared simulation gate, duplicate suppression, recovery fixes and regression tests |
 | Workshop tooling, staking registry and unmodified Hegota ethrex | Hash-chain workload, private producer, timing observer, policy comparison CLI and offline report verification |
 
-Budget policy follows draft `BUDGET-010` revision `493ba8a`: 100,000 per unstaked entity and 1,000,000 per eligible staked entity, including sender signature costs. The early public checkpoint was `7c9594f`. [Upstream provenance](docs/UPSTREAM.md) · [AI usage](AI_USAGE.md) · [License](LICENSE)
+Budget policy follows draft `BUDGET-010` revision `493ba8a`: 100,000 per unstaked entity and 1,000,000 per eligible staked entity, including sender signature costs. The early public checkpoint was `7c9594f`. [Upstream provenance](docs/UPSTREAM.md)
 
 ## StakeLane sidecar
 

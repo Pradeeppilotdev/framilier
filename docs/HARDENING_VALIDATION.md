@@ -1,6 +1,6 @@
 # StakeLane hardening validation
 
-This report covers local changes based on remote `main` commit `7d052e778fba6a86fb4f70c0d7940b2e62605285`. No new Git branch, commit, push, PR or public-chain transaction was made by Codex. Submission is reserved for the user; see [manual commands](MANUAL_SUBMISSION.md).
+Cresnex supplied these Linux results in PR #4 at `8de92f3`, based on `7d052e7`. The archived runs identify their compiled sidecar by SHA-256. The tests and timing tables below describe that contributor build. Subsequent review changes were tested separately on macOS. [Original Mac scheduler measurements](BUILDER_BENCHMARK.md#scheduler-comparison-on-6-november-2026)
 
 ## Changes
 
@@ -11,7 +11,7 @@ This report covers local changes based on remote `main` commit `7d052e778fba6a86
 - Both transient-write aggregation and write classification corrected, with regression coverage.
 - Restart-safe submission journal recovery from identical signed bytes after explicit observation checks. Legacy journals without raw bytes require manual recovery.
 - `doctor`, quick/full compare presets, custom output directory, counterbalanced policy order, JSON output and offline report verification.
-- README, operator guide, demo, AI disclosure, original-contribution license and manual submission instructions.
+- Operator setup, saved-result inspection and a timed demo script.
 
 ## Runtime and scope
 
