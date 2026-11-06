@@ -1,0 +1,98 @@
+{
+  "format": 1,
+  "status": "incomplete",
+  "startedAt": "2026-11-06T13:35:42.776Z",
+  "chainId": 8141337,
+  "host": {
+    "os": "darwin",
+    "arch": "arm64",
+    "node": "v26.12.1",
+    "ethrexWorkers": 4
+  },
+  "rounds": 20,
+  "bursts": [
+    1,
+    4,
+    8
+  ],
+  "requestedModes": [
+    "off",
+    "fifo",
+    "fair"
+  ],
+  "policies": {
+    "off": {
+      "status": "measured",
+      "schedulerReadback": null,
+      "genesisHash": "0x6ab17ca04f37fdfce18731f60a9dd1da4c68a1421c23c6198a695cac44aac633",
+      "ethrexBinarySha256": "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692",
+      "fixtureArtifactSha256": "3c3fbbe8c23ba0402e8f8e5bbb15bb69a513715b6b9d32fb98bafd88942c5bc1",
+      "signedWorkloadSha256": "2dc4dadc25ed1939f6148318572bf074bb5434fc7548a0456f593d5adae789c9",
+      "evidenceFile": "off.json",
+      "summary": [
+        {
+          "burst": 0,
+          "n": 20,
+          "bAdmissionMs": {
+            "p50": 14.156,
+            "p95": 18.372
+          },
+          "aBatchMs": null,
+          "aMined": 0,
+          "bMined": 20
+        },
+        {
+          "burst": 1,
+          "n": 20,
+          "bAdmissionMs": {
+            "p50": 128.152,
+            "p95": 137.372
+          },
+          "aBatchMs": {
+            "p50": 129.096,
+            "p95": 133.645
+          },
+          "aMined": 20,
+          "bMined": 20
+        },
+        {
+          "burst": 4,
+          "n": 20,
+          "bAdmissionMs": {
+            "p50": 136.454,
+            "p95": 243.58
+          },
+          "aBatchMs": {
+            "p50": 264.058,
+            "p95": 345.341
+          },
+          "aMined": 80,
+          "bMined": 20
+        },
+        {
+          "burst": 8,
+          "n": 20,
+          "bAdmissionMs": {
+            "p50": 286.303,
+            "p95": 365.548
+          },
+          "aBatchMs": {
+            "p50": 358.346,
+            "p95": 406.622
+          },
+          "aMined": 160,
+          "bMined": 20
+        }
+      ]
+    },
+    "fifo": {
+      "status": "unavailable",
+      "reason": "skandha_config did not report an active admission scheduler"
+    },
+    "fair": {
+      "status": "unavailable",
+      "reason": "skandha_config did not report an active admission scheduler"
+    }
+  },
+  "completedAt": "2026-11-06T13:41:59.124Z"
+}

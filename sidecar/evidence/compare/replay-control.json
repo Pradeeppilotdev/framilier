@@ -1,0 +1,93 @@
+{
+  "chainId": 8141337,
+  "method": "Start two fresh private chains using the same ephemeral wallet identities and one measured round at burst 1 plus idle and warm-ups. Both used the default sidecar. Separately request FIFO on the unpatched sidecar and interrupt a fresh CLI run after its first canonical block.",
+  "inputColumns": [
+    "round",
+    "burst",
+    "walletBHash",
+    "walletAHashes"
+  ],
+  "roundMinusOne": "warm-up",
+  "defaultRuns": [
+    {
+      "genesisHash": "0x6f70a8ecb34d5f814d7b0b66b1c5284d3f4c3ae04cca55807abff8df5804d020",
+      "signedWorkloadSha256": "f7fb7bd1c511cc8813c9247d2ecb5b5d078851fca4126fb2a933e8a60934f3e1",
+      "inputs": [
+        [
+          -1,
+          0,
+          "0x002a7816cbd9a9fcecdca7035bb058ade6d6a52503161c645bdddd37d5bf4f34",
+          []
+        ],
+        [
+          -1,
+          1,
+          "0x5675bb83b6fb483618988e87222c1734fc4a63226a8559be08fd88e22e943c7f",
+          [
+            "0x375e2830e2857e2b7cbd7fa0c2996495a3be1da9fd71ae65440c2e479b2e6e8f"
+          ]
+        ],
+        [
+          0,
+          0,
+          "0xfbe68dfeef760dd43ff33c80a6352b8c96ca5bf93f678f52e6c748c9003cb1c7",
+          []
+        ],
+        [
+          0,
+          1,
+          "0x417983291083e09a548a32aa85c7f709f8f0df6feb903064bbbac1a2682efcf0",
+          [
+            "0xc6e827aef6e9301710dd66a695f028fef4bcaea204f32c62297aadfd6cb5ed41"
+          ]
+        ]
+      ]
+    },
+    {
+      "genesisHash": "0x6f70a8ecb34d5f814d7b0b66b1c5284d3f4c3ae04cca55807abff8df5804d020",
+      "signedWorkloadSha256": "f7fb7bd1c511cc8813c9247d2ecb5b5d078851fca4126fb2a933e8a60934f3e1",
+      "inputs": [
+        [
+          -1,
+          0,
+          "0x002a7816cbd9a9fcecdca7035bb058ade6d6a52503161c645bdddd37d5bf4f34",
+          []
+        ],
+        [
+          -1,
+          1,
+          "0x5675bb83b6fb483618988e87222c1734fc4a63226a8559be08fd88e22e943c7f",
+          [
+            "0x375e2830e2857e2b7cbd7fa0c2996495a3be1da9fd71ae65440c2e479b2e6e8f"
+          ]
+        ],
+        [
+          0,
+          0,
+          "0xfbe68dfeef760dd43ff33c80a6352b8c96ca5bf93f678f52e6c748c9003cb1c7",
+          []
+        ],
+        [
+          0,
+          1,
+          "0x417983291083e09a548a32aa85c7f709f8f0df6feb903064bbbac1a2682efcf0",
+          [
+            "0xc6e827aef6e9301710dd66a695f028fef4bcaea204f32c62297aadfd6cb5ed41"
+          ]
+        ]
+      ]
+    }
+  ],
+  "unsupportedMode": {
+    "requested": "fifo",
+    "exit": 1,
+    "rejectedBeforeTiming": true,
+    "wroteTimingFile": false
+  },
+  "interruptedRun": {
+    "exit": 1,
+    "start": "in-progress",
+    "end": "failed",
+    "hasSummary": false
+  }
+}

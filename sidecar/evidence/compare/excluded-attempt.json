@@ -1,0 +1,20 @@
+{
+  "chainId": 8141337,
+  "startedAt": "2026-11-06T13:56:43.818Z",
+  "requestedModes": [
+    "off"
+  ],
+  "plannedRoundsPerBurst": 20,
+  "bursts": [
+    1,
+    4,
+    8
+  ],
+  "lastProgressMessage": "Completed 15/20 measured rounds.",
+  "status": "excluded",
+  "assertion": "traced simulation count for one signed input",
+  "transactionHash": "0x8800b9d69e262e8b227735c52938d2a3407a973530d376472875e197bcd5cb17",
+  "observed": 2,
+  "expected": 1,
+  "timingSummaryProduced": false
+}
