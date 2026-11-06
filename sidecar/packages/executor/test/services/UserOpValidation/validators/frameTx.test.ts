@@ -602,7 +602,7 @@ describe("FrameTxValidationService", () => {
 
       await expect(service.validate(tx, simResult)).rejects.toThrow(RpcError);
       await expect(service.validate(tx, simResult)).rejects.toMatchObject({
-        code: RpcErrorCodes.VALIDATION_FAILED,
+        code: RpcErrorCodes.INTERNAL_ERROR,
         message: expect.stringContaining("trace pass exceeded step limit"),
       });
     });
@@ -679,6 +679,36 @@ describe("FrameTxValidationService", () => {
         await expect(service.validate(tx, simResult)).resolves.toMatchObject({
           mempoolMembership: { [STANDARD_MEMPOOL_ID]: true },
         });
+      });
+    });
+
+    it("keeps a trace outage distinct from the canonical mempool verdict after the gas pass succeeds", async () => {
+      const sim = {
+        ...fakeEthrexResult([]),
+        canonicalMempoolValid: false,
+        canonicalMempoolViolation: "prefix gas budget exceeded",
+        erc7562Trace: null,
+        erc7562TraceError: "trace provider timed out",
+      };
+      const service = new FrameTxValidationService(
+        fakeStakingRegistry(), fakeReputationService(), fakeNetworkConfig(), fakeLogger()
+      );
+      await expect(service.validate(baseTx([selfVerifyFrame()]), sim)).rejects.toMatchObject({
+        code: RpcErrorCodes.INTERNAL_ERROR, message: "trace provider timed out",
+      });
+    });
+
+    it("reports a gas-pass storage error as unavailable despite a separate canonical cap violation", async () => {
+      const sim = {
+        ...fakeEthrexResult([]), frames: null, gasUsed: null, executionStatus: null, erc7562Trace: null,
+        canonicalMempoolValid: false, canonicalMempoolViolation: "prefix gas budget exceeded",
+        executionError: "state database unavailable",
+      };
+      const service = new FrameTxValidationService(
+        fakeStakingRegistry(), fakeReputationService(), fakeNetworkConfig(), fakeLogger()
+      );
+      await expect(service.validate(baseTx([selfVerifyFrame()]), sim)).rejects.toMatchObject({
+        code: RpcErrorCodes.INTERNAL_ERROR, message: "state database unavailable",
       });
     });
 
@@ -1214,5 +1244,17 @@ describe("FrameTxValidationService: ethrex's structured failure detail", () => {
 
   it("keeps ethrex's own violations that name no frame", async () => {
     expect(await message({ canonicalMempoolViolation: "BannedOpcode(66)" })).toBe("banned opcode: TIMESTAMP (0x42)");
+  });
+});
+
+
+describe("foreign transient writes", () => {
+  it("rejects an unrelated transient write even when the entity is staked", async () => {
+    const inner = ethrexFrame({ from: SENDER, to: OTHER_CONTRACT,
+      accessedSlots: { ...emptyAccessedSlots(), transientWrites: { ["0x" + "00".repeat(32)]: 1 } } });
+    const service = new FrameTxValidationService(fakeStakingRegistry(), fakeReputationService(SENDER),
+      fakeNetworkConfig(), fakeLogger());
+    await expect(service.validate(baseTx([selfVerifyFrame()]),
+      fakeEthrexResult([ethrexFrame({ calls: [inner] })]))).rejects.toThrow("forbidden write");
   });
 });

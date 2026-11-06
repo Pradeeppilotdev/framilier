@@ -27,7 +27,7 @@ The tested service is the [ERC-8421 Mempool Sidecar](https://github.com/forshtat
 
 The current `sidecar/` directory includes the upstream runtime and tests from [sidecar revision 2e22ff0](https://github.com/forshtat/mempool-workshop-sidecar/tree/2e22ff0a2898e69ea4bf5275bce1be8581a8582a). StakeLane implements per-address accounting against [ERC-8421 draft revision 493ba8a](https://github.com/forshtat/ERCs/blob/493ba8ac3be97dc5cf6335eb97d2e8e9f95983c5/ERCS/erc-8421.md). The upstream license is in `sidecar/LICENSE`.
 
-## Fork inventory on 6 November 2026
+## Fork inventory on 6 November 2026 (checkpoint ddfcfd5)
 
 A byte comparison of the 583 Git-visible files under `sidecar/` with the source archive at `2e22ff0` found 546 identical files, 10 modified upstream files and 27 paths added to the snapshot. Some added paths carry upstream fixtures, including the registry and ethrex genesis. The upstream archive contains 105 additional paths omitted from this source distribution, chiefly deployment and CI files. The upstream MIT license matches byte for byte.
 

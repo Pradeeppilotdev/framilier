@@ -1,5 +1,11 @@
 # StakeLane sidecar
 
+## Current operator workflow
+
+See [the operator guide](OPERATOR.md) for dependency checks, quick/full comparisons, offline reports, shared simulation limits and recovery behavior. See [hardening validation](HARDENING_VALIDATION.md) for the contributor’s Linux run and the Mac review checks. The records below describe the earlier checkpoints.
+
+## Budget accounting
+
 StakeLane implements the per-entity rule `BUDGET-010` from ERC-8421 draft revision `493ba8a`. The ledger charges each validation frame’s declared execution gas to its sender, payer or factory. A pre-verification frame belongs to the entity it prepares. Intrinsic signature cost belongs to the sender. An address appearing in multiple roles shares one allowance. The table uses that pinned draft's constants. The workshop documentation also records a landing-page proposal of 250,000 and 2,500,000. [Pinned draft](https://github.com/forshtat/ERCs/blob/493ba8ac3be97dc5cf6335eb97d2e8e9f95983c5/ERCS/erc-8421.md) · [Workshop budget notes](https://docs.altmempool.wtf/rules/budget/)
 
 | Address | Total validation allowance | Self-paying wallet with one secp256k1 signature |
@@ -85,7 +91,7 @@ The builder admission benchmark measures how one staked wallet's submissions del
 - [Stake checks and admission](../sidecar/packages/executor/src/services/UserOpValidation/validators/frameTx.ts)
 - [Boundary and isolation tests](../sidecar/packages/executor/test/services/UserOpValidation/validationBudget.test.ts)
 
-From `sidecar/`, run `bun run test:stakelane`. The build and 412 executor tests passed, including 30 budget cases. The explorer logic suite passed 31 tests.
+From `sidecar/`, run `bun run test:stakelane`. At the earlier recorded checkpoint, the build and 412 executor tests passed, including 30 budget cases. The explorer logic suite passed 31 tests.
 
 ## Private block inclusion
 

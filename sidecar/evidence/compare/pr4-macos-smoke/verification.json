@@ -1,0 +1,31 @@
+{
+  "sourceCommit": "cdb065bcb1ec39b7583d07b31f39c06cc639822f",
+  "host": {
+    "os": "darwin",
+    "arch": "arm64",
+    "node": "v26.12.1",
+    "ethrexWorkers": 4
+  },
+  "chainId": 8141337,
+  "scope": "Local smoke test, one measured round each at idle and burst 4.",
+  "checksPassed": {
+    "executor": 460,
+    "operator": 22,
+    "peer": 8,
+    "explorer": 31
+  },
+  "measuredInclusions": 18,
+  "peakHeavyTracesByMode": {
+    "fair": 2,
+    "fifo": 4,
+    "off": 4
+  },
+  "sidecarBuildSha256": "4b3eb83fdc32407d6501e1b5ce5ec4cabb1a5413101853bda166ec1f2b8e8f4c",
+  "signedWorkloadSha256": "e187cbd9c808bf6db9de9130aafcd7df7208432d4656cbd27472f389f9808b7c",
+  "fileSha256": {
+    "comparison.json": "dce70ef64b14e2b5973def0c80f553e848f73ad7c67f9fc65b1a5087834ceb10",
+    "fair.json": "ddd980693d08882b944e66874ed96020ed30e333a8d10eb5d80e59eca7a1b003",
+    "fifo.json": "4b0f0c9e6eaf241108044f444d3d1380c703b12459984b81ecafccc2cf9220bf",
+    "off.json": "cef4e2957c9e00c7659ad0524fcc4c5464155e3b4b883b4a08de69c54200b121"
+  }
+}

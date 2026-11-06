@@ -1,5 +1,6 @@
+import { SimulationWorkGate } from "../../../src/services/AdmissionScheduler/SimulationWorkGate.js";
 import { describe, it, expect, vi } from "vitest";
-import { PublicClient } from "viem";
+import { HttpRequestError, PublicClient, RpcRequestError, TimeoutError } from "viem";
 import { FrameTxSimulationService } from "../../../src/services/FrameTxSimulationService/index.js";
 import { FrameTxValidationService } from "../../../src/services/UserOpValidation/validators/frameTx.js";
 import { StakingRegistryService } from "../../../src/services/StakingRegistryService/index.js";
@@ -391,10 +392,10 @@ describe("FrameTxSimulationService.simulate: ethrex call failures", () => {
   };
   const tx = () => baseTx([selfVerifyFrame()]);
 
-  it("turns an ethrex JSON-RPC error into an RpcError with ethrex's own text, recorded under the simulation rule", async () => {
+  it.each([-32015, -32000])("turns an ethrex JSON-RPC error into an RpcError with ethrex's own text, recorded under the simulation rule for RPC code %i", async (code) => {
     const detail = "Vm execution error: Invalid Transaction: Insufficient max fee per gas";
     const service = build(() =>
-      Promise.reject(Object.assign(new Error("RPC request failed."), { name: "RpcRequestError", details: detail, code: -32000 }))
+      Promise.reject(Object.assign(new Error("RPC request failed."), { name: "RpcRequestError", details: detail, code }))
     );
     const collector = new CheckCollector();
     await expect(service.simulate(tx(), collector)).rejects.toMatchObject({
@@ -422,6 +423,22 @@ describe("FrameTxSimulationService.simulate: ethrex call failures", () => {
     expect(collector.toChecks().find((c) => c.rule === "simulation")?.detail).toMatch(/has 5 wei/);
   });
 
+  it.each([
+    new TimeoutError({ url: "http://127.0.0.1" }),
+    new HttpRequestError({ status: 503, details: "temporarily unavailable", url: "http://127.0.0.1" }),
+    new RpcRequestError({ error: { code: -32603, message: "internal database failure" }, body: {}, url: "http://127.0.0.1" }),
+    new RpcRequestError({ error: { code: -32000, message: "state temporarily unavailable" }, body: {}, url: "http://127.0.0.1" }),
+    new RpcRequestError({ error: { code: -32015, message: "Vm execution error: missing trie node" }, body: {}, url: "http://127.0.0.1" }),
+  ])("preserves uncertainty when viem supplies details for $name", async (error) => {
+    const service = build(() => Promise.reject(error));
+    const collector = new CheckCollector();
+    const err = await service.simulate(tx(), collector, "maintenance").catch(e => e);
+    expect(err).toBeInstanceOf(Error);
+    expect(err).not.toBeInstanceOf(RpcError);
+    expect(err.message).toContain(error.details);
+    expect(collector.toChecks().find(c => c.rule === "simulation")?.verdict).toBe("fail");
+  });
+
   it("keeps a transport failure a plain Error, but names the cause instead of an opaque token", async () => {
     const service = build(() => Promise.reject(new Error("fetch failed")));
     const collector = new CheckCollector();
@@ -432,4 +449,25 @@ describe("FrameTxSimulationService.simulate: ethrex call failures", () => {
     expect(err.message).not.toBe("simulateFrameTransaction_failed");
     expect(collector.toChecks().find((c) => c.rule === "simulation")?.detail).toMatch(/fetch failed/);
   });
+});
+
+
+it("shares the execution budget across admission, estimates and maintenance", async () => {
+  const releases: Array<() => void> = [];
+  const preflight = vi.fn().mockResolvedValue({});
+  const client = { request: vi.fn(async () => {
+    await new Promise<void>(r => releases.push(r));
+    return passingEthrexResult();
+  }) };
+  const validator = { preflight, validate: vi.fn().mockResolvedValue({ mempoolMembership: {} }) };
+  const service = new FrameTxSimulationService(client as any, validator as any, fakeLogger(), new SimulationWorkGate(2));
+  const tx = baseTx([selfVerifyFrame()]);
+  const tasks = [service.simulate(tx, undefined, "estimate"), service.simulate(tx, undefined, "maintenance"), service.simulate(tx)];
+  await new Promise(r => setTimeout(r, 0));
+  expect(preflight).toHaveBeenCalledTimes(2); // one auxiliary + reserved admission
+  expect(client.request).toHaveBeenCalledTimes(2);
+  releases.shift()!(); await new Promise(r => setTimeout(r, 0));
+  expect(client.request).toHaveBeenCalledTimes(3);
+  for (const release of releases) release();
+  await Promise.all(tasks);
 });

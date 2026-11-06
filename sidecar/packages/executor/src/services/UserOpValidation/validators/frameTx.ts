@@ -203,6 +203,11 @@ function describeEthrexViolation(violation: string): string {
   });
 }
 
+/** ethrex also reports storage/VM setup failures as executionError text. */
+export function isEthrexTransactionRejection(detail: string): boolean {
+  return /^(?:vm execution error:\s*)?(?:invalid transaction\b|validation prefix frame reverted\b|execution reverted\b|reverted\b)/i.test(detail);
+}
+
 export class FrameTxValidationService {
   constructor(
     private stakingRegistryService: StakingRegistryService,
@@ -396,39 +401,29 @@ export class FrameTxValidationService {
     // `checkEntityCompliance` below walks that real `FrameCallTraceFrame`
     // tree directly - no synthetic geth-shaped wrapper.
 
-    // Fail closed: a missing trace (tracing was requested but the tx never
-    // reached the traced execution pass - see
-    // EthrexSimulateFrameTransactionResult's doc comment) must not fall
-    // through to `checkEntityCompliance` with a hollow/default trace.
-    // Surfaced as an RpcError carrying ethrex's own
-    // canonicalMempoolViolation/executionError/erc7562TraceError string,
-    // mirroring this same method's existing convention for reporting
-    // simulation failures (e.g. the revert-reason RpcErrors below).
-    //
-    // `simResult.canonicalMempoolValid` is deliberately NOT part of this
-    // condition: it's ethrex's own canonical-mempool-policy opinion, decoupled
-    // from whether it reports execution results - `false` there does not
-    // imply a missing trace. `erc7562Trace == null` is the real "no data"
-    // signal; everything downstream (checkEntityCompliance's ERC-7562 rules,
-    // pre_verify-aware checks) is the sidecar's own admission gate, run against
-    // the trace regardless of ethrex's canonical-mempool verdict.
-    //
-    // `erc7562TraceError` is ethrex's own reason when the gas pass
-    // succeeded but the trace pass itself specifically failed -
-    // in that case `canonicalMempoolViolation`/`executionError` are both
-    // `null`, so without this in the chain the caller only ever saw the
-    // generic fallback message instead of the real reason. Ordered between
-    // `canonicalMempoolViolation` (a structural/gas-cap rejection - more
-    // specific, since it means tracing was never even attempted) and
-    // `executionError` (a revert during the traced execution pass itself).
     if (simResult.erc7562Trace == null) {
-      const reason =
-        (simResult.canonicalMempoolViolation != null
-          ? describeEthrexViolation(simResult.canonicalMempoolViolation)
-          : null) ??
-        simResult.erc7562TraceError ??
-        simResult.executionError ??
-        "frame transaction simulation failed";
+      const canonicalReason = simResult.canonicalMempoolViolation == null
+        ? null : describeEthrexViolation(simResult.canonicalMempoolViolation);
+      const structuredFailure = this.describeStructuredFailure(simResult);
+      let rejection = structuredFailure;
+      if (rejection == null && simResult.executionError) {
+        if (isEthrexTransactionRejection(simResult.executionError)) rejection = simResult.executionError;
+      } else if (rejection == null && simResult.frames == null && simResult.erc7562TraceError == null) {
+        // A rejected precondition ends the simulation before the gas pass.
+        rejection = canonicalReason;
+      }
+
+      if (rejection == null) {
+        // An unavailable gas/trace pass cannot establish invalidity. This
+        // matters especially for heavy transactions that independently fail
+        // canonical mempool policy but satisfy the sidecar's own rules.
+        throw collector.failed(EXPLORER_RULES.SIMULATION, new RpcError(
+          simResult.erc7562TraceError ?? simResult.executionError ?? canonicalReason ??
+            "ethrex omitted the requested validation trace",
+          RpcErrorCodes.INTERNAL_ERROR
+        ));
+      }
+      const reason = rejection;
       // ethrex rejects an unusable EIP-8272 reference (too new, expired, or
       // not committed) before running any frame; report it as such.
       throw collector.failed(
@@ -436,8 +431,7 @@ export class FrameTxValidationService {
           ? EXPLORER_RULES.RECENT_ROOT
           : EXPLORER_RULES.SIMULATION,
         new RpcError(
-          this.describeStructuredFailure(simResult) ??
-            (await this.explainFailure(tx, reason, BigInt(simResult.maxCost))),
+          await this.explainFailure(tx, reason, BigInt(simResult.maxCost)),
           RpcErrorCodes.VALIDATION_FAILED
         )
       );
@@ -817,14 +811,11 @@ export class FrameTxValidationService {
               requireStakeSlot = slot;
             } else if (addr === entityAddr) {
               requireStakeSlot = slot;
-            } else if (writes[slot] == null) {
+            } else if (writes[slot] == null && transientWrites[slot] == null) {
               requireStakeSlot = slot;
             } else {
-              const readWrite = Object.keys(writes).includes(addr)
-                ? "write to"
-                : "read from";
               throw new RpcError(
-                `${role} has forbidden ${readWrite} ${nameAddr(addr)} slot ${slot}`,
+                `${role} has forbidden write to ${nameAddr(addr)} slot ${slot}`,
                 RpcErrorCodes.INVALID_OPCODE,
                 {
                   [role]: entStakes.addr,

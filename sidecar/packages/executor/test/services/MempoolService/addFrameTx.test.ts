@@ -63,10 +63,47 @@ describe("MempoolService.addFrameTx return value", () => {
       { debug: vi.fn(), error: vi.fn() } as any
     );
 
+  it("does not return the replacement while the old hash index still points at its slot", async () => {
+    const pool = build();
+    const original = txWithFee(10n), replacement = txWithFee(20n);
+    const oldHash = keccak256(encodeRawFrameTx(original));
+    const newHash = keccak256(encodeRawFrameTx(replacement));
+    await pool.addFrameTx(original, oldHash);
+    const db = (pool as any).db;
+    const put = db.put.bind(db);
+    let oldDuringReplacement: unknown;
+    let newDuringReplacement: unknown;
+    db.put = async (key: string, value: any) => {
+      await put(key, value);
+      if (value?.txHash === newHash) {
+        oldDuringReplacement = await pool.getEntryByHash(oldHash);
+        newDuringReplacement = await pool.getEntryByHash(newHash);
+      }
+    };
+    await pool.addFrameTx(replacement, newHash);
+    expect(oldDuringReplacement).toBeNull();
+    expect(newDuringReplacement).toBeNull(); // index not yet published
+    expect((await pool.getEntryByHash(newHash))?.txHash).toBe(newHash);
+  });
+
   it("returns no replacedTxHash for a new transaction", async () => {
     const pool = build();
     const res = await pool.addFrameTx(txWithFee(2n), "0xaaa");
     expect(res.replacedTxHash).toBeUndefined();
+  });
+
+  it("never returns the new occupant for the hash of a purged nonce slot", async () => {
+    const pool = build();
+    await pool.addFrameTx(txWithFee(2n), "0xaaa");
+    const archived = await pool.getEntryByHash("0xaaa");
+    await pool.updateStatus([archived!], MempoolEntryStatus.Finalized);
+    vi.advanceTimersByTime(2_000);
+    await pool.deleteOldUserOps();
+    expect(await pool.getEntryByHash("0xaaa")).toBeNull();
+
+    await pool.addFrameTx(txWithFee(100n), "0xbbb");
+    expect((await pool.getEntryByHash("0xbbb"))?.txHash).toBe("0xbbb");
+    expect(await pool.getEntryByHash("0xaaa")).toBeNull();
   });
 
   it("returns the old transaction's hash when a newer one takes its sender:nonce slot", async () => {

@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased — admission hardening
+
+- Verify the requested hash across replacement races and reject mislabeled partial reports.
+
+- Share bounded simulation capacity across admission, estimates and maintenance.
+- Bound sender backlogs and coalesce duplicate RPC/gossip admissions before simulation.
+- Preserve pending entries when revalidation infrastructure fails.
+- Correct transient storage write aggregation and validation.
+- Recover public submission journals using identical signed bytes after observation.
+- Add operator doctor, quick/full presets, output/JSON options and verified offline reports.
+- Document the private-chain setup and the operator demo.
+- Current verification and experiments: [hardening validation](docs/HARDENING_VALIDATION.md).
+
 ## Public 1M admission — 2026-11-06
 
 - Deployed the hash-chain wallet on the replacement devnet, mined its 0.012 test ETH stake and sent one 1M hash-chain workload through the organizers' primary sidecar. Preserved the admission, four relay attempts, final cancellation and successful 993,512-gas execution simulation. [Public test record](docs/SIDECAR.md#updated-public-devnet-on-6-november-2026)

@@ -1,27 +1,44 @@
 # StakeLane
 
-StakeLane measures how expensive VERIFY frames affect other wallets during admission to an EIP-8141 alternative mempool. Its sidecar implements draft rule `BUDGET-010` at revision `493ba8a` with 100,000 gas per unstaked entity and 1,000,000 per eligible staked entity, including the sender's signature charge. [Pinned ERC-8421 draft](https://github.com/forshtat/ERCs/blob/493ba8ac3be97dc5cf6335eb97d2e8e9f95983c5/ERCS/erc-8421.md)
+StakeLane schedules transaction admission work for EIP-8141 alternative-mempool node operators. It measures whether limiting one sender's concurrent expensive checks lets another wallet get admitted sooner, and what that costs the busy sender's batch. Block builders still choose what gets included.
+
+The sidecar supports **off**, **FIFO** and **fair** policies. Fair mode rotates senders, limits heavy concurrency per sender, bounds per-sender backlogs and shares an execution budget across admission, estimates and revalidation. This is operator resource control, not Sybil resistance or a guarantee of inclusion.
+
+## Run and verify
+
+To inspect the published experiments from a fresh clone, use Node.js 20.12 or newer. This command reads the checked-in samples and recomputes the report.
+
+```sh
+./stakelane report sidecar/evidence/hardening/full-1 --verify
+```
+
+To run a live demo, build the sidecar with Bun and provide the pinned ethrex executable for your platform. The CLI creates and funds its own wallets on a private loopback chain. [One-time setup](docs/OPERATOR.md#prerequisites)
+
+```sh
+./stakelane doctor
+./stakelane compare --rounds 1 --bursts 8
+```
+
+For 20 measured rounds per condition, use `./stakelane compare --preset full`. Read wallet B’s admission time alongside wallet A’s batch completion time. [Operator guide](docs/OPERATOR.md) · [Recorded demo walkthrough](DEMO.md)
+
+## Evidence and scope
+
+| Local experiment, burst of eight | Policies compared | B admission | A median batch time |
+| --- | --- | ---: | ---: |
+| Apple Silicon, original scheduler at `7d052e7` | FIFO → fair | p95 678.0 → 238.2 ms | 593.2 → 622.1 ms |
+| Linux, contributor’s PR #4 build | Off → fair | median 420.7 → 175.6 ms | 480.8 → 545.7 ms |
+| Linux, same build, reversed policy order | Off → fair | median 378.3 → 168.9 ms | 401.1 → 487.4 ms |
+
+Each policy and burst size had 20 measured rounds. The Linux runs recorded 1,620 measured inclusions across private chains. The workload is a synthetic Keccak hash chain. Timers end at admission, and receipts establish inclusion afterward. The review changes have a separate local smoke check. [Original Mac comparison](docs/BUILDER_BENCHMARK.md#scheduler-comparison-on-6-november-2026) · [Linux measurements and limitations](docs/HARDENING_VALIDATION.md)
 
 ## Inherited code and team additions
 
 | Inherited | Added or changed for StakeLane |
 | --- | --- |
-| Workshop sidecar, codec, staking and reputation services, relay and explorer | Per-entity budget accounting, preflight checks, rule reporting and boundary tests |
-| Workshop wallet tooling, staking registry and unmodified Hegota ethrex | Keccak hash-chain wallet workload, private block producer, public submission runner, simulation timing and two-wallet comparisons |
+| Workshop sidecar, codec, staking/reputation services, relay and explorer | Per-entity budget accounting, scheduler, shared simulation gate, duplicate suppression, recovery fixes and regression tests |
+| Workshop tooling, staking registry and unmodified Hegota ethrex | Hash-chain workload, private producer, timing observer, policy comparison CLI and offline report verification |
 
-The initial public workshop checkpoint was `7c9594f`. The fork inventory separates the imported files from the project changes. [Upstream provenance](docs/UPSTREAM.md)
-
-## Compare admission policies
-
-After the [private-node setup](docs/SIDECAR.md#reproduce-the-mined-transaction), run the following command from the repository root.
-
-```sh
-./stakelane compare
-```
-
-The command sends valid transactions from two staked wallets to a local sidecar. It reports wallet B’s median and p95 admission times and the time to admit all of wallet A’s burst. It verifies canonical receipts after timing. Use `./stakelane compare --baseline-only` for the default policy alone. The full comparison checks the node’s active policy before reporting FIFO or fair timings. [Command options, methodology and integration contract](docs/BUILDER_BENCHMARK.md#run-stakelane-compare)
-
-To check the saved measurements with Node alone, run `node --test sidecar/test/stakelane/compare-evidence.test.mjs` from the repository root. [Evidence and audit](docs/BUILDER_BENCHMARK.md#verify-the-saved-measurements)
+Budget policy follows draft `BUDGET-010` revision `493ba8a`: 100,000 per unstaked entity and 1,000,000 per eligible staked entity, including sender signature costs. The early public checkpoint was `7c9594f`. [Upstream provenance](docs/UPSTREAM.md)
 
 ## StakeLane sidecar
 
@@ -33,9 +50,9 @@ On an isolated ethrex chain, a staked wallet verified a 9,664-step Keccak witnes
 
 The local sidecar admitted a signed transaction from a staked wallet at exactly 1,000,000 declared validation gas. It rejected the same wallet at 1,000,001. The public execution node rejected the admitted bytes under its canonical mempool cap. See the [test record and run instructions](docs/SIDECAR.md).
 
-## Public workshop baseline
+## Historical public workshop baseline
 
-On 6 November 2026 (India time), the tested public sidecar enforced a **100,000-gas combined validation-prefix cap**, including signature-verification costs.
+At the recorded early checkpoint on 6 November 2026 (India time), the tested public sidecar enforced a **100,000-gas combined validation-prefix cap**, including signature-verification costs.
 
 | Declared VERIFY execution allowance | Unstaked wallet | Staked wallet |
 | --- | --- | --- |
@@ -55,7 +72,7 @@ See [the full test record](docs/TEST_RESULTS.md), [machine-readable results](sta
 
 The upstream workshop is a local dependency in `mempool-workshop/`; it is excluded from Git. Dependencies, compiled adapters, private participant state and ZIP checkpoints are also excluded. The forked sidecar, its tests and its boundary evidence live in `sidecar/`.
 
-## Set up a fresh checkout
+## Optional: set up the historical workshop probe
 
 The workshop requires Node.js 20.12 or newer and Yarn 1. This run used Node.js 26.12.1 and Yarn 1.22.22.
 
@@ -77,7 +94,7 @@ https://altmempool.forshtat.com/rpc
 
 The recorded test network is chain **1337**. Endpoints and deployments may change when this demonstration network resets. Funding was a separate prerequisite; see the [recorded funding and routing issues](docs/TEST_RESULTS.md#funding-and-routing).
 
-## Reproduce the checks
+## Reproduce the historical probe checks
 
 Run each command individually from `mempool-workshop/` and inspect its result before proceeding. On an existing configured workshop, **do not rerun `step_1_check`**: it resets the recorded deployed addresses and completed steps while retaining the participant key.
 
@@ -109,7 +126,7 @@ yarn tsx src/steps/stakelane_probe.ts --budget 500001 --submit
 
 `--submit` submits exactly one candidate. A rejected budget probe exits with code 2; inspect the error and run `yarn step_11_debug <transaction-hash> --json` for its admission report. If a transaction remains pending, investigate that hash before submitting another probe. The documented run stopped after reproducing the explicit cap; it did not submit a 1,000,001-gas case or run the workshop's reputation-burn step.
 
-## Validation performed
+## Historical workshop validation
 
 ```sh
 yarn typecheck

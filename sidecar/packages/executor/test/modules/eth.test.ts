@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { Eth } from "../../src/modules/eth.js";
+import { AdmissionScheduler } from "../../src/services/AdmissionScheduler/index.js";
 import { FrameTxSimulationService } from "../../src/services/FrameTxSimulationService/index.js";
 import { ReceiptService } from "../../src/services/ReceiptService/index.js";
 import { MempoolService } from "../../src/services/MempoolService/service.js";
@@ -35,6 +36,7 @@ function buildEth(overrides: Partial<{
   skandhaModule: Partial<Skandha>;
   explorer: ExplorerService;
   publicClient: unknown;
+  admissionScheduler: AdmissionScheduler;
 }> = {}): Eth {
   const frameTxSimulationService = {
     simulate: vi.fn().mockResolvedValue({
@@ -96,7 +98,8 @@ function buildEth(overrides: Partial<{
     logger,
     null,
     undefined, // getNodeAPI: use the default
-    overrides.explorer
+    overrides.explorer,
+    overrides.admissionScheduler
   );
 }
 
@@ -138,6 +141,63 @@ describe("Eth.sendFrameTransaction", () => {
       blobVersionedHashes: [],
       recentRootReferences: [],
     }) as any;
+
+  it("coalesces concurrent RPC/gossip copies and skips known hashes", async () => {
+    let release!: (value: any) => void;
+    const simulate = vi.fn(() => new Promise<any>(r => { release = r; }));
+    const known = vi.fn().mockResolvedValue(null);
+    const addFrameTx = vi.fn();
+    const eth = buildEth({ frameTxSimulationService: { simulate },
+      mempoolService: { getEntryByHash: known, addFrameTx } });
+    const tx = validTx();
+    const first = eth.sendFrameTransaction(tx, "rpc");
+    const second = eth.submitFrameTransaction(tx, "gossip:peer");
+    await new Promise(r => setTimeout(r, 0));
+    expect(simulate).toHaveBeenCalledTimes(1);
+    release({ validation: { roleStakes: {}, mempoolMembership: {} }, simulation: {} });
+    const txHash = await first;
+    expect(await second).toEqual({ txHash, added: false });
+    expect(addFrameTx).toHaveBeenCalledTimes(1);
+    known.mockResolvedValue({ txHash, status: 0 });
+    await expect(eth.sendFrameTransaction(tx)).resolves.toBe(txHash);
+    await expect(eth.submitFrameTransaction(tx, "sync:peer")).resolves.toEqual({ txHash, added: false });
+    expect(simulate).toHaveBeenCalledTimes(1);
+  });
+
+  it("bounds pending database lookups before a keyed replacement scan or simulation", async () => {
+    let release!: (value: null) => void;
+    const lookup = vi.fn(() => new Promise<null>(resolve => { release = resolve; }));
+    const validateFrameTxReplaceability = vi.fn().mockResolvedValue(true);
+    const eth = buildEth({
+      admissionScheduler: new AdmissionScheduler({ mode: "fifo", slots: 1, maxWaiting: 0 }),
+      mempoolService: { getEntryByHash: lookup, validateFrameTxReplaceability },
+    });
+    const first = eth.sendFrameTransaction(validTx());
+    const other = { ...validTx(), nonceKeys: [2n] };
+    await expect(eth.submitFrameTransaction(other, "gossip:peer")).rejects.toThrow("queue is full");
+    expect(lookup).toHaveBeenCalledTimes(1);
+    expect(validateFrameTxReplaceability).not.toHaveBeenCalled();
+    release(null);
+    await first;
+    expect(validateFrameTxReplaceability).toHaveBeenCalledOnce();
+  });
+
+  it("does not acknowledge a different transaction returned by a racing hash lookup", async () => {
+    const simulate = vi.fn().mockRejectedValue(new Error("validation rejected the requested transaction"));
+    const eth = buildEth({ frameTxSimulationService: { simulate }, mempoolService: {
+      getEntryByHash: vi.fn().mockResolvedValue({ status: 0, txHash: `0x${"ff".repeat(32)}` }),
+    } });
+    await expect(eth.sendFrameTransaction(validTx())).rejects.toThrow("validation rejected");
+    expect(simulate).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects a known underpriced replacement without simulation", async () => {
+    const simulate = vi.fn();
+    const eth = buildEth({ frameTxSimulationService: { simulate },
+      mempoolService: { validateFrameTxReplaceability: vi.fn().mockRejectedValue(new Error("fee too low")) } });
+    await expect(eth.sendFrameTransaction(validTx())).rejects.toThrow("fee too low");
+    expect(simulate).not.toHaveBeenCalled();
+  });
 
   it("rejects a transaction for another chain before simulating it", async () => {
     const simulate = vi.fn();
@@ -342,6 +402,7 @@ describe("Eth.estimateFrameTransactionGas", () => {
         eth.estimateFrameTransactionGas(buildEstimateTx())
       ).resolves.toBeDefined();
       expect(simulate).toHaveBeenCalledTimes(1);
+      expect(simulate).toHaveBeenCalledWith(expect.any(Object), undefined, "estimate");
     }
   );
 

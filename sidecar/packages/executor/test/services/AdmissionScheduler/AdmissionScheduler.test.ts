@@ -537,3 +537,20 @@ describe("AdmissionScheduler", () => {
     });
   });
 });
+
+
+describe("sender backlog isolation", () => {
+  it("one capped sender cannot occupy the entire waiting queue", async () => {
+    const scheduler = new AdmissionScheduler({ mode: "fair", slots: 2, maxHeavyPerSender: 1,
+      maxWaiting: 8, maxWaitingPerSender: 1 });
+    const first = createHoldableJob("first"), queued = createHoldableJob("queued"), other = createHoldableJob("other");
+    const a = scheduler.submit(SENDER_A, true, first.fn);
+    const b = scheduler.submit(SENDER_A, true, queued.fn);
+    await expect(scheduler.submit(SENDER_A, true, async () => "overflow")).rejects.toThrow("Sender admission queue");
+    const c = scheduler.submit(SENDER_B, true, other.fn);
+    expect(other.isStarted()).toBe(true);
+    first.release(); other.release(); await queued.waitForStart(); queued.release();
+    await Promise.all([a, b, c]);
+    expect(scheduler.getWaitingCount()).toBe(0);
+  });
+});

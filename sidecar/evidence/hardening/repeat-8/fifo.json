@@ -1,0 +1,4421 @@
+{
+  "timestamp": "2026-11-06T17:09:33.319Z",
+  "network": "isolated single-node Hegota execution chain",
+  "chainId": 8141337,
+  "genesisHash": "0x067deabcab394a950b36d8b0709c5a184c889edf04e3298ba4508ced0d1467f3",
+  "ethrexSource": "9aa3645d795945c64400f41a70aace0edfa7f383",
+  "sidecarBuildSha256": "062ce18b811e1b4be482715a3c84822254c5d77926921972fed24f1290ccd767",
+  "ethrexBinarySha256": "5c3944f2478784973a4357f05deffb8a54465f5be7676cd01464ae1a30d87e4d",
+  "fixtureArtifactSha256": "3c3fbbe8c23ba0402e8f8e5bbb15bb69a513715b6b9d32fb98bafd88942c5bc1",
+  "clientVersion": "ethrex/v23.0.0-eip8141-tracer-9aa3645d795945c64400f41a70aace0edfa7f383/x86_64-unknown-linux-gnu/rustc-v1.93.1",
+  "compiler": "0.8.28+commit.7893614a.Emscripten.clang",
+  "owner": "0xF20f72B7F7D9b89Ebcb565dBbC0C9D5FC62fcCf3",
+  "wallet": "0x5257034757378b9f39bc234c8aa2207c030db7de",
+  "registry": "0x9e3a81f5647b8fb38c00775e12955e360f38ef22",
+  "walletCodeHash": "0x0ea000a72cc61f60739e5562b6dcfc43886311f8cbe8e9f1acd6bb703b487d2e",
+  "workload": {
+    "algorithm": "Keccak-256 hash chain",
+    "rounds": 9664,
+    "witness": "0x0561fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289",
+    "commitment": "0x369b0408dd1c7a153b0a7a0cc34b4c8b41bf9c36476bddad2af01cd8e8f5238a"
+  },
+  "stake": {
+    "before": {
+      "amountWei": "0",
+      "delay": 0,
+      "withdrawal": "0"
+    },
+    "after": {
+      "amountWei": "12000000000000000",
+      "delay": 86400,
+      "withdrawal": "0"
+    },
+    "transactionHash": "0x829552564b5a991dd7ff50882259cf69586bb89bd7cad52d8851407020503b15"
+  },
+  "controls": {
+    "unstaked": {
+      "hash": "0x6d4895ce5f16dab73bf51fafc116a18c0d7b177f501581c99f3a710e84ac1003",
+      "code": -32602,
+      "reason": "BUDGET-010 exceeded: entity 0x5257034757378b9f39bc234c8aa2207c030db7de (sender+payer), frames [0]: 997200 execution + 2800 signature = 1000000; limit 100000"
+    },
+    "stakedOneOver": {
+      "hash": "0xa9764bf319bdcdddabdcff27219bfa4daf3b3b87c1e12e07c334e08bb053e9fb",
+      "code": -32602,
+      "reason": "BUDGET-010 exceeded: entity 0x5257034757378b9f39bc234c8aa2207c030db7de (sender+payer), frames [0]: 997201 execution + 2800 signature = 1000001; limit 1000000"
+    },
+    "incorrectWitness": {
+      "hash": "0x4a5b5cec314aa47f494d2fe54ecff170187abe77ddb7ed39e50deef70da184ca",
+      "code": -32500,
+      "reason": "validation frame 0: reverted with data 0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000d77726f6e67207769746e65737300000000000000000000000000000000000000"
+    }
+  },
+  "accepted": {
+    "declaredVerifyGas": 997200,
+    "signatureGas": 2800,
+    "totalDeclaredGas": 1000000,
+    "actualVerifyGas": 993512,
+    "signedTransaction": "0x06f8d6837c3a19c18009945257034757378b9f39bc234c8aa2207c030db7def84ceb010380c5830f37508080a00561fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289df028094f20f72b7f7d9b89ebcb565dbbc0c9d5fc62fccf3c5830249f0808080f85cf85a0194f20f72b7f7d9b89ebcb565dbbc0c9d5fc62fccf380b84101978805ddf9688a6ff4598bc5962e4f296738f8b9eac9851b8af815d9625da5e54e1014a6d387627c2b975835597d4493bc8f1a6da5fa2248afae185cac428262cb843b9aca00847735940080c0c0",
+    "receipt": {
+      "blockHash": "0xa4accef8628258f32aa9c451a1e911445b606ad2f2a0ad4785d0fece65a57f7c",
+      "blockNumber": "0x5",
+      "contractAddress": null,
+      "cumulativeGasUsed": "0xf6e52",
+      "effectiveGasPrice": "0x5c592522",
+      "frameReceipts": [
+        {
+          "gasUsed": "0xf28e8",
+          "logs": [],
+          "stateGasUsed": "0x0",
+          "status": "0x1"
+        },
+        {
+          "gasUsed": "0x64",
+          "logs": [],
+          "stateGasUsed": "0x0",
+          "status": "0x1"
+        }
+      ],
+      "from": "0x5257034757378b9f39bc234c8aa2207c030db7de",
+      "gasUsed": "0xf6e52",
+      "logs": [],
+      "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "payer": "0x5257034757378b9f39bc234c8aa2207c030db7de",
+      "status": "0x1",
+      "to": "0x5257034757378b9f39bc234c8aa2207c030db7de",
+      "transactionHash": "0xf9243f75a5478fc1e917334ba56e98c31afa9cde44cda381f71baa0f599101c1",
+      "transactionIndex": "0x0",
+      "type": "0x6"
+    },
+    "block": {
+      "number": "0x5",
+      "hash": "0xa4accef8628258f32aa9c451a1e911445b606ad2f2a0ad4785d0fece65a57f7c",
+      "transactions": [
+        "0xf9243f75a5478fc1e917334ba56e98c31afa9cde44cda381f71baa0f599101c1"
+      ]
+    }
+  },
+  "producer": {
+    "forkchoice": "engine_forkchoiceUpdatedV5",
+    "build": "engine_getPayloadV6",
+    "import": "engine_newPayloadV6",
+    "importStatus": "VALID"
+  },
+  "benchmark": {
+    "noisyWallet": "0x5257034757378b9f39bc234c8aa2207c030db7de",
+    "honestWallet": "0xd3fb780ed145f87f62a5da92538f049863760bc7",
+    "warmup": [
+      {
+        "round": -1,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x5b632882ff4948a60e4894d798393c57dded4976df91b3ab91fa09a40f7a97f4",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x3c74c2fa912536575f19cfd3d52d63012b6bd8b790efa814c4365f3ab3857879",
+        "honestMs": 26.736,
+        "honestStakeLookupRpcMs": [
+          1.123
+        ],
+        "beforeHonestTraceMs": 17.143,
+        "afterHonestTraceMs": 7.896,
+        "honestSimulationRpcMs": 1.696,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 19,
+        "honestBlockHash": "0xef7832a85a1764cc258e9fc45a5742c8b3e49eb3ab607cdaa0ab8d621cfa60b1",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 13,
+            "included": 13,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 13,
+            "included": 13,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": -1,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0xef7832a85a1764cc258e9fc45a5742c8b3e49eb3ab607cdaa0ab8d621cfa60b1",
+        "backgroundBatchMs": 364.023,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x7accac132c03380d5196a70ab072ac92631571432d39378748e2dba857d67c8f",
+        "honestMs": 348.252,
+        "honestStakeLookupRpcMs": [
+          17.324
+        ],
+        "beforeHonestTraceMs": 325.13,
+        "afterHonestTraceMs": 21.619,
+        "honestSimulationRpcMs": 1.503,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 28,
+        "honestBlockHash": "0x2e2ffeb781a436617beb1d6da489c53833a223f6bd94f8ab8eb0c8af330355ad",
+        "background": [
+          {
+            "hash": "0x105b2696d404a05d586885d679345af19da3a7f2fcf71ade1e65f67a1e3bca7c",
+            "nonceKey": "1",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 175.22,
+            "submitStartRelativeToHonestMs": -20.409,
+            "responseEndRelativeToHonestMs": 154.811,
+            "simulationRpcMs": 51.808,
+            "traceStartRelativeToHonestMs": 1.456,
+            "traceEndRelativeToHonestMs": 53.265,
+            "mined": {
+              "blockNumber": 21,
+              "blockHash": "0xb00a452ac7f9e1c4e331089e67305e5f06cab1a5ae0442c28a0353c7d07fb104",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xc798dc8e21cb21e068a6adc29ee4bee37144fff6a99d27cdf4b1bad82ef195d6",
+            "nonceKey": "2",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 163.715,
+            "submitStartRelativeToHonestMs": -20.056,
+            "responseEndRelativeToHonestMs": 143.66,
+            "simulationRpcMs": 30.711,
+            "traceStartRelativeToHonestMs": -0.138,
+            "traceEndRelativeToHonestMs": 30.573,
+            "mined": {
+              "blockNumber": 20,
+              "blockHash": "0xbcca81fbe89651a86ce6af9b9b7f641a42b51fc102b3e2fc9574853aeda30818",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x623f19759e6aaebbaf455d0d84bd4b04733972e1a7751f6dc814bd691745c627",
+            "nonceKey": "3",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 363.438,
+            "submitStartRelativeToHonestMs": -19.824,
+            "responseEndRelativeToHonestMs": 343.614,
+            "simulationRpcMs": 19.177,
+            "traceStartRelativeToHonestMs": 282.341,
+            "traceEndRelativeToHonestMs": 301.518,
+            "mined": {
+              "blockNumber": 27,
+              "blockHash": "0x22c6737835920998cdc1b40c2338ed68e4a25eaae630ab83310a6bd0409bb77f",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x8a3f27b55e94ba61ce64b70243bb50dcab7cd0905b192ebd90aaf928c7aecd4a",
+            "nonceKey": "4",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 347.398,
+            "submitStartRelativeToHonestMs": -19.587,
+            "responseEndRelativeToHonestMs": 327.811,
+            "simulationRpcMs": 18.854,
+            "traceStartRelativeToHonestMs": 195.547,
+            "traceEndRelativeToHonestMs": 214.402,
+            "mined": {
+              "blockNumber": 25,
+              "blockHash": "0x853b11927bcd8ca6eba66c13059046c3e6ba07d7093c8ba4592ba6b8cac03c4a",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x7f10c1082e83082e47547a8fc99c3eabf43e50e79ba252cd8c90b893fc0dcd48",
+            "nonceKey": "5",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 260.451,
+            "submitStartRelativeToHonestMs": -19.372,
+            "responseEndRelativeToHonestMs": 241.078,
+            "simulationRpcMs": 56.98,
+            "traceStartRelativeToHonestMs": 6.729,
+            "traceEndRelativeToHonestMs": 63.709,
+            "mined": {
+              "blockNumber": 23,
+              "blockHash": "0xaa02bbbff71d37ec6b85914f620753db06be9c3c4e67bef8059a9d135b194ba7",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x90ddb25b7d798dbcddd2c788165b76e117e53ee8bb1f492101a2b1e7215cca06",
+            "nonceKey": "6",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 217.956,
+            "submitStartRelativeToHonestMs": -19.142,
+            "responseEndRelativeToHonestMs": 198.814,
+            "simulationRpcMs": 47.888,
+            "traceStartRelativeToHonestMs": 7.634,
+            "traceEndRelativeToHonestMs": 55.522,
+            "mined": {
+              "blockNumber": 22,
+              "blockHash": "0x6fc8f3e44b1b2b17fd7ccda128ebeeb80153fe376a5fe7dd3dc509d1b4f73f26",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x88e15dd444f06975a72894a162e294c35a256add182b32186c6d6c68f425e355",
+            "nonceKey": "7",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 354.05,
+            "submitStartRelativeToHonestMs": -18.795,
+            "responseEndRelativeToHonestMs": 335.255,
+            "simulationRpcMs": 19.613,
+            "traceStartRelativeToHonestMs": 238.766,
+            "traceEndRelativeToHonestMs": 258.379,
+            "mined": {
+              "blockNumber": 26,
+              "blockHash": "0xe9f939d594796ffbee66a272b1f4a7d0cbedc45390c0a7392e56133eea137706",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xbc7fc60f59a79559fd599be9bb6b0032f472e98bf3707c1eac85ec0dbc7ed46d",
+            "nonceKey": "8",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 303.723,
+            "submitStartRelativeToHonestMs": -18.663,
+            "responseEndRelativeToHonestMs": 285.06,
+            "simulationRpcMs": 21.056,
+            "traceStartRelativeToHonestMs": 149.164,
+            "traceEndRelativeToHonestMs": 170.22,
+            "mined": {
+              "blockNumber": 24,
+              "blockHash": "0x62f599dc9d93f4d58df883201590dbfa587d83db5b455e3197d800521d6582d8",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 13,
+            "included": 13,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 21,
+            "included": 13,
+            "status": "ok"
+          }
+        }
+      }
+    ],
+    "trials": [
+      {
+        "round": 0,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x2e2ffeb781a436617beb1d6da489c53833a223f6bd94f8ab8eb0c8af330355ad",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x3de263f151f96a894b967ea46a864d65cd225f7954ab3e42e07af37d00ff021c",
+        "honestMs": 34.052,
+        "honestStakeLookupRpcMs": [
+          1.023
+        ],
+        "beforeHonestTraceMs": 16.982,
+        "afterHonestTraceMs": 14.994,
+        "honestSimulationRpcMs": 2.075,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 29,
+        "honestBlockHash": "0xf17c7be400a441d4db097f82f171c5fc6c45c367af4426becefcd530ee602c87",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 21,
+            "included": 21,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 21,
+            "included": 21,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 0,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0xf17c7be400a441d4db097f82f171c5fc6c45c367af4426becefcd530ee602c87",
+        "backgroundBatchMs": 411.53,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0xfd874cd8046924b68d8c62bfb7a80b8aaca84943cef95c20a8f4bc980bfa5f55",
+        "honestMs": 395.061,
+        "honestStakeLookupRpcMs": [
+          23.673
+        ],
+        "beforeHonestTraceMs": 373.152,
+        "afterHonestTraceMs": 20.495,
+        "honestSimulationRpcMs": 1.414,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 38,
+        "honestBlockHash": "0x8d55d88704ff34f8c778a7578d7c360fcba0a19938013b8fc11d7b59e2a06bf6",
+        "background": [
+          {
+            "hash": "0x4b95d6d300b33dac2bcca3ae37f2882a734a11c766fc3bccb5194c8e612e992d",
+            "nonceKey": "9",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 192.235,
+            "submitStartRelativeToHonestMs": -21.303,
+            "responseEndRelativeToHonestMs": 170.932,
+            "simulationRpcMs": 22.261,
+            "traceStartRelativeToHonestMs": -0.09,
+            "traceEndRelativeToHonestMs": 22.171,
+            "mined": {
+              "blockNumber": 30,
+              "blockHash": "0x78d5b227eccbc99e0c11c8117b87e3bd1496f23b5596bf1ad533d44837059b99",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x8e00319dbb8f1324b75513230508ccb80d94ec8e6759c4415e405af7e79f5379",
+            "nonceKey": "10",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 201.653,
+            "submitStartRelativeToHonestMs": -21.07,
+            "responseEndRelativeToHonestMs": 180.583,
+            "simulationRpcMs": 42.007,
+            "traceStartRelativeToHonestMs": 1.582,
+            "traceEndRelativeToHonestMs": 43.589,
+            "mined": {
+              "blockNumber": 31,
+              "blockHash": "0xe9ccee9e352b1f2edbce8748e4875f009a50cc76cc1963cd9c9e76c2f00eb3db",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xd8c6372ca5dd40dc29efe53e404ff2727c3d22522eda34edf15714ca84c278f9",
+            "nonceKey": "11",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 341.374,
+            "submitStartRelativeToHonestMs": -20.888,
+            "responseEndRelativeToHonestMs": 320.486,
+            "simulationRpcMs": 23.648,
+            "traceStartRelativeToHonestMs": 174.35,
+            "traceEndRelativeToHonestMs": 197.998,
+            "mined": {
+              "blockNumber": 34,
+              "blockHash": "0x8b73871d66179ea19d4cab4e075f70d42f64030f461255c2053546d6509b9829",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x548e6ce625f5256e2416a25b5723185ce8229e956f53a3ff895304578c8b4f32",
+            "nonceKey": "12",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 246.954,
+            "submitStartRelativeToHonestMs": -20.741,
+            "responseEndRelativeToHonestMs": 226.213,
+            "simulationRpcMs": 40.059,
+            "traceStartRelativeToHonestMs": 4.558,
+            "traceEndRelativeToHonestMs": 44.617,
+            "mined": {
+              "blockNumber": 32,
+              "blockHash": "0x732d9690431894dfdd5d09696f73c42fa085162925594114a9feb8ac13ee52f7",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xd072fe2ee423ed9d714596d649c457427993f17c46aa957f47b6b1070e27c210",
+            "nonceKey": "13",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 395.889,
+            "submitStartRelativeToHonestMs": -20.606,
+            "responseEndRelativeToHonestMs": 375.283,
+            "simulationRpcMs": 20.849,
+            "traceStartRelativeToHonestMs": 223.666,
+            "traceEndRelativeToHonestMs": 244.516,
+            "mined": {
+              "blockNumber": 35,
+              "blockHash": "0x73e8c9029e5c9339ddcfbecb6b22c8ab527bde5cd265fee91c198e3087748398",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xdc880e3505b58e811b7362eae679c2a0a9204fdcdf5481c16e5e5596c66dddcc",
+            "nonceKey": "14",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 292.201,
+            "submitStartRelativeToHonestMs": -20.424,
+            "responseEndRelativeToHonestMs": 271.777,
+            "simulationRpcMs": 39.656,
+            "traceStartRelativeToHonestMs": 6.105,
+            "traceEndRelativeToHonestMs": 45.76,
+            "mined": {
+              "blockNumber": 33,
+              "blockHash": "0x3e049c49bd7ad8246544afc0fd75c30a20a3a507da3394af5956a65491126401",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xc413e44b6d495cdfa0599f7df6160e0a744e52ec744c667d756d7d268d3ad7fb",
+            "nonceKey": "15",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 410.471,
+            "submitStartRelativeToHonestMs": -20.243,
+            "responseEndRelativeToHonestMs": 390.228,
+            "simulationRpcMs": 25.57,
+            "traceStartRelativeToHonestMs": 317.746,
+            "traceEndRelativeToHonestMs": 343.317,
+            "mined": {
+              "blockNumber": 37,
+              "blockHash": "0x9f285f1ff8f2bd5584fbb2098ef8c9766a9f242121429212b811b85999f74eec",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xaa85f01f6995eae14edbcb510c48be52971a326d4b0e8dbe5a7861b6ef28fbac",
+            "nonceKey": "16",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 401.141,
+            "submitStartRelativeToHonestMs": -20.068,
+            "responseEndRelativeToHonestMs": 381.073,
+            "simulationRpcMs": 21.325,
+            "traceStartRelativeToHonestMs": 268.985,
+            "traceEndRelativeToHonestMs": 290.311,
+            "mined": {
+              "blockNumber": 36,
+              "blockHash": "0x13691243198b644ac9e58155727fa46a28717647c865c1a2badcdf4face77ba7",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 21,
+            "included": 21,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 29,
+            "included": 21,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 1,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0x8d55d88704ff34f8c778a7578d7c360fcba0a19938013b8fc11d7b59e2a06bf6",
+        "backgroundBatchMs": 426.618,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0xab87bc59774d3c594b343c927bbbed1f581d500af57040654de8bae665d04513",
+        "honestMs": 411.056,
+        "honestStakeLookupRpcMs": [
+          25.629
+        ],
+        "beforeHonestTraceMs": 384.538,
+        "afterHonestTraceMs": 25.187,
+        "honestSimulationRpcMs": 1.331,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 47,
+        "honestBlockHash": "0xce841a2338bfa9b3e67af53dfc3ae91c2c9fc1c5c94ddb6d78527ab30aa80907",
+        "background": [
+          {
+            "hash": "0xe7ecfcb6c9aec658793817ef4faba19b5393954120bde4aaa20fda6f62d9f634",
+            "nonceKey": "17",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 189.078,
+            "submitStartRelativeToHonestMs": -21.911,
+            "responseEndRelativeToHonestMs": 167.167,
+            "simulationRpcMs": 25.324,
+            "traceStartRelativeToHonestMs": -0.083,
+            "traceEndRelativeToHonestMs": 25.241,
+            "mined": {
+              "blockNumber": 39,
+              "blockHash": "0x042e4102faa2676c6e30c40be0be5228d71fd0663d45cfa61e5b952c0c2bcbb0",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xbfcd15f7371cdf2a4b1e85334b0b90d891c174bef43f424f371eb21099da4f2c",
+            "nonceKey": "18",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 304.584,
+            "submitStartRelativeToHonestMs": -21.789,
+            "responseEndRelativeToHonestMs": 282.795,
+            "simulationRpcMs": 47.697,
+            "traceStartRelativeToHonestMs": 2.419,
+            "traceEndRelativeToHonestMs": 50.116,
+            "mined": {
+              "blockNumber": 42,
+              "blockHash": "0x0f2686e946d499fb2cbc3a0fc11a64c37194f94f5cf44c1b5c93aec00f640318",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x8114472f9bf77d4d8b9bf7b14854a8ccedaceaf216d699ee9244377a6131d3ef",
+            "nonceKey": "19",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 248.203,
+            "submitStartRelativeToHonestMs": -21.745,
+            "responseEndRelativeToHonestMs": 226.458,
+            "simulationRpcMs": 47.828,
+            "traceStartRelativeToHonestMs": 1.351,
+            "traceEndRelativeToHonestMs": 49.18,
+            "mined": {
+              "blockNumber": 41,
+              "blockHash": "0x4edef06827ad9d1769f89e3fd37ce725f2c34038dd0dbdad5fc142527fb79bad",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xbf29d9de48aa0a5edf5b13d57bf3bcee0e2cd252cdc0f4e62703bc0b3569d837",
+            "nonceKey": "20",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 353.363,
+            "submitStartRelativeToHonestMs": -21.713,
+            "responseEndRelativeToHonestMs": 331.65,
+            "simulationRpcMs": 23.564,
+            "traceStartRelativeToHonestMs": 171.663,
+            "traceEndRelativeToHonestMs": 195.227,
+            "mined": {
+              "blockNumber": 43,
+              "blockHash": "0x2ad1b0fada80991413c2c2fa22d938bdb22254940c9e6a824173f5b639a2dd9c",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x9a6b10927b0835b628d41d1e10ee6dc550fa134a8d9a15a0e473ea6d332c8af0",
+            "nonceKey": "21",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 202.561,
+            "submitStartRelativeToHonestMs": -21.684,
+            "responseEndRelativeToHonestMs": 180.877,
+            "simulationRpcMs": 43.218,
+            "traceStartRelativeToHonestMs": 4.408,
+            "traceEndRelativeToHonestMs": 47.626,
+            "mined": {
+              "blockNumber": 40,
+              "blockHash": "0xd8a72c5af56393272e800ec3019cc81be522852ea0c8c8d4c00f53b0f7eb64d1",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x6805c925bfbc7fb6eebab4305361166c772e1f9dbcae67484428005e36fd835e",
+            "nonceKey": "22",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 408.75,
+            "submitStartRelativeToHonestMs": -21.655,
+            "responseEndRelativeToHonestMs": 387.095,
+            "simulationRpcMs": 24.474,
+            "traceStartRelativeToHonestMs": 223.369,
+            "traceEndRelativeToHonestMs": 247.843,
+            "mined": {
+              "blockNumber": 44,
+              "blockHash": "0x70f910f0e2ff7e2e976a0c5c6fdb262df6d1b392d690fabc1bddc5d3c0de6e54",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x840e22527d58c4a2c770fd919670e187347f2e6547fefbb039a39964e18dac45",
+            "nonceKey": "23",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 426.319,
+            "submitStartRelativeToHonestMs": -21.613,
+            "responseEndRelativeToHonestMs": 404.706,
+            "simulationRpcMs": 27.155,
+            "traceStartRelativeToHonestMs": 329.162,
+            "traceEndRelativeToHonestMs": 356.317,
+            "mined": {
+              "blockNumber": 46,
+              "blockHash": "0xfc347aa295b2f5ff149de7d91903687a5c8a029ccb25169528b319225f18f602",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x979652713dadcd2b36b524fa017acbf07ac4be0310437ac34f33248c4c0b78df",
+            "nonceKey": "24",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 416.525,
+            "submitStartRelativeToHonestMs": -21.581,
+            "responseEndRelativeToHonestMs": 394.943,
+            "simulationRpcMs": 21.87,
+            "traceStartRelativeToHonestMs": 280.575,
+            "traceEndRelativeToHonestMs": 302.445,
+            "mined": {
+              "blockNumber": 45,
+              "blockHash": "0xa9240adb8ec2f2b4fafc143f79f3ad181ebd329ad5056ca5b5fedc9d803ae2da",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 29,
+            "included": 29,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 37,
+            "included": 29,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 1,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0xce841a2338bfa9b3e67af53dfc3ae91c2c9fc1c5c94ddb6d78527ab30aa80907",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0xafa6b579b412701f9b5c779f090cf024023e8d0e9d766ea38bb6b10739be6492",
+        "honestMs": 18.349,
+        "honestStakeLookupRpcMs": [
+          0.565
+        ],
+        "beforeHonestTraceMs": 6.485,
+        "afterHonestTraceMs": 10.199,
+        "honestSimulationRpcMs": 1.665,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 48,
+        "honestBlockHash": "0x023185aac4ab9469659bbbd54b5d1c9eb4db73e100bf1cee615b83b6d4b05ce6",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 37,
+            "included": 37,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 37,
+            "included": 37,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 2,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x023185aac4ab9469659bbbd54b5d1c9eb4db73e100bf1cee615b83b6d4b05ce6",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x4ab19de37cff75782ced15eb17912a13824530df670f666a88777c29fe22ef01",
+        "honestMs": 19.376,
+        "honestStakeLookupRpcMs": [
+          0.723
+        ],
+        "beforeHonestTraceMs": 7.36,
+        "afterHonestTraceMs": 11.085,
+        "honestSimulationRpcMs": 0.931,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 49,
+        "honestBlockHash": "0xf10082d78719ac8997d9173bd37078505c1dde4043d0c973f49a4ab6d0633fd0",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 37,
+            "included": 37,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 37,
+            "included": 37,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 2,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0xf10082d78719ac8997d9173bd37078505c1dde4043d0c973f49a4ab6d0633fd0",
+        "backgroundBatchMs": 399.303,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x79bd0d45189d305e9c78c93b1523a6b8c1862959288667e62b50b333860a47d4",
+        "honestMs": 385.821,
+        "honestStakeLookupRpcMs": [
+          18.984
+        ],
+        "beforeHonestTraceMs": 355.639,
+        "afterHonestTraceMs": 29.066,
+        "honestSimulationRpcMs": 1.116,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 58,
+        "honestBlockHash": "0xb6f58a59302a5e55c7087f90d782baa1e4cca2943da55b01cd5dbfd269358f00",
+        "background": [
+          {
+            "hash": "0x305bf06ad11c4a662b8786206dd726122708636702a94a5c6ef0929206660044",
+            "nonceKey": "25",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 176.074,
+            "submitStartRelativeToHonestMs": -21.655,
+            "responseEndRelativeToHonestMs": 154.419,
+            "simulationRpcMs": 27.44,
+            "traceStartRelativeToHonestMs": -0.081,
+            "traceEndRelativeToHonestMs": 27.358,
+            "mined": {
+              "blockNumber": 50,
+              "blockHash": "0xec4d9d8390432a4b041c73d70fe498066cb87c122150d22d0aecd45a66b6d20a",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xfa6688e24cd7f7b21931cfcc1873720371f90ae673888cc7b306eb958ec700da",
+            "nonceKey": "26",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 189.437,
+            "submitStartRelativeToHonestMs": -21.398,
+            "responseEndRelativeToHonestMs": 168.038,
+            "simulationRpcMs": 44.334,
+            "traceStartRelativeToHonestMs": 0.992,
+            "traceEndRelativeToHonestMs": 45.326,
+            "mined": {
+              "blockNumber": 51,
+              "blockHash": "0xb9c3ce8ba4081edb54d1cacc9d6355023758e861647ed6ae7cbb433403d0395c",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xe85f9cfbd86d7dab0eb724aef4e639f9656bd7f38209aa36743df741382cf0f6",
+            "nonceKey": "27",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 278.446,
+            "submitStartRelativeToHonestMs": -21.223,
+            "responseEndRelativeToHonestMs": 257.222,
+            "simulationRpcMs": 56.632,
+            "traceStartRelativeToHonestMs": 3.102,
+            "traceEndRelativeToHonestMs": 59.734,
+            "mined": {
+              "blockNumber": 53,
+              "blockHash": "0xb5490451cad3ee1a50bf5f9c133898d2fd4f24bb2f89a18cdddeb4f7407fcd83",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xde6ad3237de6c3ad588eaa907949c1bd6d8a6e98c7cbe4c7b55bc2b8bcb46a38",
+            "nonceKey": "28",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 231.988,
+            "submitStartRelativeToHonestMs": -21.09,
+            "responseEndRelativeToHonestMs": 210.898,
+            "simulationRpcMs": 42.671,
+            "traceStartRelativeToHonestMs": 4.613,
+            "traceEndRelativeToHonestMs": 47.284,
+            "mined": {
+              "blockNumber": 52,
+              "blockHash": "0xb8054946da3dd3c182a34c60aac34ada5802b8b038fe7a6a4389c6617147dc96",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xf6633ac2c4241ce73589d4b7edde3d76853170237db8eee3a984b1ad05fad27e",
+            "nonceKey": "29",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 334.197,
+            "submitStartRelativeToHonestMs": -20.885,
+            "responseEndRelativeToHonestMs": 313.312,
+            "simulationRpcMs": 24.892,
+            "traceStartRelativeToHonestMs": 159.078,
+            "traceEndRelativeToHonestMs": 183.97,
+            "mined": {
+              "blockNumber": 54,
+              "blockHash": "0xd443210fc503f8f8c9a1c3cb59acac586a752a4ce3a03348897ec535207dcb8d",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x377ee185009cd1cf6ac931cb5ba1e8fa117ef3da8603c1eb748edb1123e0c143",
+            "nonceKey": "30",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 398.381,
+            "submitStartRelativeToHonestMs": -20.733,
+            "responseEndRelativeToHonestMs": 377.648,
+            "simulationRpcMs": 21.71,
+            "traceStartRelativeToHonestMs": 309.926,
+            "traceEndRelativeToHonestMs": 331.637,
+            "mined": {
+              "blockNumber": 57,
+              "blockHash": "0x8fcf8a24577e69dbb6b2d6abf695689fa8c2b46708f5d55b0e920e3d9d357883",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xe63e16c1247bddfba39538dd1da9892c6560d9eec607d27db6f8b81d6616be25",
+            "nonceKey": "31",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 389.5,
+            "submitStartRelativeToHonestMs": -20.569,
+            "responseEndRelativeToHonestMs": 368.931,
+            "simulationRpcMs": 29.317,
+            "traceStartRelativeToHonestMs": 254.204,
+            "traceEndRelativeToHonestMs": 283.521,
+            "mined": {
+              "blockNumber": 56,
+              "blockHash": "0xed13d18968f65cf125eca4ee1943505b48f2e52b830489a269d3cfc184e82bdc",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xb45a5096b804c4a97a84273826d2ee9bd957f7f1796f23b3ca6bdb629a6b9d8a",
+            "nonceKey": "32",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 379.005,
+            "submitStartRelativeToHonestMs": -20.437,
+            "responseEndRelativeToHonestMs": 358.568,
+            "simulationRpcMs": 21.497,
+            "traceStartRelativeToHonestMs": 207.659,
+            "traceEndRelativeToHonestMs": 229.156,
+            "mined": {
+              "blockNumber": 55,
+              "blockHash": "0xa6b7a18b9354da5507e1ff3fcfee122080460eee1ce937eb564d4ad3b189963c",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 37,
+            "included": 37,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 45,
+            "included": 37,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 3,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0xb6f58a59302a5e55c7087f90d782baa1e4cca2943da55b01cd5dbfd269358f00",
+        "backgroundBatchMs": 443.885,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x3dd8438a9cb1c27614d27a671e65afb17eddb302da70db476f5172c8478b4c75",
+        "honestMs": 433.434,
+        "honestStakeLookupRpcMs": [
+          17.059
+        ],
+        "beforeHonestTraceMs": 377.25,
+        "afterHonestTraceMs": 55.272,
+        "honestSimulationRpcMs": 0.911,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 67,
+        "honestBlockHash": "0x9ee09c98cafa8413c5706cd59fc93fa6a8ee9a605ffb2da6c768d14b9fb4b46a",
+        "background": [
+          {
+            "hash": "0x1fc135afc4c37a31faef5822f3ec5367c615b20ada95d09fe3fc7c28a3fe948e",
+            "nonceKey": "33",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 179.258,
+            "submitStartRelativeToHonestMs": -24.683,
+            "responseEndRelativeToHonestMs": 154.575,
+            "simulationRpcMs": 22.499,
+            "traceStartRelativeToHonestMs": -0.108,
+            "traceEndRelativeToHonestMs": 22.39,
+            "mined": {
+              "blockNumber": 59,
+              "blockHash": "0x9684d21486b284ef965bed919bc4b26be9dfdd690274f29beec9df92868c6aa2",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xa75ad53f83e66e077289c2b05f330734089f36be35ed1f13fd47a541447f179e",
+            "nonceKey": "34",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 303.08,
+            "submitStartRelativeToHonestMs": -24.523,
+            "responseEndRelativeToHonestMs": 278.557,
+            "simulationRpcMs": 48.348,
+            "traceStartRelativeToHonestMs": 0.808,
+            "traceEndRelativeToHonestMs": 49.156,
+            "mined": {
+              "blockNumber": 62,
+              "blockHash": "0xd89ef3bf5dcd5a9e2a798b3011dc94275b8d850881ed9bdd1cc8334fdafeab18",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xb906c2fe26a18ef87bd4a40961ed5799c7f385303b9b5265e6eade2259353217",
+            "nonceKey": "35",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 195.646,
+            "submitStartRelativeToHonestMs": -24.424,
+            "responseEndRelativeToHonestMs": 171.222,
+            "simulationRpcMs": 40.007,
+            "traceStartRelativeToHonestMs": 4.12,
+            "traceEndRelativeToHonestMs": 44.127,
+            "mined": {
+              "blockNumber": 60,
+              "blockHash": "0x8f68dfe519de30e06a8d5ebf4e3c96b3ac8182ddc83a61512b48132fb9de78ef",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xab536a293352a2872c3e8bd719c2f6000665e75e78095fa83fa3786e21325a6b",
+            "nonceKey": "36",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 252.299,
+            "submitStartRelativeToHonestMs": -24.34,
+            "responseEndRelativeToHonestMs": 227.958,
+            "simulationRpcMs": 45.151,
+            "traceStartRelativeToHonestMs": 2.92,
+            "traceEndRelativeToHonestMs": 48.072,
+            "mined": {
+              "blockNumber": 61,
+              "blockHash": "0xce75f6fb13b8bfd45a9f1e19018ff2ab401c9e7b197232961a985573339cbd5e",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x6d98fe3fd3e8d026c3674f062664d15aa71dbfcec261fefa406898ae4d1bbede",
+            "nonceKey": "37",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 359.294,
+            "submitStartRelativeToHonestMs": -24.263,
+            "responseEndRelativeToHonestMs": 335.032,
+            "simulationRpcMs": 27.586,
+            "traceStartRelativeToHonestMs": 165.198,
+            "traceEndRelativeToHonestMs": 192.784,
+            "mined": {
+              "blockNumber": 63,
+              "blockHash": "0x718c90c58695b751954f7c42e50792081fffdc4b14f1fa3b1c5bab9ff90cd283",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xd6bed00a17cd6649bf9153a00536c0fe2252e268b40ff5bd1807a47b9132f2ba",
+            "nonceKey": "38",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 443.39,
+            "submitStartRelativeToHonestMs": -24.188,
+            "responseEndRelativeToHonestMs": 419.202,
+            "simulationRpcMs": 21.167,
+            "traceStartRelativeToHonestMs": 330.228,
+            "traceEndRelativeToHonestMs": 351.395,
+            "mined": {
+              "blockNumber": 66,
+              "blockHash": "0xde3fd2d8a8d338c6299618f0f77f273c21dfa6ee46d681e8304bf64b0c6939fc",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x480779e5c041672b14f7da05ef6213e696d0ae507c3dda3c67d5f5036efeac63",
+            "nonceKey": "39",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 407.348,
+            "submitStartRelativeToHonestMs": -24.087,
+            "responseEndRelativeToHonestMs": 383.261,
+            "simulationRpcMs": 22.273,
+            "traceStartRelativeToHonestMs": 223.195,
+            "traceEndRelativeToHonestMs": 245.468,
+            "mined": {
+              "blockNumber": 64,
+              "blockHash": "0x0bf389bcfb2f3853ff8fa37f94a2c5e54dffe797c8400838a7164aa370980a27",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xeffbb7466d0d496f3a2f1cf8465365e22f2fd02f4f1d642f3018a06c733d3cc2",
+            "nonceKey": "40",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 431.578,
+            "submitStartRelativeToHonestMs": -24.014,
+            "responseEndRelativeToHonestMs": 407.564,
+            "simulationRpcMs": 24.424,
+            "traceStartRelativeToHonestMs": 274.507,
+            "traceEndRelativeToHonestMs": 298.931,
+            "mined": {
+              "blockNumber": 65,
+              "blockHash": "0x74231997ed1c01ac6ce0212fa746499a43c4bf301fc33bb1803f5826d207eb21",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 45,
+            "included": 45,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 53,
+            "included": 45,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 3,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x9ee09c98cafa8413c5706cd59fc93fa6a8ee9a605ffb2da6c768d14b9fb4b46a",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0xdaee82238da4c9f88d6cf1abb4ef2334c52b508e3372b730899e5fe5e76a8e1e",
+        "honestMs": 20.566,
+        "honestStakeLookupRpcMs": [
+          0.717
+        ],
+        "beforeHonestTraceMs": 8.951,
+        "afterHonestTraceMs": 10.383,
+        "honestSimulationRpcMs": 1.232,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 68,
+        "honestBlockHash": "0x0f334a96de70f2871a6c4e2923fc58411ddb9635c46f5570a7895a08c6fb37f1",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 53,
+            "included": 53,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 53,
+            "included": 53,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 4,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x0f334a96de70f2871a6c4e2923fc58411ddb9635c46f5570a7895a08c6fb37f1",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0xcc014717ba72aa81fa8cbadc5f0c8019e526f283d863848502cb5042cbecb4af",
+        "honestMs": 22.63,
+        "honestStakeLookupRpcMs": [
+          0.676
+        ],
+        "beforeHonestTraceMs": 10.755,
+        "afterHonestTraceMs": 10.986,
+        "honestSimulationRpcMs": 0.89,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 69,
+        "honestBlockHash": "0x37051674a72a16a9c3e8effa123ff78684c0b4360d8feecaa069fba2d8747b0f",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 53,
+            "included": 53,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 53,
+            "included": 53,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 4,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0x37051674a72a16a9c3e8effa123ff78684c0b4360d8feecaa069fba2d8747b0f",
+        "backgroundBatchMs": 404.127,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x69f3ee3b8ff0db45e8a5651fd641f202f509623cf6af070de139fd8a623ead13",
+        "honestMs": 389.058,
+        "honestStakeLookupRpcMs": [
+          18.904
+        ],
+        "beforeHonestTraceMs": 351.867,
+        "afterHonestTraceMs": 36.146,
+        "honestSimulationRpcMs": 1.045,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 78,
+        "honestBlockHash": "0xd50e670cf58f5a6b1d6b216564a8fa92047d535a9b07795ac8bf61f8a4572b21",
+        "background": [
+          {
+            "hash": "0x6a9fe6abe272a71f3886e057b1e32917b5f472348fc03d989173e385e7b99650",
+            "nonceKey": "41",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 170.931,
+            "submitStartRelativeToHonestMs": -23.548,
+            "responseEndRelativeToHonestMs": 147.383,
+            "simulationRpcMs": 22.653,
+            "traceStartRelativeToHonestMs": -0.094,
+            "traceEndRelativeToHonestMs": 22.558,
+            "mined": {
+              "blockNumber": 70,
+              "blockHash": "0xd25268967e742a44261ff7e66285c346e55d8155cbd5f786989d356e5c7f808c",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xc1bf895ecb8395b01a73dcf4b0e7949c4ce832a89de74129b1e2aa3b44e502da",
+            "nonceKey": "42",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 183.448,
+            "submitStartRelativeToHonestMs": -23.382,
+            "responseEndRelativeToHonestMs": 160.066,
+            "simulationRpcMs": 40.348,
+            "traceStartRelativeToHonestMs": 2.676,
+            "traceEndRelativeToHonestMs": 43.025,
+            "mined": {
+              "blockNumber": 71,
+              "blockHash": "0xdd6ac07512c47bfd77e1122bab54e837f5cfda60399903d45840346e35bfa30c",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x97e67a8e5e373c523bda96d9dc0bcd958d4d9bfda3fafa792e7b09853529915e",
+            "nonceKey": "43",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 274.868,
+            "submitStartRelativeToHonestMs": -23.288,
+            "responseEndRelativeToHonestMs": 251.58,
+            "simulationRpcMs": 53.498,
+            "traceStartRelativeToHonestMs": 1.427,
+            "traceEndRelativeToHonestMs": 54.924,
+            "mined": {
+              "blockNumber": 73,
+              "blockHash": "0x657d4653914f3a3ad546184f8eed4966f9d0941bdb323327765a1a788f503c34",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xb12ec52e571e69b42c605b5ebedca46cf7d4f7ca617c9274e32016cf9eef6af1",
+            "nonceKey": "44",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 223.568,
+            "submitStartRelativeToHonestMs": -23.169,
+            "responseEndRelativeToHonestMs": 200.4,
+            "simulationRpcMs": 39.186,
+            "traceStartRelativeToHonestMs": 5.3,
+            "traceEndRelativeToHonestMs": 44.486,
+            "mined": {
+              "blockNumber": 72,
+              "blockHash": "0xcef0e3562bb403ddef34a73ba1fbf7b8cc92e25c6a738f1d8a5c20fbf413fa81",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x4269cdd419b32ad69fcf8f886fee2187a54765ec44ce2aca29c75a68f5ea5943",
+            "nonceKey": "45",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 377.907,
+            "submitStartRelativeToHonestMs": -23.083,
+            "responseEndRelativeToHonestMs": 354.824,
+            "simulationRpcMs": 20.949,
+            "traceStartRelativeToHonestMs": 197.244,
+            "traceEndRelativeToHonestMs": 218.193,
+            "mined": {
+              "blockNumber": 75,
+              "blockHash": "0x8558d24fe6998a55a01349c87845dde4623bf19377b6da924e9dcfa1ad2e0605",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xeb508bafaf08f94c00585bdcda613c5ea5a1051a3611fe5d7ea670cb536b46be",
+            "nonceKey": "46",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 329.804,
+            "submitStartRelativeToHonestMs": -23.006,
+            "responseEndRelativeToHonestMs": 306.797,
+            "simulationRpcMs": 19.538,
+            "traceStartRelativeToHonestMs": 152.002,
+            "traceEndRelativeToHonestMs": 171.54,
+            "mined": {
+              "blockNumber": 74,
+              "blockHash": "0x2ea9b211971dccedda6c198e47da315449106a7935c260695d0f08ee84f6481f",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x27f1d6752be9a26ff8a629831d865baf512065c59b645b58c8ebbd30a856b8e0",
+            "nonceKey": "47",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 403.513,
+            "submitStartRelativeToHonestMs": -22.933,
+            "responseEndRelativeToHonestMs": 380.579,
+            "simulationRpcMs": 22.21,
+            "traceStartRelativeToHonestMs": 302.738,
+            "traceEndRelativeToHonestMs": 324.949,
+            "mined": {
+              "blockNumber": 77,
+              "blockHash": "0x7269ca5e731c272988f2a6128e3ff1ac157323378ea72bc9fe17677f6b06f5d4",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x4061517bf14a162b198232a8507755d606e794de01250091dc1eea0ba3d29683",
+            "nonceKey": "48",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 389.49,
+            "submitStartRelativeToHonestMs": -22.861,
+            "responseEndRelativeToHonestMs": 366.629,
+            "simulationRpcMs": 29.968,
+            "traceStartRelativeToHonestMs": 247.752,
+            "traceEndRelativeToHonestMs": 277.72,
+            "mined": {
+              "blockNumber": 76,
+              "blockHash": "0xbd555a2a174dfb3708f1f3495bfe4d4b2a4d359eea916bfc8b7c6833e36934b3",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 53,
+            "included": 53,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 61,
+            "included": 53,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 5,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0xd50e670cf58f5a6b1d6b216564a8fa92047d535a9b07795ac8bf61f8a4572b21",
+        "backgroundBatchMs": 412.532,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0xdd40e95c89aff4613a86754ee3405f80beb172f75286e0829a4cd7e6999e8af2",
+        "honestMs": 398.467,
+        "honestStakeLookupRpcMs": [
+          20.911
+        ],
+        "beforeHonestTraceMs": 360.483,
+        "afterHonestTraceMs": 36.606,
+        "honestSimulationRpcMs": 1.378,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 87,
+        "honestBlockHash": "0x766e81c3eedd1a0e5ae9063440963ef6f7f0f9da5818f83d5110edfa42d8fb72",
+        "background": [
+          {
+            "hash": "0x9897c3c8bbe5ba6b82e75d51d01da87e1c335767e31048ccb47fb9914e27a54d",
+            "nonceKey": "49",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 170.538,
+            "submitStartRelativeToHonestMs": -23.055,
+            "responseEndRelativeToHonestMs": 147.483,
+            "simulationRpcMs": 20.32,
+            "traceStartRelativeToHonestMs": -0.052,
+            "traceEndRelativeToHonestMs": 20.268,
+            "mined": {
+              "blockNumber": 79,
+              "blockHash": "0xe4d16ed43951d256672a66d50056b77f6a2646ee7a45088648864aecb76e17df",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x692a3e7a7b8aff75c1160b772ecdd34de33311a465fc269075b91f8a110de6ff",
+            "nonceKey": "50",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 239.783,
+            "submitStartRelativeToHonestMs": -22.95,
+            "responseEndRelativeToHonestMs": 216.833,
+            "simulationRpcMs": 41.566,
+            "traceStartRelativeToHonestMs": 1.296,
+            "traceEndRelativeToHonestMs": 42.862,
+            "mined": {
+              "blockNumber": 81,
+              "blockHash": "0x3b086b2022e7c78edf3cca0a998f927297107e07a716527c9834ccee4ea1f02d",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x3924f30d73998ea0f6f6a96d07e8ba349818c40492349b90964d6c04d50200f5",
+            "nonceKey": "51",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 284.319,
+            "submitStartRelativeToHonestMs": -22.906,
+            "responseEndRelativeToHonestMs": 261.413,
+            "simulationRpcMs": 40.863,
+            "traceStartRelativeToHonestMs": 3.337,
+            "traceEndRelativeToHonestMs": 44.2,
+            "mined": {
+              "blockNumber": 82,
+              "blockHash": "0xd29df45b522e44ada98b455945490fbec586edd49604eeaa973fa755bbace9c3",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x84f3bd0b1030f8cb097ca7a6fc1072229222887e807e585b0e3136a35c6acfbe",
+            "nonceKey": "52",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 224.368,
+            "submitStartRelativeToHonestMs": -22.868,
+            "responseEndRelativeToHonestMs": 201.5,
+            "simulationRpcMs": 39.154,
+            "traceStartRelativeToHonestMs": 2.28,
+            "traceEndRelativeToHonestMs": 41.434,
+            "mined": {
+              "blockNumber": 80,
+              "blockHash": "0xc6e6c2b7bc6a34fab02c9b7289a93430d6e5182d6b8fb43723ac9da6debfb43e",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x194b3a2e8ed6399cff9d8bca54b0722c8eb7ba8dd859b2cc6a9142583168b353",
+            "nonceKey": "53",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 335.545,
+            "submitStartRelativeToHonestMs": -22.826,
+            "responseEndRelativeToHonestMs": 312.718,
+            "simulationRpcMs": 19.62,
+            "traceStartRelativeToHonestMs": 155.377,
+            "traceEndRelativeToHonestMs": 174.997,
+            "mined": {
+              "blockNumber": 83,
+              "blockHash": "0x8d175eb029ff577b9974be3083ef11ee4e2dd6eacfd2c9782d5151714c496d42",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xde65af92f41498a68f9d7226533ad48be9a9048cd6fd9b21a76a6da1f7e76d27",
+            "nonceKey": "54",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 386.973,
+            "submitStartRelativeToHonestMs": -22.797,
+            "responseEndRelativeToHonestMs": 364.176,
+            "simulationRpcMs": 21.565,
+            "traceStartRelativeToHonestMs": 208.353,
+            "traceEndRelativeToHonestMs": 229.918,
+            "mined": {
+              "blockNumber": 84,
+              "blockHash": "0x71df8703ff2f37294dc06a5143ae6b6d916ad5ca2f7edf648cde98d9da80a971",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x42e2ebc0a88083f7efc711eb55c0347d55073b064857847aedf96ec2249f67bc",
+            "nonceKey": "55",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 399.168,
+            "submitStartRelativeToHonestMs": -22.766,
+            "responseEndRelativeToHonestMs": 376.403,
+            "simulationRpcMs": 25.783,
+            "traceStartRelativeToHonestMs": 257.993,
+            "traceEndRelativeToHonestMs": 283.776,
+            "mined": {
+              "blockNumber": 85,
+              "blockHash": "0x321c6ac6cd7bef9d68ec0e4bb4c126c267479ebff4fc919073f04e258314b992",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x635dc9ab8fa2fcda2abbf49b5aafac381ed22e8a93d2cd16a5137b18be3012f7",
+            "nonceKey": "56",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 412.216,
+            "submitStartRelativeToHonestMs": -22.739,
+            "responseEndRelativeToHonestMs": 389.477,
+            "simulationRpcMs": 24.002,
+            "traceStartRelativeToHonestMs": 308.9,
+            "traceEndRelativeToHonestMs": 332.902,
+            "mined": {
+              "blockNumber": 86,
+              "blockHash": "0x000913b391e13bcd65ed6a124e9975a317579a68a262501319615bf5e272574f",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 61,
+            "included": 61,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 69,
+            "included": 61,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 5,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x766e81c3eedd1a0e5ae9063440963ef6f7f0f9da5818f83d5110edfa42d8fb72",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x510b9641bc48877e51c93ae9f2189f57b634b4d9bc038fe8275182047a1a20dc",
+        "honestMs": 20.653,
+        "honestStakeLookupRpcMs": [
+          0.504
+        ],
+        "beforeHonestTraceMs": 7.391,
+        "afterHonestTraceMs": 12.306,
+        "honestSimulationRpcMs": 0.955,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 88,
+        "honestBlockHash": "0x3e5aac922ba47691c33a412b630242a7d5b2cfdaea55ae5d5e0a09304204796f",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 69,
+            "included": 69,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 69,
+            "included": 69,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 6,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x3e5aac922ba47691c33a412b630242a7d5b2cfdaea55ae5d5e0a09304204796f",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x24b9a6b8bdbf90a89aae69d865cef23e8d1eaae53f03a5bb95e36163d6ea3a6b",
+        "honestMs": 27.901,
+        "honestStakeLookupRpcMs": [
+          0.669
+        ],
+        "beforeHonestTraceMs": 11.716,
+        "afterHonestTraceMs": 14.166,
+        "honestSimulationRpcMs": 2.019,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 89,
+        "honestBlockHash": "0x5adf47feb54a3fef2d2763d25c0554a20323a06fb6cb8fbce11bbff8598c824f",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 69,
+            "included": 69,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 69,
+            "included": 69,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 6,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0x5adf47feb54a3fef2d2763d25c0554a20323a06fb6cb8fbce11bbff8598c824f",
+        "backgroundBatchMs": 419.149,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x38d218e0bd671774582c73e678a640cfe6913a6aed847f67754ca0f268aee383",
+        "honestMs": 398.849,
+        "honestStakeLookupRpcMs": [
+          17.478
+        ],
+        "beforeHonestTraceMs": 360.216,
+        "afterHonestTraceMs": 37.332,
+        "honestSimulationRpcMs": 1.301,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 98,
+        "honestBlockHash": "0x07c9f715806b9aab1d741c2ebc90dbfe754599923a361e04f8262f82408e873c",
+        "background": [
+          {
+            "hash": "0xc46f812ff4676423b3cbdc20a74bdb53290dafa08b1cd7be2bbafbedd27be0e5",
+            "nonceKey": "57",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 206.523,
+            "submitStartRelativeToHonestMs": -30.027,
+            "responseEndRelativeToHonestMs": 176.495,
+            "simulationRpcMs": 43.438,
+            "traceStartRelativeToHonestMs": 0.951,
+            "traceEndRelativeToHonestMs": 44.389,
+            "mined": {
+              "blockNumber": 91,
+              "blockHash": "0x1416b969fceb23295270f29b033295a845ccd08df7d903aaecc8f42b4ef19104",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x7b0e14dcd31bbf2fd3e014b5afc1d0b5e49acfe47dd978f6154b64fcb311a929",
+            "nonceKey": "58",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 193.658,
+            "submitStartRelativeToHonestMs": -29.704,
+            "responseEndRelativeToHonestMs": 163.954,
+            "simulationRpcMs": 22.565,
+            "traceStartRelativeToHonestMs": -0.077,
+            "traceEndRelativeToHonestMs": 22.487,
+            "mined": {
+              "blockNumber": 90,
+              "blockHash": "0x3c7f665ee2e1e49c927f42449b49b5898b254aecdd5bc079f255bc6ce627e8c6",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x013336559ef58750d10ea1603ffc41c5c7bf435cd1e77ef5ce43262dc2e4657f",
+            "nonceKey": "59",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 249.717,
+            "submitStartRelativeToHonestMs": -29.253,
+            "responseEndRelativeToHonestMs": 220.464,
+            "simulationRpcMs": 42.777,
+            "traceStartRelativeToHonestMs": 3.992,
+            "traceEndRelativeToHonestMs": 46.769,
+            "mined": {
+              "blockNumber": 92,
+              "blockHash": "0x3d94110a453a907700887705a39d66ea67837d7cb6ca1db7ce2f0f58125dfc9f",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xd3f66bc1369a01b25beac8ca70a0df3143de60402fb45767ec2631e84ebe0a96",
+            "nonceKey": "60",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 405.615,
+            "submitStartRelativeToHonestMs": -29.163,
+            "responseEndRelativeToHonestMs": 376.452,
+            "simulationRpcMs": 22.25,
+            "traceStartRelativeToHonestMs": 262.282,
+            "traceEndRelativeToHonestMs": 284.531,
+            "mined": {
+              "blockNumber": 96,
+              "blockHash": "0x66395cca00e34a390b80824655625e64cb36271bd85e9e24f7d84fb778498634",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xc6691428f0f7f4dca91efead99d68ae9af08f5bf40061f3bc2dfc6218184e433",
+            "nonceKey": "61",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 393.383,
+            "submitStartRelativeToHonestMs": -29.099,
+            "responseEndRelativeToHonestMs": 364.283,
+            "simulationRpcMs": 20.232,
+            "traceStartRelativeToHonestMs": 215.101,
+            "traceEndRelativeToHonestMs": 235.333,
+            "mined": {
+              "blockNumber": 95,
+              "blockHash": "0xffa08d0be1c22e93cb53a8c46ace04b2d054388a57f180261675760d10ef43b1",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x0aba9e982fa7472f59920f5a458289f46ddf7e0c310d5c701dc4e0fd22920a12",
+            "nonceKey": "62",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 295.104,
+            "submitStartRelativeToHonestMs": -29.039,
+            "responseEndRelativeToHonestMs": 266.065,
+            "simulationRpcMs": 44.362,
+            "traceStartRelativeToHonestMs": 3.015,
+            "traceEndRelativeToHonestMs": 47.376,
+            "mined": {
+              "blockNumber": 93,
+              "blockHash": "0xa82b3c9eaa73ae841990471bb031efa5a3aa671b752233d9f7e4bfa8b481e2c0",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x33947367ba4ec77a1434f630e8f0782504dfcf434c25e26c85f4c6bf8b3bfbc7",
+            "nonceKey": "63",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 343.144,
+            "submitStartRelativeToHonestMs": -28.973,
+            "responseEndRelativeToHonestMs": 314.172,
+            "simulationRpcMs": 20.683,
+            "traceStartRelativeToHonestMs": 169.668,
+            "traceEndRelativeToHonestMs": 190.351,
+            "mined": {
+              "blockNumber": 94,
+              "blockHash": "0x76cad88503d0f27baa6ebc1b1d8b0357b731503b31c3795e040a57caed7cd8c9",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x177dd414ac359af1fd36046848c294edb3703b3bdee7bac84157053c4a27259b",
+            "nonceKey": "64",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 418.007,
+            "submitStartRelativeToHonestMs": -28.885,
+            "responseEndRelativeToHonestMs": 389.121,
+            "simulationRpcMs": 21.306,
+            "traceStartRelativeToHonestMs": 310.238,
+            "traceEndRelativeToHonestMs": 331.544,
+            "mined": {
+              "blockNumber": 97,
+              "blockHash": "0x67deba261d51a47275d52627b0b1cf93deaa02c50f00983b0b2cace9c0327355",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 69,
+            "included": 69,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 77,
+            "included": 69,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 7,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0x07c9f715806b9aab1d741c2ebc90dbfe754599923a361e04f8262f82408e873c",
+        "backgroundBatchMs": 454.344,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0xa5aa8b1e65a49a04f152ef899fc089e052d3cffae37df9fa5ac790def11bda9b",
+        "honestMs": 433.775,
+        "honestStakeLookupRpcMs": [
+          14.113
+        ],
+        "beforeHonestTraceMs": 391.944,
+        "afterHonestTraceMs": 40.718,
+        "honestSimulationRpcMs": 1.114,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 107,
+        "honestBlockHash": "0x37ccecb4d76b0d17b4f3efa1e8568c550a3cee43cea2dbf5d7230164f7c9d479",
+        "background": [
+          {
+            "hash": "0x84075e94e87238c7068f1332f7d61e0458204ed01c33d040273a061aaf3816c1",
+            "nonceKey": "65",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 329.806,
+            "submitStartRelativeToHonestMs": -29.117,
+            "responseEndRelativeToHonestMs": 300.688,
+            "simulationRpcMs": 51.256,
+            "traceStartRelativeToHonestMs": 1.358,
+            "traceEndRelativeToHonestMs": 52.614,
+            "mined": {
+              "blockNumber": 102,
+              "blockHash": "0x9e0cf457189421ad6d1b3b78d1be5585a1fea30b4bd1eab2619f29663f3a73f5",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x873488ff35190e041b34fc6492fc973e8f5d8bc44d522c8fe6a57dda756e81fb",
+            "nonceKey": "66",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 188.988,
+            "submitStartRelativeToHonestMs": -28.994,
+            "responseEndRelativeToHonestMs": 159.994,
+            "simulationRpcMs": 23.781,
+            "traceStartRelativeToHonestMs": -0.072,
+            "traceEndRelativeToHonestMs": 23.709,
+            "mined": {
+              "blockNumber": 99,
+              "blockHash": "0x90fc99fdb5b1af402f88d08251026528449d560b9125f4f717c3950c618877d9",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x018bb6a58cc5ee77cd58657813681aef1659b30a9f5d7dceb460776fb609082a",
+            "nonceKey": "67",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 254.872,
+            "submitStartRelativeToHonestMs": -28.946,
+            "responseEndRelativeToHonestMs": 225.926,
+            "simulationRpcMs": 39.844,
+            "traceStartRelativeToHonestMs": 3.762,
+            "traceEndRelativeToHonestMs": 43.606,
+            "mined": {
+              "blockNumber": 100,
+              "blockHash": "0x905f426ea7147e1393a349eff88b4257e4f94e2d5a0603f28d01e52ab78566a0",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x9d898272d610d9b5b941f5e49ea0623dda151bc8917e28648e796dbf658e635c",
+            "nonceKey": "68",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 380.178,
+            "submitStartRelativeToHonestMs": -28.913,
+            "responseEndRelativeToHonestMs": 351.265,
+            "simulationRpcMs": 29.473,
+            "traceStartRelativeToHonestMs": 165.955,
+            "traceEndRelativeToHonestMs": 195.427,
+            "mined": {
+              "blockNumber": 103,
+              "blockHash": "0x8c050a146c103629a9e9a9e9d8495c98715417a210b5f9872a74bff8104d80ae",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x063db8b929ea71297ed8be3ac99cdd009b5b32522c19f3853f9302c978ddf4b2",
+            "nonceKey": "69",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 439.637,
+            "submitStartRelativeToHonestMs": -28.884,
+            "responseEndRelativeToHonestMs": 410.753,
+            "simulationRpcMs": 21.186,
+            "traceStartRelativeToHonestMs": 296.46,
+            "traceEndRelativeToHonestMs": 317.645,
+            "mined": {
+              "blockNumber": 105,
+              "blockHash": "0xcf368532e49c66d2fb311d6d8e75c1f437c26a485f5eb5deff75c342c9fefe5c",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xab244f9bece01afb27553ff511c631026eedd9ef6e8cc56552c1f7aea075df25",
+            "nonceKey": "70",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 424.601,
+            "submitStartRelativeToHonestMs": -28.853,
+            "responseEndRelativeToHonestMs": 395.748,
+            "simulationRpcMs": 24.851,
+            "traceStartRelativeToHonestMs": 235.21,
+            "traceEndRelativeToHonestMs": 260.061,
+            "mined": {
+              "blockNumber": 104,
+              "blockHash": "0x7d8e3cf2eff3a545053029a8f97fb1f42fc8e76ef14b1458163930d90e475c7a",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xb93c1d70a7a8a580fde51bd2a715d2a5aa7062e901eb8a66965062bf624b9e7a",
+            "nonceKey": "71",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 454.052,
+            "submitStartRelativeToHonestMs": -28.825,
+            "responseEndRelativeToHonestMs": 425.227,
+            "simulationRpcMs": 19.172,
+            "traceStartRelativeToHonestMs": 346.174,
+            "traceEndRelativeToHonestMs": 365.347,
+            "mined": {
+              "blockNumber": 106,
+              "blockHash": "0x713d3751130b68e274e7381d603656e2b9cefca24312d3855511acaa254c339e",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xdc17b487cc920159033c196d5c4d243bfbb28416a8b8038b67d2423b06e304d0",
+            "nonceKey": "72",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 271.828,
+            "submitStartRelativeToHonestMs": -28.797,
+            "responseEndRelativeToHonestMs": 243.031,
+            "simulationRpcMs": 39.774,
+            "traceStartRelativeToHonestMs": 5.004,
+            "traceEndRelativeToHonestMs": 44.778,
+            "mined": {
+              "blockNumber": 101,
+              "blockHash": "0x65045bfff11549eb7e701ecbef4515eafeb3774d9acce199b3eb42356b770fb0",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 77,
+            "included": 77,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 85,
+            "included": 77,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 7,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x37ccecb4d76b0d17b4f3efa1e8568c550a3cee43cea2dbf5d7230164f7c9d479",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x159c9bd1fa0d965248d3229ff33b4b98e7dad8e00789f60df1f167573d5e82a0",
+        "honestMs": 28.777,
+        "honestStakeLookupRpcMs": [
+          0.919
+        ],
+        "beforeHonestTraceMs": 11.535,
+        "afterHonestTraceMs": 15.917,
+        "honestSimulationRpcMs": 1.325,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 108,
+        "honestBlockHash": "0xd1503eeea32ce3362e86ea49c57a735821f7231b3fd9a57d612d8b50e0c0f647",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 85,
+            "included": 85,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 85,
+            "included": 85,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 8,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0xd1503eeea32ce3362e86ea49c57a735821f7231b3fd9a57d612d8b50e0c0f647",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x0e6ee20dbbfa6451e417c1355d2313499bcce5a714070cc73cdedd6d1efaead0",
+        "honestMs": 26.929,
+        "honestStakeLookupRpcMs": [
+          0.839
+        ],
+        "beforeHonestTraceMs": 9.801,
+        "afterHonestTraceMs": 15.798,
+        "honestSimulationRpcMs": 1.33,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 109,
+        "honestBlockHash": "0x7b51210e594a3087c0ebf84e389903918447b7c501048743c7709d804c8ea722",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 85,
+            "included": 85,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 85,
+            "included": 85,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 8,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0x7b51210e594a3087c0ebf84e389903918447b7c501048743c7709d804c8ea722",
+        "backgroundBatchMs": 449.88,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x225461b892fdc8788d98abc4d80a0288fa98c8db4c5575975326a8d497cfcff0",
+        "honestMs": 429.787,
+        "honestStakeLookupRpcMs": [
+          17.206
+        ],
+        "beforeHonestTraceMs": 382.309,
+        "afterHonestTraceMs": 46.092,
+        "honestSimulationRpcMs": 1.387,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 118,
+        "honestBlockHash": "0x18b773f2eddd53a5bffb46b3a628d559eaa635148fd85e05ef954e3a9d23292b",
+        "background": [
+          {
+            "hash": "0x9afbe0a3da9f6517c0b7a8b0c192041fa1872774f1fad0c498a5e12da51dbe07",
+            "nonceKey": "73",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 196.565,
+            "submitStartRelativeToHonestMs": -32.539,
+            "responseEndRelativeToHonestMs": 164.026,
+            "simulationRpcMs": 25.784,
+            "traceStartRelativeToHonestMs": -0.115,
+            "traceEndRelativeToHonestMs": 25.669,
+            "mined": {
+              "blockNumber": 110,
+              "blockHash": "0x376dd9f4eb678920d427191010919a1e8d23cd0c05b94775b763b9764e473000",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x036bf21819d5c8e4fe1fcd2ae9705c758800f3c1cbe62964748649ddcbb8893e",
+            "nonceKey": "74",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 264.94,
+            "submitStartRelativeToHonestMs": -32.365,
+            "responseEndRelativeToHonestMs": 232.575,
+            "simulationRpcMs": 48.995,
+            "traceStartRelativeToHonestMs": 5.167,
+            "traceEndRelativeToHonestMs": 54.163,
+            "mined": {
+              "blockNumber": 112,
+              "blockHash": "0xeef82a31317d21b37c7e558178da52471099cd8dc3127c8bdf8429b42881e975",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x1c4c22b398496af6dbee3e988c9cc51ebe962830308616e9bcacf62b538c1f3d",
+            "nonceKey": "75",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 212.531,
+            "submitStartRelativeToHonestMs": -32.24,
+            "responseEndRelativeToHonestMs": 180.291,
+            "simulationRpcMs": 40.719,
+            "traceStartRelativeToHonestMs": 1.849,
+            "traceEndRelativeToHonestMs": 42.568,
+            "mined": {
+              "blockNumber": 111,
+              "blockHash": "0x86119c03e4486d0164ae29032f94eebf615ff084b947e2d6487f38507588c0cf",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x936b63e8dd34ab0916e45b22536f398d6807da8eba7bb4ea7d1109f69be1ea31",
+            "nonceKey": "76",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 418.577,
+            "submitStartRelativeToHonestMs": -32.141,
+            "responseEndRelativeToHonestMs": 386.436,
+            "simulationRpcMs": 26.861,
+            "traceStartRelativeToHonestMs": 228.134,
+            "traceEndRelativeToHonestMs": 254.994,
+            "mined": {
+              "blockNumber": 115,
+              "blockHash": "0xb8ff839f6f1c64f5754b7e716a448f029f5f2609cd5cc8ce09b89a6c545474e0",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xad62f55c6bde4085498cb6d80a1ae45ec2974d02421cc8b4e80a70299a83cef2",
+            "nonceKey": "77",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 369.383,
+            "submitStartRelativeToHonestMs": -32.049,
+            "responseEndRelativeToHonestMs": 337.334,
+            "simulationRpcMs": 26.724,
+            "traceStartRelativeToHonestMs": 172.882,
+            "traceEndRelativeToHonestMs": 199.607,
+            "mined": {
+              "blockNumber": 114,
+              "blockHash": "0x5d064a65b54e3341977791285f221c52b1685146a40df5b733a7715703fe3aac",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x8983838200418fa8f286c99d6231c89061e4c497a30f25d136a40044c7cb12a6",
+            "nonceKey": "78",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 433.826,
+            "submitStartRelativeToHonestMs": -31.958,
+            "responseEndRelativeToHonestMs": 401.868,
+            "simulationRpcMs": 22.404,
+            "traceStartRelativeToHonestMs": 285.018,
+            "traceEndRelativeToHonestMs": 307.421,
+            "mined": {
+              "blockNumber": 116,
+              "blockHash": "0xb2625f374a4874ee3c7086820dac23b3bd2b5bbf9516974db4dd6b8fd8487d73",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x4319c6e62bc6008193f99941c53bc11699bd23aded31be606aad991e55d62310",
+            "nonceKey": "79",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 321.258,
+            "submitStartRelativeToHonestMs": -31.836,
+            "responseEndRelativeToHonestMs": 289.422,
+            "simulationRpcMs": 47.997,
+            "traceStartRelativeToHonestMs": 7.036,
+            "traceEndRelativeToHonestMs": 55.033,
+            "mined": {
+              "blockNumber": 113,
+              "blockHash": "0x250362e69ed1c03245c1374a3aa7b7574e2f789a2a2e40f9a32391fc0c5fcf99",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xf866dcb9a8db86f3d506909d6470ea2182dfc150c002a1284f34a40e1272ba4a",
+            "nonceKey": "80",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 449.078,
+            "submitStartRelativeToHonestMs": -31.737,
+            "responseEndRelativeToHonestMs": 417.341,
+            "simulationRpcMs": 21.047,
+            "traceStartRelativeToHonestMs": 333.433,
+            "traceEndRelativeToHonestMs": 354.48,
+            "mined": {
+              "blockNumber": 117,
+              "blockHash": "0xe95fe03ca72fcaf1510f90cab533d8c29a7b27d7515dd28d0b16a8bd0b42163e",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 85,
+            "included": 85,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 93,
+            "included": 85,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 9,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0x18b773f2eddd53a5bffb46b3a628d559eaa635148fd85e05ef954e3a9d23292b",
+        "backgroundBatchMs": 450.205,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x2974133dc9356b45dce9ed83a4f9e188f479d4b1f3fda4b07033c9e29079c1d7",
+        "honestMs": 432.064,
+        "honestStakeLookupRpcMs": [
+          22.411
+        ],
+        "beforeHonestTraceMs": 384.527,
+        "afterHonestTraceMs": 46.699,
+        "honestSimulationRpcMs": 0.839,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 127,
+        "honestBlockHash": "0x652352970955481f676d3e5ea2974a2614148894a1400d5cdbb130c1a838d966",
+        "background": [
+          {
+            "hash": "0x354a7bd689d8254dd96297ef62dcd2b12a1e9d9990c10328f9b220cd6d37c756",
+            "nonceKey": "81",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 215.633,
+            "submitStartRelativeToHonestMs": -30.998,
+            "responseEndRelativeToHonestMs": 184.635,
+            "simulationRpcMs": 38.543,
+            "traceStartRelativeToHonestMs": 3.083,
+            "traceEndRelativeToHonestMs": 41.626,
+            "mined": {
+              "blockNumber": 120,
+              "blockHash": "0x4cdd6e570a745119b59d9b7f13d3f0f9298647bf2d7a30db3a10e4485172c665",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x20d5363327448edb3dc8e24f0f3ffb966da159ab855722a340dded14310dc8a7",
+            "nonceKey": "82",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 419.192,
+            "submitStartRelativeToHonestMs": -30.871,
+            "responseEndRelativeToHonestMs": 388.321,
+            "simulationRpcMs": 24.19,
+            "traceStartRelativeToHonestMs": 226.747,
+            "traceEndRelativeToHonestMs": 250.937,
+            "mined": {
+              "blockNumber": 124,
+              "blockHash": "0xace63e7aa28886f19c2a767801d728e2868cd571efbbdf13effb0843661a72e8",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xf51c2d5989679db1b5623cf927a5d2c2124b5a7754fcfe5d9b0d129cec0b637d",
+            "nonceKey": "83",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 433.996,
+            "submitStartRelativeToHonestMs": -30.815,
+            "responseEndRelativeToHonestMs": 403.181,
+            "simulationRpcMs": 25.58,
+            "traceStartRelativeToHonestMs": 278.01,
+            "traceEndRelativeToHonestMs": 303.59,
+            "mined": {
+              "blockNumber": 125,
+              "blockHash": "0x3832b19e6b544a3a21bf90bdbf7c4c97370c17b41dd3e1201003afaba3e2dfe4",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xd50156b3420c4e28fe6c9eedd6daf1c6311fee71c08d1f58fa43db7cd3371748",
+            "nonceKey": "84",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 449.974,
+            "submitStartRelativeToHonestMs": -30.766,
+            "responseEndRelativeToHonestMs": 419.207,
+            "simulationRpcMs": 25.728,
+            "traceStartRelativeToHonestMs": 330.173,
+            "traceEndRelativeToHonestMs": 355.901,
+            "mined": {
+              "blockNumber": 126,
+              "blockHash": "0xddf2a27d8948c95e4d896d7fc80f4a5a71d3527003602634f4fc62e227e82210",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xaa53ab9c501b7c9462351bb2dc84a04ab3a04cc86793b606464f9157f50dade7",
+            "nonceKey": "85",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 312.897,
+            "submitStartRelativeToHonestMs": -30.728,
+            "responseEndRelativeToHonestMs": 282.169,
+            "simulationRpcMs": 40.116,
+            "traceStartRelativeToHonestMs": 4.371,
+            "traceEndRelativeToHonestMs": 44.488,
+            "mined": {
+              "blockNumber": 122,
+              "blockHash": "0x3df1db2bb437660355436cd6b918595d1f211c21b9afd23c6fe03d9edf92efcf",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x3c3d3822367a595a4a25dfe0200cb29fc3ee49d1642ee546d1de8eb8ffbb5a1e",
+            "nonceKey": "86",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 364.831,
+            "submitStartRelativeToHonestMs": -30.689,
+            "responseEndRelativeToHonestMs": 334.142,
+            "simulationRpcMs": 23.788,
+            "traceStartRelativeToHonestMs": 174.07,
+            "traceEndRelativeToHonestMs": 197.859,
+            "mined": {
+              "blockNumber": 123,
+              "blockHash": "0x30906336a7b8fcd997cee9683c775393caa18ff8bfb76827679a00bacba4614d",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xfbb72cb8eb4f1532b8946895b8b128bf69e3dbf5d2126fcc548ee8f09d573905",
+            "nonceKey": "87",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 196.364,
+            "submitStartRelativeToHonestMs": -30.653,
+            "responseEndRelativeToHonestMs": 165.711,
+            "simulationRpcMs": 20.146,
+            "traceStartRelativeToHonestMs": -0.044,
+            "traceEndRelativeToHonestMs": 20.102,
+            "mined": {
+              "blockNumber": 119,
+              "blockHash": "0xc8dcefedc6fed33241448026953f41c14ad09ae6ec57fc096f8762ee14332206",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xbe93f7a7083b95a8e08b23e0bb3205600b5f7ec0fde58e1b5de75bdd4e67266c",
+            "nonceKey": "88",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 261.435,
+            "submitStartRelativeToHonestMs": -30.618,
+            "responseEndRelativeToHonestMs": 230.816,
+            "simulationRpcMs": 42.374,
+            "traceStartRelativeToHonestMs": 1.04,
+            "traceEndRelativeToHonestMs": 43.414,
+            "mined": {
+              "blockNumber": 121,
+              "blockHash": "0xe9556550940d75650e17f4c9f0501efaa2eadfc8ab3b81606f6f80cd5fdaaa54",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 93,
+            "included": 93,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 101,
+            "included": 93,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 9,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x652352970955481f676d3e5ea2974a2614148894a1400d5cdbb130c1a838d966",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0xd3c80d3ac6a35e56c82d632a17c598c1f34e984e21cf07d4a2e12689c061119d",
+        "honestMs": 32.342,
+        "honestStakeLookupRpcMs": [
+          0.883
+        ],
+        "beforeHonestTraceMs": 10.471,
+        "afterHonestTraceMs": 20.123,
+        "honestSimulationRpcMs": 1.748,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 128,
+        "honestBlockHash": "0xdb9d5004d3d3df7ca7d4ab488438b52848c9fc35976f66fa432e5326593d7f11",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 101,
+            "included": 101,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 101,
+            "included": 101,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 10,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0xdb9d5004d3d3df7ca7d4ab488438b52848c9fc35976f66fa432e5326593d7f11",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x5fddfce75ac914547d3558f467062289afe2a50c1f67be67543842229bea0ec7",
+        "honestMs": 25.252,
+        "honestStakeLookupRpcMs": [
+          0.617
+        ],
+        "beforeHonestTraceMs": 7.792,
+        "afterHonestTraceMs": 16.485,
+        "honestSimulationRpcMs": 0.974,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 129,
+        "honestBlockHash": "0x0f11ebefe4c96a4dfb90d0ceeced75aa55b9460be5f843ce4fa3b5889b760258",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 101,
+            "included": 101,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 101,
+            "included": 101,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 10,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0x0f11ebefe4c96a4dfb90d0ceeced75aa55b9460be5f843ce4fa3b5889b760258",
+        "backgroundBatchMs": 438.656,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x59ada86fa4dda97ae463e2b8910204bfcbebf1f1fb3baa01323d73a03d206987",
+        "honestMs": 418.932,
+        "honestStakeLookupRpcMs": [
+          17.031
+        ],
+        "beforeHonestTraceMs": 367.983,
+        "afterHonestTraceMs": 50.036,
+        "honestSimulationRpcMs": 0.914,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 138,
+        "honestBlockHash": "0x097eebb7f37fdbc910fc6b36639791c857485fc5a11e0e7ab2caaafffaaea26c",
+        "background": [
+          {
+            "hash": "0x448cc7fbf0f0604d76d2b6299511a1904542978275a248339001e141664733c9",
+            "nonceKey": "89",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 303.211,
+            "submitStartRelativeToHonestMs": -33.765,
+            "responseEndRelativeToHonestMs": 269.446,
+            "simulationRpcMs": 42.311,
+            "traceStartRelativeToHonestMs": 2.272,
+            "traceEndRelativeToHonestMs": 44.584,
+            "mined": {
+              "blockNumber": 133,
+              "blockHash": "0xbdabd5eadee7d22c8ea1db7f487af481e3fe59de72fab44de54a8fcbf59aa83c",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x5298cce315d76738078774630e84cacf7ffbabcf65d81d7e036ab0ec8ebe7f66",
+            "nonceKey": "90",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 246.945,
+            "submitStartRelativeToHonestMs": -33.649,
+            "responseEndRelativeToHonestMs": 213.296,
+            "simulationRpcMs": 42.221,
+            "traceStartRelativeToHonestMs": 1.206,
+            "traceEndRelativeToHonestMs": 43.427,
+            "mined": {
+              "blockNumber": 132,
+              "blockHash": "0x53bc54082459670c979916b06d9a6453feda23883cc4574d5fb978cc4dc16834",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x1547d253a619c35e05d71785346f878137833aba9adc4f86397c5511c75282d0",
+            "nonceKey": "91",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 207.22,
+            "submitStartRelativeToHonestMs": -33.589,
+            "responseEndRelativeToHonestMs": 173.631,
+            "simulationRpcMs": 37.484,
+            "traceStartRelativeToHonestMs": 4.614,
+            "traceEndRelativeToHonestMs": 42.098,
+            "mined": {
+              "blockNumber": 131,
+              "blockHash": "0xf6c5be6d3d97f75790c6d010c1a794685e47b8f6bc91462a96cd0ba1a8296536",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xb599f70d37dc10f557f2ba6e8472924e4e1d70b3048d877947931c75be2bd279",
+            "nonceKey": "92",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 187.429,
+            "submitStartRelativeToHonestMs": -33.538,
+            "responseEndRelativeToHonestMs": 153.891,
+            "simulationRpcMs": 21.885,
+            "traceStartRelativeToHonestMs": -0.064,
+            "traceEndRelativeToHonestMs": 21.821,
+            "mined": {
+              "blockNumber": 130,
+              "blockHash": "0x80665603802d222785acb40c2cc0ac4a6cc14d7080fd748788ba4a2727a9aa88",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x31e9a4ffbd9dc88b965e8407c73a647a9c4b0fe980dcfca10869f0f8893bcb56",
+            "nonceKey": "93",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 355.004,
+            "submitStartRelativeToHonestMs": -33.498,
+            "responseEndRelativeToHonestMs": 321.506,
+            "simulationRpcMs": 19.459,
+            "traceStartRelativeToHonestMs": 162.774,
+            "traceEndRelativeToHonestMs": 182.233,
+            "mined": {
+              "blockNumber": 134,
+              "blockHash": "0x3dc3ec20565a40d7fb91723ddb3565775272996211fcb105a08582d0f6490611",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x6bbc0804bc2c05b00cac738d92c99b39c36fb7df83835ca60b2e74b2c6f6574f",
+            "nonceKey": "94",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 422.434,
+            "submitStartRelativeToHonestMs": -33.438,
+            "responseEndRelativeToHonestMs": 388.996,
+            "simulationRpcMs": 20.998,
+            "traceStartRelativeToHonestMs": 264.675,
+            "traceEndRelativeToHonestMs": 285.673,
+            "mined": {
+              "blockNumber": 136,
+              "blockHash": "0xed5d1f88b7f11b0dcf2bc7b6e3824138bf57405ab608bf0fde7589760ea0c8ad",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x26c2f2d7e62a618839906f1266b3b8ab1c3ddfbe622400a550fa5a46e82e49c6",
+            "nonceKey": "95",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 438.263,
+            "submitStartRelativeToHonestMs": -33.372,
+            "responseEndRelativeToHonestMs": 404.892,
+            "simulationRpcMs": 21.809,
+            "traceStartRelativeToHonestMs": 316.68,
+            "traceEndRelativeToHonestMs": 338.489,
+            "mined": {
+              "blockNumber": 137,
+              "blockHash": "0x1ebfba8df467f5eada6330ed43bd25df97df75487c72ae9cc58fe7f23044635e",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x0633de38c330181cd9a219ed41df636212584e26b88c6185fbabbd65c391854d",
+            "nonceKey": "96",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 405.324,
+            "submitStartRelativeToHonestMs": -33.333,
+            "responseEndRelativeToHonestMs": 371.991,
+            "simulationRpcMs": 26.688,
+            "traceStartRelativeToHonestMs": 208.773,
+            "traceEndRelativeToHonestMs": 235.461,
+            "mined": {
+              "blockNumber": 135,
+              "blockHash": "0x536267fc898c1c73e9f6368c5994fe5550a60788422c222258d6fab3f0d37da0",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 101,
+            "included": 101,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 109,
+            "included": 101,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 11,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0x097eebb7f37fdbc910fc6b36639791c857485fc5a11e0e7ab2caaafffaaea26c",
+        "backgroundBatchMs": 440.777,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x5fb0e3ac34d8e7224be6cb1b333dc59c1472c76bfb5ab2b4ae8c862fc7e389b8",
+        "honestMs": 416.447,
+        "honestStakeLookupRpcMs": [
+          17.23
+        ],
+        "beforeHonestTraceMs": 363.541,
+        "afterHonestTraceMs": 51.658,
+        "honestSimulationRpcMs": 1.248,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 147,
+        "honestBlockHash": "0x3b2a2d872d06d630b32020e26de4d7da999a536b5c98bbf4944f2eead9bd70a0",
+        "background": [
+          {
+            "hash": "0xb490d95dbc403c48a1f7328c27c9d22b5be24e74adececfc714adf3f6d432144",
+            "nonceKey": "97",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 214.363,
+            "submitStartRelativeToHonestMs": -37.923,
+            "responseEndRelativeToHonestMs": 176.44,
+            "simulationRpcMs": 37.314,
+            "traceStartRelativeToHonestMs": 3.647,
+            "traceEndRelativeToHonestMs": 40.961,
+            "mined": {
+              "blockNumber": 140,
+              "blockHash": "0x3ad88519d42195af3668ff667fd2d1fbcd72caf7dd6a0345af6adfe04a19554d",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x65a10d1511fbd219fd92ebf9dd392a8fa843d11915453fbb6425e958daf78478",
+            "nonceKey": "98",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 259.038,
+            "submitStartRelativeToHonestMs": -37.784,
+            "responseEndRelativeToHonestMs": 221.254,
+            "simulationRpcMs": 41.075,
+            "traceStartRelativeToHonestMs": 1.12,
+            "traceEndRelativeToHonestMs": 42.195,
+            "mined": {
+              "blockNumber": 141,
+              "blockHash": "0x5412495c17e2b66b2c703ac7fbff2d7e3c097b24ce35c70aa828c1071fd7f34b",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xfe0633603209b34ebaae386197fd104e3c1fa5a8e5784ab41283fc54bdee6153",
+            "nonceKey": "99",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 311.338,
+            "submitStartRelativeToHonestMs": -37.695,
+            "responseEndRelativeToHonestMs": 273.643,
+            "simulationRpcMs": 46.735,
+            "traceStartRelativeToHonestMs": 2.318,
+            "traceEndRelativeToHonestMs": 49.052,
+            "mined": {
+              "blockNumber": 142,
+              "blockHash": "0x379ac5bf49e0542eccffcb9bc20b0a11c007134e1db855aff1f26e445c715791",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xf492657c73d83f268c670b3fd772e064edacafaf280d3531a75d67f8d94514df",
+            "nonceKey": "100",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 186.083,
+            "submitStartRelativeToHonestMs": -37.604,
+            "responseEndRelativeToHonestMs": 148.479,
+            "simulationRpcMs": 20.601,
+            "traceStartRelativeToHonestMs": -0.099,
+            "traceEndRelativeToHonestMs": 20.502,
+            "mined": {
+              "blockNumber": 139,
+              "blockHash": "0xc4042918d77e1fa99ed06e8d285a624001d1b7630aeeb3d56f50464a113aca13",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x0d20f4b115d526517c3b8585b9e655d24b554e9dc54d98d22ecd1a0f4bfbd17a",
+            "nonceKey": "101",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 357.941,
+            "submitStartRelativeToHonestMs": -37.531,
+            "responseEndRelativeToHonestMs": 320.41,
+            "simulationRpcMs": 20.237,
+            "traceStartRelativeToHonestMs": 166.956,
+            "traceEndRelativeToHonestMs": 187.193,
+            "mined": {
+              "blockNumber": 143,
+              "blockHash": "0x51f9dadc24c97286c5d24f67528e23b76335085e6c1da1e814db7d972c1c1420",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x69eb1d1f66eb69909b24e7146712c53a202a1d81dfe3951e8e95d7559cf1c14f",
+            "nonceKey": "102",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 405.257,
+            "submitStartRelativeToHonestMs": -37.459,
+            "responseEndRelativeToHonestMs": 367.798,
+            "simulationRpcMs": 21.194,
+            "traceStartRelativeToHonestMs": 215.732,
+            "traceEndRelativeToHonestMs": 236.926,
+            "mined": {
+              "blockNumber": 144,
+              "blockHash": "0x1f8947d850b18d06509e62265fab837edc91e839cc34675af2ad868c4f983b43",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x8094c5e45fc21a1a211174eeef35c04e28c944896c58db9bc140af1c26a49870",
+            "nonceKey": "103",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 440.244,
+            "submitStartRelativeToHonestMs": -37.391,
+            "responseEndRelativeToHonestMs": 402.853,
+            "simulationRpcMs": 20.548,
+            "traceStartRelativeToHonestMs": 316.297,
+            "traceEndRelativeToHonestMs": 336.844,
+            "mined": {
+              "blockNumber": 146,
+              "blockHash": "0x2de83f75beb8362a41d4b9797d58d6f86b19fa397683de1f610aa35ed75ecb27",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x954d61657607af8a4fac39370c8a53ab8f1ee8ba7c658ed13d14bf3c7d3e7e6a",
+            "nonceKey": "104",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 422.79,
+            "submitStartRelativeToHonestMs": -37.323,
+            "responseEndRelativeToHonestMs": 385.467,
+            "simulationRpcMs": 22.549,
+            "traceStartRelativeToHonestMs": 268.532,
+            "traceEndRelativeToHonestMs": 291.082,
+            "mined": {
+              "blockNumber": 145,
+              "blockHash": "0xafc299b6a94fe8d006436a67f5a79d9c9ddd44e29033cadac12471f87178e04c",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 109,
+            "included": 109,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 117,
+            "included": 109,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 11,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x3b2a2d872d06d630b32020e26de4d7da999a536b5c98bbf4944f2eead9bd70a0",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0xf570a3c23d9adba15f55d687f66e3a28b4538093eae6eef52f6a05b383cd53c5",
+        "honestMs": 36.053,
+        "honestStakeLookupRpcMs": [
+          1.042
+        ],
+        "beforeHonestTraceMs": 16.678,
+        "afterHonestTraceMs": 17.308,
+        "honestSimulationRpcMs": 2.067,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 148,
+        "honestBlockHash": "0xa54cb689de5c024cf4135e42c14a2f92a20653914eca6f4d1bd32c8026d8dd8c",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 117,
+            "included": 117,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 117,
+            "included": 117,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 12,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0xa54cb689de5c024cf4135e42c14a2f92a20653914eca6f4d1bd32c8026d8dd8c",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x1cf2a0898624d751c9affa8a4e0b08c382a95db1384687c30889196ce673bda5",
+        "honestMs": 37.973,
+        "honestStakeLookupRpcMs": [
+          0.812
+        ],
+        "beforeHonestTraceMs": 15.17,
+        "afterHonestTraceMs": 21.315,
+        "honestSimulationRpcMs": 1.489,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 149,
+        "honestBlockHash": "0x524a949f6729e8f0038d58de3a59d5bd3a2f76eff333e04bf296ce2393e12f42",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 117,
+            "included": 117,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 117,
+            "included": 117,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 12,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0x524a949f6729e8f0038d58de3a59d5bd3a2f76eff333e04bf296ce2393e12f42",
+        "backgroundBatchMs": 461.377,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x2e4dbe2236e39cf8d8298f5df6444596e75ab742c23da5d6d1ea36399a035fb1",
+        "honestMs": 438.303,
+        "honestStakeLookupRpcMs": [
+          17.39
+        ],
+        "beforeHonestTraceMs": 367.646,
+        "afterHonestTraceMs": 69.399,
+        "honestSimulationRpcMs": 1.257,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 158,
+        "honestBlockHash": "0xb7afcc3138282d2496019fd29477302e5dcf4d62f00fd9fc520ea268538ae4fc",
+        "background": [
+          {
+            "hash": "0x1586c520b18cd4807f60e9f64a70250c74b255be248645a6b2be0566e2bf187b",
+            "nonceKey": "105",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 257.955,
+            "submitStartRelativeToHonestMs": -38.37,
+            "responseEndRelativeToHonestMs": 219.585,
+            "simulationRpcMs": 47.85,
+            "traceStartRelativeToHonestMs": 2,
+            "traceEndRelativeToHonestMs": 49.85,
+            "mined": {
+              "blockNumber": 152,
+              "blockHash": "0x68921b7981e9b46703bdef0bf060a5ce9a821d56c4a3a3e3fb59a8daee79383d",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xac1b9b473c2aa7abfdca55da6966d2dc31da79a1faaee94c91545c934597d0d9",
+            "nonceKey": "106",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 358.894,
+            "submitStartRelativeToHonestMs": -38.265,
+            "responseEndRelativeToHonestMs": 320.629,
+            "simulationRpcMs": 22.047,
+            "traceStartRelativeToHonestMs": 163.114,
+            "traceEndRelativeToHonestMs": 185.161,
+            "mined": {
+              "blockNumber": 154,
+              "blockHash": "0x7cd8cf2ed469e5b7449b2676dbb89d7a46d6423f464a7fa0a445c6d1dbf41119",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xff1dc65cb5d4c9fe13b608093476b446b48e0c66d12b8d55743bcadd307febe6",
+            "nonceKey": "107",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 191.911,
+            "submitStartRelativeToHonestMs": -38.224,
+            "responseEndRelativeToHonestMs": 153.687,
+            "simulationRpcMs": 22.162,
+            "traceStartRelativeToHonestMs": -0.095,
+            "traceEndRelativeToHonestMs": 22.067,
+            "mined": {
+              "blockNumber": 150,
+              "blockHash": "0x826b003248388cc8c5e60e5f1f400b7b44fa9a805a3ddec3a91ac1f77434b301",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xae6922d9f8083e0310e99850a72b44f15bf100d85e54a1096a9062d24f08e2a0",
+            "nonceKey": "108",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 461.192,
+            "submitStartRelativeToHonestMs": -38.186,
+            "responseEndRelativeToHonestMs": 423.007,
+            "simulationRpcMs": 22.857,
+            "traceStartRelativeToHonestMs": 315.126,
+            "traceEndRelativeToHonestMs": 337.983,
+            "mined": {
+              "blockNumber": 157,
+              "blockHash": "0xa48f07ceb4301ed2ce2ff45014ae5f21ebd4f34881406fe96fdc746fd1e5d52e",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x9ed47112aea0ce892936f680107bbd00fef62b5d0da99613ecb11f8e8dabb387",
+            "nonceKey": "109",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 441.801,
+            "submitStartRelativeToHonestMs": -38.158,
+            "responseEndRelativeToHonestMs": 403.642,
+            "simulationRpcMs": 21.344,
+            "traceStartRelativeToHonestMs": 266.194,
+            "traceEndRelativeToHonestMs": 287.538,
+            "mined": {
+              "blockNumber": 156,
+              "blockHash": "0x2e60274aa821b57ad68d3924f36322ccde0b1431df053cbe84de7e9291a20ab3",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x7e4a1f4717c4fe844e4067b554ca1d0304bcd56f8169d1e90d82900efdeab25d",
+            "nonceKey": "110",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 411.483,
+            "submitStartRelativeToHonestMs": -38.128,
+            "responseEndRelativeToHonestMs": 373.355,
+            "simulationRpcMs": 21.493,
+            "traceStartRelativeToHonestMs": 214.807,
+            "traceEndRelativeToHonestMs": 236.3,
+            "mined": {
+              "blockNumber": 155,
+              "blockHash": "0xf5b7870df0ecf2df2652b717db955d818f96fd17d580f2ea30e831bbcc063b9b",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x651b4caf9d1adccdb6a4c54f1c45756a4952e47ef30906e58e853977a5b9169f",
+            "nonceKey": "111",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 309.635,
+            "submitStartRelativeToHonestMs": -38.079,
+            "responseEndRelativeToHonestMs": 271.556,
+            "simulationRpcMs": 48.508,
+            "traceStartRelativeToHonestMs": 4.322,
+            "traceEndRelativeToHonestMs": 52.83,
+            "mined": {
+              "blockNumber": 153,
+              "blockHash": "0x95b10d4de189c30e6c7e501ae7e964a83683f4c89d93e5d9911cd76b80ceb127",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x0875eb49d7b40d5c1825e1dc44cec5ead3edd8b02155275bfb636612ed41c793",
+            "nonceKey": "112",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 212.914,
+            "submitStartRelativeToHonestMs": -38.044,
+            "responseEndRelativeToHonestMs": 174.87,
+            "simulationRpcMs": 39.356,
+            "traceStartRelativeToHonestMs": 1.029,
+            "traceEndRelativeToHonestMs": 40.385,
+            "mined": {
+              "blockNumber": 151,
+              "blockHash": "0xe3fc8258c216f51a9ab1c5f096b660b21fa268dbd076c5645dca3a984f2ede97",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 117,
+            "included": 117,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 125,
+            "included": 117,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 13,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0xb7afcc3138282d2496019fd29477302e5dcf4d62f00fd9fc520ea268538ae4fc",
+        "backgroundBatchMs": 476.553,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x61ff33eaa533c5fb9d04bd5febdc8ff97b3b747ca582ffc035b64d3e7317e6b5",
+        "honestMs": 438.502,
+        "honestStakeLookupRpcMs": [
+          16.443
+        ],
+        "beforeHonestTraceMs": 381.169,
+        "afterHonestTraceMs": 56.043,
+        "honestSimulationRpcMs": 1.29,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 167,
+        "honestBlockHash": "0x1288baafba906f9b17facf7aa239c73102cb720921cb5ef3bc6f6cbf7bef906e",
+        "background": [
+          {
+            "hash": "0xbf5827e5439fb4b36a12777561e54a3e83835a9d5dbdd52e5b1f600e88ac2954",
+            "nonceKey": "113",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 207.546,
+            "submitStartRelativeToHonestMs": -50.278,
+            "responseEndRelativeToHonestMs": 157.268,
+            "simulationRpcMs": 22.18,
+            "traceStartRelativeToHonestMs": -0.068,
+            "traceEndRelativeToHonestMs": 22.112,
+            "mined": {
+              "blockNumber": 159,
+              "blockHash": "0x4f201735926c2bf8a6a566267c27cd7d9aabcce8cd11a1cc21aa79bdcb2b74aa",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x46583869aaddd85824214b2d0f4343d5a0bddbdf6b4a66069dabc88e44b345d0",
+            "nonceKey": "114",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 294.484,
+            "submitStartRelativeToHonestMs": -50.049,
+            "responseEndRelativeToHonestMs": 244.435,
+            "simulationRpcMs": 47.142,
+            "traceStartRelativeToHonestMs": 1.022,
+            "traceEndRelativeToHonestMs": 48.164,
+            "mined": {
+              "blockNumber": 161,
+              "blockHash": "0xef2a85c207eae69fd7a906bf8b0be7b874ae6090ee2fa240ded5070010826c17",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x8f4df1e201141e72f1557c23bc5bae01fb883a551815fde76cb65366dcd154ec",
+            "nonceKey": "115",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 336.608,
+            "submitStartRelativeToHonestMs": -49.907,
+            "responseEndRelativeToHonestMs": 286.701,
+            "simulationRpcMs": 47.665,
+            "traceStartRelativeToHonestMs": 3.276,
+            "traceEndRelativeToHonestMs": 50.941,
+            "mined": {
+              "blockNumber": 162,
+              "blockHash": "0x361c6f0f2c489e9ae6ffc780570d90d68f2e53005e6d42a04a5ad6ca6bc550fd",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xb66f98a019a1fd4c6a0cb9bd084df48a0deb07f8f54e0e10e08a7088d9c6cffc",
+            "nonceKey": "116",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 230.49,
+            "submitStartRelativeToHonestMs": -49.782,
+            "responseEndRelativeToHonestMs": 180.708,
+            "simulationRpcMs": 36.549,
+            "traceStartRelativeToHonestMs": 4.286,
+            "traceEndRelativeToHonestMs": 40.835,
+            "mined": {
+              "blockNumber": 160,
+              "blockHash": "0xcd470e66795078077a3d9c216075dae5d236f653b166cab8517397ea16b0eccb",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xc41603822103efe452e5e4be67732a85ec10e191d0799a785786d24d2a9d17dd",
+            "nonceKey": "117",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 387.229,
+            "submitStartRelativeToHonestMs": -49.649,
+            "responseEndRelativeToHonestMs": 337.58,
+            "simulationRpcMs": 24.603,
+            "traceStartRelativeToHonestMs": 171.129,
+            "traceEndRelativeToHonestMs": 195.732,
+            "mined": {
+              "blockNumber": 163,
+              "blockHash": "0x19e6ae945ea54268fd83888d5dc92927926a432f0646bfbc4269e6d8b9aa2cc2",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x6a6893e28d34d7516cf4674ba8bd9cefa5e7bd248787470f747c279aef225918",
+            "nonceKey": "118",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 435.502,
+            "submitStartRelativeToHonestMs": -49.529,
+            "responseEndRelativeToHonestMs": 385.973,
+            "simulationRpcMs": 23.649,
+            "traceStartRelativeToHonestMs": 228.131,
+            "traceEndRelativeToHonestMs": 251.78,
+            "mined": {
+              "blockNumber": 164,
+              "blockHash": "0x8529775ae709d1f278a3a54cc154364355d8921dfe38cfbcf6f9cb6d3cdf9593",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x8fb972a1e7a568be097614cc95b43ecb1511535c125659a92c8f56cada309a06",
+            "nonceKey": "119",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 455.212,
+            "submitStartRelativeToHonestMs": -49.415,
+            "responseEndRelativeToHonestMs": 405.797,
+            "simulationRpcMs": 22.386,
+            "traceStartRelativeToHonestMs": 280.964,
+            "traceEndRelativeToHonestMs": 303.35,
+            "mined": {
+              "blockNumber": 165,
+              "blockHash": "0xeeeeff448bdb477b027ddd88fe346455e619300e3545f38ae510cd83ee562e61",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xa87ad652092d3e8483601485bbb20f45cdc68924efd9ac2f60cc3fc6acecc172",
+            "nonceKey": "120",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 475.579,
+            "submitStartRelativeToHonestMs": -49.303,
+            "responseEndRelativeToHonestMs": 426.275,
+            "simulationRpcMs": 21.408,
+            "traceStartRelativeToHonestMs": 332.069,
+            "traceEndRelativeToHonestMs": 353.477,
+            "mined": {
+              "blockNumber": 166,
+              "blockHash": "0x49cdedd727161455a9e67dca8b5b18808ca8184d534096f8e371f9e37d326224",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 125,
+            "included": 125,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 133,
+            "included": 125,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 13,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x1288baafba906f9b17facf7aa239c73102cb720921cb5ef3bc6f6cbf7bef906e",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x169fb096006955665fe11a854fc712264510a5894f9e4906d9a6938890b3ae40",
+        "honestMs": 29.084,
+        "honestStakeLookupRpcMs": [
+          0.695
+        ],
+        "beforeHonestTraceMs": 11.209,
+        "afterHonestTraceMs": 16.936,
+        "honestSimulationRpcMs": 0.938,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 168,
+        "honestBlockHash": "0x9bc76a69badf852c175e467b441d4c29fda6e2897c463f39fda3218b38d050d0",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 133,
+            "included": 133,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 133,
+            "included": 133,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 14,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x9bc76a69badf852c175e467b441d4c29fda6e2897c463f39fda3218b38d050d0",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x219c3f50385aaea0a7239506a646a7a7547d15a50804f107061ff1a6bb0d4f72",
+        "honestMs": 30.89,
+        "honestStakeLookupRpcMs": [
+          0.956
+        ],
+        "beforeHonestTraceMs": 12.045,
+        "afterHonestTraceMs": 17.235,
+        "honestSimulationRpcMs": 1.61,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 169,
+        "honestBlockHash": "0x9e197762338e64ad8d92bcbf6647e80322bba2cf70c62aa9b3265fffa509a517",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 133,
+            "included": 133,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 133,
+            "included": 133,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 14,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0x9e197762338e64ad8d92bcbf6647e80322bba2cf70c62aa9b3265fffa509a517",
+        "backgroundBatchMs": 465.573,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x4895ced12b2cbab3a03b95d0152662f360db19b899ebec555e1b7dd2171acd8a",
+        "honestMs": 438.154,
+        "honestStakeLookupRpcMs": [
+          17.466
+        ],
+        "beforeHonestTraceMs": 370.122,
+        "afterHonestTraceMs": 66.882,
+        "honestSimulationRpcMs": 1.149,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 178,
+        "honestBlockHash": "0xa7a7c960b27d65a4f515ab1c9035f1cdd0b43bcfb9352b25cc64b491e17c4ed7",
+        "background": [
+          {
+            "hash": "0x134af985f505bffbfb9b04f831a7dc3dd2d39cbc3cae8e01c224b4ebf49b1d30",
+            "nonceKey": "121",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 202.792,
+            "submitStartRelativeToHonestMs": -46.152,
+            "responseEndRelativeToHonestMs": 156.64,
+            "simulationRpcMs": 20.168,
+            "traceStartRelativeToHonestMs": -0.064,
+            "traceEndRelativeToHonestMs": 20.104,
+            "mined": {
+              "blockNumber": 170,
+              "blockHash": "0xb804e364cc8f0cf265363796248298206a72f79c22c37a321b9afd975acd2125",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xd11818bf80330600f33a425de18d93fffe9992e2f3a09b73b73022dbba60ec32",
+            "nonceKey": "122",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 223.969,
+            "submitStartRelativeToHonestMs": -45.74,
+            "responseEndRelativeToHonestMs": 178.229,
+            "simulationRpcMs": 35.321,
+            "traceStartRelativeToHonestMs": 4.847,
+            "traceEndRelativeToHonestMs": 40.168,
+            "mined": {
+              "blockNumber": 171,
+              "blockHash": "0xcbbf3679a0c2a0be009b9bd343c733c49170c094d61e5dd2a379ab2e0686532c",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x6cce02adf2bbfa48bbbf981353833aecbe22704227291eb21d580a36791dbcfb",
+            "nonceKey": "123",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 321.216,
+            "submitStartRelativeToHonestMs": -45.46,
+            "responseEndRelativeToHonestMs": 275.756,
+            "simulationRpcMs": 47.219,
+            "traceStartRelativeToHonestMs": 2.356,
+            "traceEndRelativeToHonestMs": 49.576,
+            "mined": {
+              "blockNumber": 173,
+              "blockHash": "0xa692d7b4bce60d95f48fb27723e6e5d500b5a2b8c0c4f419498c4244268f074c",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x8da696aa9bbf69976d01e2bad5d6a6c9fcbdb538998c18bcfa35fe69450e5d5a",
+            "nonceKey": "124",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 269.809,
+            "submitStartRelativeToHonestMs": -45.241,
+            "responseEndRelativeToHonestMs": 224.568,
+            "simulationRpcMs": 39.999,
+            "traceStartRelativeToHonestMs": 1.218,
+            "traceEndRelativeToHonestMs": 41.217,
+            "mined": {
+              "blockNumber": 172,
+              "blockHash": "0x1e6b94a0597dac309131eccc8cc72f1e93ad37ac5f893344cfcd492031a80fb2",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xcf1858143213b6a212a8af83fd437d12ad6d91f6b55c2658151b1b3c1968a95e",
+            "nonceKey": "125",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 420.806,
+            "submitStartRelativeToHonestMs": -45.048,
+            "responseEndRelativeToHonestMs": 375.758,
+            "simulationRpcMs": 21.87,
+            "traceStartRelativeToHonestMs": 218.129,
+            "traceEndRelativeToHonestMs": 240,
+            "mined": {
+              "blockNumber": 175,
+              "blockHash": "0x8a07a3a0b0d530e283285515410d6d305b40ca13ccc1bd1126b37dbc268f43f9",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x256855f08f892832ef84b7afb04798f6362d08fec497e65235ed8d2e149c17d8",
+            "nonceKey": "126",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 464.281,
+            "submitStartRelativeToHonestMs": -44.86,
+            "responseEndRelativeToHonestMs": 419.421,
+            "simulationRpcMs": 23.393,
+            "traceStartRelativeToHonestMs": 319.066,
+            "traceEndRelativeToHonestMs": 342.459,
+            "mined": {
+              "blockNumber": 177,
+              "blockHash": "0x1e7b72f7831d1d7a2edd561e34b074ba8c9170879ea5ed9ec8c7e31f93aecd62",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x634a9b7719919d7492f4027d2533b9aa4885719fea34b6086fafffaeabfcf81c",
+            "nonceKey": "127",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 443.431,
+            "submitStartRelativeToHonestMs": -44.626,
+            "responseEndRelativeToHonestMs": 398.805,
+            "simulationRpcMs": 21.64,
+            "traceStartRelativeToHonestMs": 269.749,
+            "traceEndRelativeToHonestMs": 291.389,
+            "mined": {
+              "blockNumber": 176,
+              "blockHash": "0x4920ca692f22ca7db58f1341f07a204cd63ef2300a6627958b6ca3cc9c306cbe",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x7b71b56df321b9e51574dabd35beb679f231a21bb41f2e10bb681dc8435d8d39",
+            "nonceKey": "128",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 369.404,
+            "submitStartRelativeToHonestMs": -44.423,
+            "responseEndRelativeToHonestMs": 324.981,
+            "simulationRpcMs": 22.123,
+            "traceStartRelativeToHonestMs": 168.107,
+            "traceEndRelativeToHonestMs": 190.23,
+            "mined": {
+              "blockNumber": 174,
+              "blockHash": "0x59033240e5ee3963266cec836332c714bb352d5884d698a6c8fe7d9f24c75fa8",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 133,
+            "included": 133,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 141,
+            "included": 133,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 15,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0xa7a7c960b27d65a4f515ab1c9035f1cdd0b43bcfb9352b25cc64b491e17c4ed7",
+        "backgroundBatchMs": 511.067,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0xc7182cd0139a19a91da273f5e529639148c9f3091a4ab77c09ba9a3fe1beb884",
+        "honestMs": 479.794,
+        "honestStakeLookupRpcMs": [
+          19.871
+        ],
+        "beforeHonestTraceMs": 409.967,
+        "afterHonestTraceMs": 68.546,
+        "honestSimulationRpcMs": 1.281,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 187,
+        "honestBlockHash": "0x44677455dfc23517043c9c3a41ebcae235226d652b9ab3073f81e1ed9623038f",
+        "background": [
+          {
+            "hash": "0x8b8bb1ea5b07ad589b1c9e9475b857c35623e654e80ea710c7de8bfca8127032",
+            "nonceKey": "129",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 252.912,
+            "submitStartRelativeToHonestMs": -48.045,
+            "responseEndRelativeToHonestMs": 204.867,
+            "simulationRpcMs": 37.912,
+            "traceStartRelativeToHonestMs": 4.196,
+            "traceEndRelativeToHonestMs": 42.108,
+            "mined": {
+              "blockNumber": 180,
+              "blockHash": "0x9f14ab98a55ddf5e47ef30caaf00d70876aa077b6ffdbcf408402ed1d5bea71a",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x396f89da2277699e8b5763eced99ed96ab27039168a28868057d7a39b6e1f3b6",
+            "nonceKey": "130",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 358.185,
+            "submitStartRelativeToHonestMs": -47.896,
+            "responseEndRelativeToHonestMs": 310.29,
+            "simulationRpcMs": 53.129,
+            "traceStartRelativeToHonestMs": 2.669,
+            "traceEndRelativeToHonestMs": 55.798,
+            "mined": {
+              "blockNumber": 182,
+              "blockHash": "0x92939110643b0c2bb9c524a1936096aeee87d1afbd2b2b7cf74eb45739edd18e",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xe5650ff585c9a2bf0946b1e757ed1dddee2f11bb4c4d5b14f250e5d67386ec8b",
+            "nonceKey": "131",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 463.866,
+            "submitStartRelativeToHonestMs": -47.845,
+            "responseEndRelativeToHonestMs": 416.02,
+            "simulationRpcMs": 24.782,
+            "traceStartRelativeToHonestMs": 250.932,
+            "traceEndRelativeToHonestMs": 275.714,
+            "mined": {
+              "blockNumber": 184,
+              "blockHash": "0xb2f87aa6796b53a9558ca138ed6ccb34586927a6c69f703abae89a7b1d9bec59",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x4183422394ee1d6d5f75cd1b1bd1caea2899f7dda97f424501ea182a2be7d81e",
+            "nonceKey": "132",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 407.446,
+            "submitStartRelativeToHonestMs": -47.807,
+            "responseEndRelativeToHonestMs": 359.64,
+            "simulationRpcMs": 31.309,
+            "traceStartRelativeToHonestMs": 190.955,
+            "traceEndRelativeToHonestMs": 222.264,
+            "mined": {
+              "blockNumber": 183,
+              "blockHash": "0xea7a21e0380fab066620a69d9070f8e5fffc4ef3c7b2b8919097cef49b2dfc91",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xadccb54216aa5ef7a2fb0074f1ca40b86d2bb2cb8467cbc1a9cc97c7178d4e8b",
+            "nonceKey": "133",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 228.804,
+            "submitStartRelativeToHonestMs": -47.772,
+            "responseEndRelativeToHonestMs": 181.032,
+            "simulationRpcMs": 22.922,
+            "traceStartRelativeToHonestMs": -0.097,
+            "traceEndRelativeToHonestMs": 22.825,
+            "mined": {
+              "blockNumber": 179,
+              "blockHash": "0x370f6f9caa204b5332bc41dbd372d2e8298a9ff8c3979a586d1f87d62fe6455d",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xe489e1d5743c18f8dc1a09003c42577feef33c7452619e372529926ee8b12c98",
+            "nonceKey": "134",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 305.034,
+            "submitStartRelativeToHonestMs": -47.737,
+            "responseEndRelativeToHonestMs": 257.298,
+            "simulationRpcMs": 50.22,
+            "traceStartRelativeToHonestMs": 1.179,
+            "traceEndRelativeToHonestMs": 51.399,
+            "mined": {
+              "blockNumber": 181,
+              "blockHash": "0xb7e01263ecbd68f3728e51f9b650ed2be15a82d8b91ed5b2e02763678c40082e",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xf3bb8d3d775b539e9f286901b7cdaba70606fca5c1ca2341d076c6ad9f217d4a",
+            "nonceKey": "135",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 510.721,
+            "submitStartRelativeToHonestMs": -47.7,
+            "responseEndRelativeToHonestMs": 463.022,
+            "simulationRpcMs": 25.722,
+            "traceStartRelativeToHonestMs": 353.754,
+            "traceEndRelativeToHonestMs": 379.476,
+            "mined": {
+              "blockNumber": 186,
+              "blockHash": "0xe28134c45e976bce2f83ab074196ee338d18d090d8bff6a59d5164e85d605517",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x1ab151e1c57577a57a92cf10c5033ba631b6be62a96ce6454ae17e1ed68bbb7d",
+            "nonceKey": "136",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 487.809,
+            "submitStartRelativeToHonestMs": -47.665,
+            "responseEndRelativeToHonestMs": 440.145,
+            "simulationRpcMs": 20.606,
+            "traceStartRelativeToHonestMs": 304.506,
+            "traceEndRelativeToHonestMs": 325.112,
+            "mined": {
+              "blockNumber": 185,
+              "blockHash": "0x356635de3c7e29a7515539b868e8b847137c201c268098dc9145af471618b8c3",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 141,
+            "included": 141,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 149,
+            "included": 141,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 15,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x44677455dfc23517043c9c3a41ebcae235226d652b9ab3073f81e1ed9623038f",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x2ef0217ec6bf6bcdf207b5742d6110776d4c1948a41cbd79b27113821a571f18",
+        "honestMs": 28.993,
+        "honestStakeLookupRpcMs": [
+          0.632
+        ],
+        "beforeHonestTraceMs": 9.378,
+        "afterHonestTraceMs": 18.831,
+        "honestSimulationRpcMs": 0.784,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 188,
+        "honestBlockHash": "0x372989f0e0e70bffde4ccc75291f7398b093a4a8e27c647978089ef21e2e4d05",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 149,
+            "included": 149,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 149,
+            "included": 149,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 16,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x372989f0e0e70bffde4ccc75291f7398b093a4a8e27c647978089ef21e2e4d05",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0xce1e423ee69e29357c7e52b13f90c515ac4b3c2c617e21359b5edd689b564e5b",
+        "honestMs": 35.459,
+        "honestStakeLookupRpcMs": [
+          1.006
+        ],
+        "beforeHonestTraceMs": 11.521,
+        "afterHonestTraceMs": 21.592,
+        "honestSimulationRpcMs": 2.346,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 189,
+        "honestBlockHash": "0xe34e7ccc975461f3ff64a745716eb62dd89ae0578a400113347e0d20967fb40a",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 149,
+            "included": 149,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 149,
+            "included": 149,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 16,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0xe34e7ccc975461f3ff64a745716eb62dd89ae0578a400113347e0d20967fb40a",
+        "backgroundBatchMs": 472.774,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x94e98d625d53c5d3b0b82c3e436d76f52d4c0664c67e5203a2e8515af8353f08",
+        "honestMs": 442.998,
+        "honestStakeLookupRpcMs": [
+          15.956
+        ],
+        "beforeHonestTraceMs": 369.572,
+        "afterHonestTraceMs": 72.479,
+        "honestSimulationRpcMs": 0.947,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 198,
+        "honestBlockHash": "0x466752abbcab7ecd38d6f4675ef5ad97a5773da96b51ed659d10f340a4a8a676",
+        "background": [
+          {
+            "hash": "0x8d9db0d6b1373eb62369085a3f51eea77bf7933ca56834883df1b56467a74d5c",
+            "nonceKey": "137",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 225.613,
+            "submitStartRelativeToHonestMs": -47.988,
+            "responseEndRelativeToHonestMs": 177.625,
+            "simulationRpcMs": 41.968,
+            "traceStartRelativeToHonestMs": 1.266,
+            "traceEndRelativeToHonestMs": 43.234,
+            "mined": {
+              "blockNumber": 191,
+              "blockHash": "0x0a181c50755d2f6dd6cf4ef25d0a2e549a6c563e5e660a530133a5fe426a11bf",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xd812e2e65892e8b09889300438932d00cb1a656d3c4ed3e4f7545f4866e66024",
+            "nonceKey": "138",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 326.421,
+            "submitStartRelativeToHonestMs": -47.801,
+            "responseEndRelativeToHonestMs": 278.621,
+            "simulationRpcMs": 50.626,
+            "traceStartRelativeToHonestMs": 4.458,
+            "traceEndRelativeToHonestMs": 55.084,
+            "mined": {
+              "blockNumber": 193,
+              "blockHash": "0x46af7953abffa489ee0624ee6dc1dfbb92c50eac0df6ce36f84cdb4c0f01064e",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xbb384b3186c98baec52ca4ab92e815e1c2325c3347e1b6759e47ea94725dca35",
+            "nonceKey": "139",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 201.846,
+            "submitStartRelativeToHonestMs": -47.654,
+            "responseEndRelativeToHonestMs": 154.193,
+            "simulationRpcMs": 23.959,
+            "traceStartRelativeToHonestMs": -0.058,
+            "traceEndRelativeToHonestMs": 23.901,
+            "mined": {
+              "blockNumber": 190,
+              "blockHash": "0x579f1cec14450cd8fef1cd930a91185b0edf4adb9e68b6d3731c4892611915ff",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xe1a92683075a3f4bbbd15d7a57c1d4b830ccf4bd904dcd07f227d7657f689f4c",
+            "nonceKey": "140",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 448.781,
+            "submitStartRelativeToHonestMs": -47.507,
+            "responseEndRelativeToHonestMs": 401.274,
+            "simulationRpcMs": 20.989,
+            "traceStartRelativeToHonestMs": 271.415,
+            "traceEndRelativeToHonestMs": 292.404,
+            "mined": {
+              "blockNumber": 196,
+              "blockHash": "0x96aeab9400c84a5629bd968d724c6c0e9499ae59c2b2f1942f8659b78822e7a0",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xcc12f6ee0d19aaa22378f4f7e689941ac99650e6dfaef440cde5caaac28302ab",
+            "nonceKey": "141",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 372.796,
+            "submitStartRelativeToHonestMs": -47.461,
+            "responseEndRelativeToHonestMs": 325.335,
+            "simulationRpcMs": 24.361,
+            "traceStartRelativeToHonestMs": 164.742,
+            "traceEndRelativeToHonestMs": 189.103,
+            "mined": {
+              "blockNumber": 194,
+              "blockHash": "0x1fe9c3fe22fe5c985432849f5aca8614578f21f73556a5c1a86234a359ca8056",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xef3132828c1dcbc4398e80b24f5cbe33f55e8df5a624cd18bc995beb005c0ea2",
+            "nonceKey": "142",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 472.214,
+            "submitStartRelativeToHonestMs": -47.429,
+            "responseEndRelativeToHonestMs": 424.785,
+            "simulationRpcMs": 21.804,
+            "traceStartRelativeToHonestMs": 319.563,
+            "traceEndRelativeToHonestMs": 341.367,
+            "mined": {
+              "blockNumber": 197,
+              "blockHash": "0xafcbc9635e458df742829635b34c8d7a902e9510c2ce606da34a9fbc81a4e656",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x7561983cdb59f31dc654a058ad184a1a569da1c489aa229baf435d3df2f9b2a7",
+            "nonceKey": "143",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 272.159,
+            "submitStartRelativeToHonestMs": -47.403,
+            "responseEndRelativeToHonestMs": 224.756,
+            "simulationRpcMs": 48.522,
+            "traceStartRelativeToHonestMs": 2.348,
+            "traceEndRelativeToHonestMs": 50.87,
+            "mined": {
+              "blockNumber": 192,
+              "blockHash": "0x0a7283bf54d62e6251b9225ba8aaba28b24a9e85da724cf6f0a4d8ff677b038c",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xb5a6ec64e2bef6059796a25b2ac4a909d777110d16a684393a6efb26dcf28182",
+            "nonceKey": "144",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 422.799,
+            "submitStartRelativeToHonestMs": -47.377,
+            "responseEndRelativeToHonestMs": 375.422,
+            "simulationRpcMs": 23.028,
+            "traceStartRelativeToHonestMs": 218.921,
+            "traceEndRelativeToHonestMs": 241.949,
+            "mined": {
+              "blockNumber": 195,
+              "blockHash": "0x6ffae8514b69416dd8411996e9543a34fcd1215ef362fa71421024f50206a50a",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 149,
+            "included": 149,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 157,
+            "included": 149,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 17,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0x466752abbcab7ecd38d6f4675ef5ad97a5773da96b51ed659d10f340a4a8a676",
+        "backgroundBatchMs": 494.665,
+        "peakTraces": 2,
+        "peakBackgroundTraces": 2,
+        "honestHash": "0x6687293a9ac933fae83e6fea78300c1109ac453144717a85fc39ff565443db37",
+        "honestMs": 461.447,
+        "honestStakeLookupRpcMs": [
+          14.598
+        ],
+        "beforeHonestTraceMs": 385.348,
+        "afterHonestTraceMs": 75.046,
+        "honestSimulationRpcMs": 1.053,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 207,
+        "honestBlockHash": "0x1625f289ac3533185c100f4f808fd42a385b6448e854efd20453f8cbff6cb334",
+        "background": [
+          {
+            "hash": "0x350e13b8c7ee8c4e79120696a66d1e3cd6658ef437d4eb24cff4fb4f5c2874c2",
+            "nonceKey": "145",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 216.967,
+            "submitStartRelativeToHonestMs": -51.612,
+            "responseEndRelativeToHonestMs": 165.355,
+            "simulationRpcMs": 25.012,
+            "traceStartRelativeToHonestMs": -0.109,
+            "traceEndRelativeToHonestMs": 24.903,
+            "mined": {
+              "blockNumber": 199,
+              "blockHash": "0x12c97c75ced5e86c34c3b79b3df4beb9886ec4cba95ae738b74ce55b89f1d503",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xcf6ff6529dd7a18b895b8fbaf4fce01eb5936b6dcded59cfb5d1eec45a29f507",
+            "nonceKey": "146",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 241.836,
+            "submitStartRelativeToHonestMs": -51.456,
+            "responseEndRelativeToHonestMs": 190.379,
+            "simulationRpcMs": 45.109,
+            "traceStartRelativeToHonestMs": 1.56,
+            "traceEndRelativeToHonestMs": 46.669,
+            "mined": {
+              "blockNumber": 200,
+              "blockHash": "0xc3ea497feccb88a024e67f541376e88a031e8b1d37e252d121b3780413174998",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x201e3b1a5d6472f578695a0b6c5992dd18011ee017a47dae3c2915bb8651f21c",
+            "nonceKey": "147",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 287.938,
+            "submitStartRelativeToHonestMs": -51.408,
+            "responseEndRelativeToHonestMs": 236.53,
+            "simulationRpcMs": 21.199,
+            "traceStartRelativeToHonestMs": 89.107,
+            "traceEndRelativeToHonestMs": 110.306,
+            "mined": {
+              "blockNumber": 201,
+              "blockHash": "0x769b96506860a33e8f6906b873cf7a69c1ace6e177c00f8e787cf458f93b770c",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xaab4cffbf00d479f91b56215b05cbf43552b3879606fa8dcfd5d0e24ff91f0ab",
+            "nonceKey": "148",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 471.206,
+            "submitStartRelativeToHonestMs": -51.371,
+            "responseEndRelativeToHonestMs": 419.835,
+            "simulationRpcMs": 25.826,
+            "traceStartRelativeToHonestMs": 282.296,
+            "traceEndRelativeToHonestMs": 308.122,
+            "mined": {
+              "blockNumber": 205,
+              "blockHash": "0xcdec86f82d7586f04dcf96b84247045d7110721a8c468b6fa873a7f8274a3dfa",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xa53f9f150b89a6c41733d3e495940f06d5c76f6d0fda74c856c28c72db54c2aa",
+            "nonceKey": "149",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 395.895,
+            "submitStartRelativeToHonestMs": -51.341,
+            "responseEndRelativeToHonestMs": 344.554,
+            "simulationRpcMs": 21.244,
+            "traceStartRelativeToHonestMs": 178.026,
+            "traceEndRelativeToHonestMs": 199.27,
+            "mined": {
+              "blockNumber": 203,
+              "blockHash": "0xc833e09ae313ebd2047dbd718d23a7eabddb57d05d993ed08d968240920ee20b",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xf99b13323abae656c4254cce740866d8c4f11518001be7d715eb5be444fe5103",
+            "nonceKey": "150",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 340.85,
+            "submitStartRelativeToHonestMs": -51.313,
+            "responseEndRelativeToHonestMs": 289.537,
+            "simulationRpcMs": 46.868,
+            "traceStartRelativeToHonestMs": 90.265,
+            "traceEndRelativeToHonestMs": 137.133,
+            "mined": {
+              "blockNumber": 202,
+              "blockHash": "0xb9150f33b8e60f9de89b91482b6c77cf2c12fc5273c1eb78b3c3ae8e33ccee96",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x09a526edcc5ae8af9afe2ff9ade75b24ca0927a7116e48682ee2642d2c964e26",
+            "nonceKey": "151",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 447.224,
+            "submitStartRelativeToHonestMs": -51.286,
+            "responseEndRelativeToHonestMs": 395.938,
+            "simulationRpcMs": 27.237,
+            "traceStartRelativeToHonestMs": 226.274,
+            "traceEndRelativeToHonestMs": 253.511,
+            "mined": {
+              "blockNumber": 204,
+              "blockHash": "0xadf11aa6a04992211041e5afceeb63ab8b0b8f1ace7f28cabed98e8d8351fbf3",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xb1aafea2a38ebf855098a462519471b2da1b612494f24e4a5fd8342b05509a21",
+            "nonceKey": "152",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 494.312,
+            "submitStartRelativeToHonestMs": -51.259,
+            "responseEndRelativeToHonestMs": 443.053,
+            "simulationRpcMs": 20.82,
+            "traceStartRelativeToHonestMs": 337.84,
+            "traceEndRelativeToHonestMs": 358.66,
+            "mined": {
+              "blockNumber": 206,
+              "blockHash": "0x3619a0ecca0d70565cd594c0720d4626c052aac82cdb53b742e33feb10191753",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 157,
+            "included": 157,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 165,
+            "included": 157,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 17,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0x1625f289ac3533185c100f4f808fd42a385b6448e854efd20453f8cbff6cb334",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x72a5df011716bbef2a1f4067d76ca40e98dc6118f1299cfb4e3fb665b40d02bc",
+        "honestMs": 32.46,
+        "honestStakeLookupRpcMs": [
+          0.739
+        ],
+        "beforeHonestTraceMs": 9.641,
+        "afterHonestTraceMs": 21.565,
+        "honestSimulationRpcMs": 1.255,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 208,
+        "honestBlockHash": "0xbf0e5ab3ac498982c35e6fc388ceb18a88ceedd24e8612c597b9acce1043e865",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 165,
+            "included": 165,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 165,
+            "included": 165,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 18,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0xbf0e5ab3ac498982c35e6fc388ceb18a88ceedd24e8612c597b9acce1043e865",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0xd51c9283caeb9d4ae6207d1e5f33ac51cfb2253a8e7c76c3f71b41e21d11a9bd",
+        "honestMs": 42.81,
+        "honestStakeLookupRpcMs": [
+          1.158
+        ],
+        "beforeHonestTraceMs": 15.081,
+        "afterHonestTraceMs": 25.784,
+        "honestSimulationRpcMs": 1.946,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 209,
+        "honestBlockHash": "0xbd687e3365e2616c66e27c2345cd3197ce6a81b32b789bf0a0a8ba637e148bfe",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 165,
+            "included": 165,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 165,
+            "included": 165,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 18,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0xbd687e3365e2616c66e27c2345cd3197ce6a81b32b789bf0a0a8ba637e148bfe",
+        "backgroundBatchMs": 507.43,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x18c0e002ea298747630e9cc3836587e2fcfaf29ecc88689c3ec981e58109da1c",
+        "honestMs": 474.835,
+        "honestStakeLookupRpcMs": [
+          17.09
+        ],
+        "beforeHonestTraceMs": 398.886,
+        "afterHonestTraceMs": 74.642,
+        "honestSimulationRpcMs": 1.307,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 218,
+        "honestBlockHash": "0x0478c87ab3ddefb826559b04692fa1d97e71a4db6b2330b4f9ac47d09cf7c076",
+        "background": [
+          {
+            "hash": "0xf138f777586bb4ff6602ab28ae5fdfe1660d00290ff29aaa8347b64c24e81c50",
+            "nonceKey": "153",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 350.764,
+            "submitStartRelativeToHonestMs": -52.005,
+            "responseEndRelativeToHonestMs": 298.76,
+            "simulationRpcMs": 44.573,
+            "traceStartRelativeToHonestMs": 3.477,
+            "traceEndRelativeToHonestMs": 48.051,
+            "mined": {
+              "blockNumber": 213,
+              "blockHash": "0x2f7b1981fac6ca2cb2b2eef0ea629092b76ab6697a4e27e9c70c248507cdc131",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x704f9ffe693f770cdc719bd4ab25c06dd7fba313f402369f37a03a1476bdc634",
+            "nonceKey": "154",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 233.763,
+            "submitStartRelativeToHonestMs": -51.648,
+            "responseEndRelativeToHonestMs": 182.114,
+            "simulationRpcMs": 35.782,
+            "traceStartRelativeToHonestMs": 4.651,
+            "traceEndRelativeToHonestMs": 40.433,
+            "mined": {
+              "blockNumber": 211,
+              "blockHash": "0xfffda3751cf9a58b14e0b8cd6cc43a5327c7066b9b68ae6770eec8a70f89bf2b",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xbbd5cd0ed305b02c90138977a6f51156d42170097af02ed884a61f786c8ac24f",
+            "nonceKey": "155",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 207.895,
+            "submitStartRelativeToHonestMs": -51.442,
+            "responseEndRelativeToHonestMs": 156.453,
+            "simulationRpcMs": 19.773,
+            "traceStartRelativeToHonestMs": -0.066,
+            "traceEndRelativeToHonestMs": 19.708,
+            "mined": {
+              "blockNumber": 210,
+              "blockHash": "0xbbb20e77e1544784b731acce2b0742702c681d3701ba36bfd027eeaca75cadfe",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x8bc0921da0f5f5342777d7be481481e8b45842ab88fb2d8656ba6110b22c8de4",
+            "nonceKey": "156",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 400.646,
+            "submitStartRelativeToHonestMs": -51.267,
+            "responseEndRelativeToHonestMs": 349.379,
+            "simulationRpcMs": 23.628,
+            "traceStartRelativeToHonestMs": 170.537,
+            "traceEndRelativeToHonestMs": 194.166,
+            "mined": {
+              "blockNumber": 214,
+              "blockHash": "0x72409d8427666ac76d2fac1b7af0d78204a0bccba1c3e5d26e4a4facc4b362f9",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x44f23751860ae731f2a1f2954b895f4613dcc6f955b3ce441decac61695a7d0e",
+            "nonceKey": "157",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 455.225,
+            "submitStartRelativeToHonestMs": -51.096,
+            "responseEndRelativeToHonestMs": 404.129,
+            "simulationRpcMs": 23.967,
+            "traceStartRelativeToHonestMs": 225.259,
+            "traceEndRelativeToHonestMs": 249.226,
+            "mined": {
+              "blockNumber": 215,
+              "blockHash": "0x29e523de3f17bafb05672c7586143bc80efa76f5b11e9cdfe957d3c2d8aeeb24",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x1bb49497f724996d9da6c1c0c76d86a20d357b244668adcd746469d0394e8357",
+            "nonceKey": "158",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 482.496,
+            "submitStartRelativeToHonestMs": -50.922,
+            "responseEndRelativeToHonestMs": 431.574,
+            "simulationRpcMs": 28.274,
+            "traceStartRelativeToHonestMs": 284.651,
+            "traceEndRelativeToHonestMs": 312.925,
+            "mined": {
+              "blockNumber": 216,
+              "blockHash": "0x34ce20659d71e044821b3c4bbf3375a55eefac893b51963acdf79e275e5746c9",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x1ac5057647b3cd4b5abaefeab9759a9d66f44660c3c27157f1cb13bc1738d3d2",
+            "nonceKey": "159",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 506.153,
+            "submitStartRelativeToHonestMs": -50.728,
+            "responseEndRelativeToHonestMs": 455.425,
+            "simulationRpcMs": 23.368,
+            "traceStartRelativeToHonestMs": 343.018,
+            "traceEndRelativeToHonestMs": 366.386,
+            "mined": {
+              "blockNumber": 217,
+              "blockHash": "0x48c111845cf1297966010a85713f6350159443faaee7640ffb00ca0cc25dd3be",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xc182e372460bce001b492ba3d77824269de49d1a1a69fa56c136621884806ac5",
+            "nonceKey": "160",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 297.564,
+            "submitStartRelativeToHonestMs": -50.301,
+            "responseEndRelativeToHonestMs": 247.262,
+            "simulationRpcMs": 40.807,
+            "traceStartRelativeToHonestMs": 1.142,
+            "traceEndRelativeToHonestMs": 41.948,
+            "mined": {
+              "blockNumber": 212,
+              "blockHash": "0x190d9ad267b37e30dd0d0a4d1e16193f96ab837d21557d47bdd2ed4a8cfe32fe",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 165,
+            "included": 165,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 173,
+            "included": 165,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 19,
+        "kind": "valid",
+        "burst": 8,
+        "admissionHeadHash": "0x0478c87ab3ddefb826559b04692fa1d97e71a4db6b2330b4f9ac47d09cf7c076",
+        "backgroundBatchMs": 514.859,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x4792f8abe0244f63f0f5fd6a08073c0424ebb4904514d651daa7643edef87185",
+        "honestMs": 488.637,
+        "honestStakeLookupRpcMs": [
+          18.268
+        ],
+        "beforeHonestTraceMs": 403.635,
+        "afterHonestTraceMs": 83.721,
+        "honestSimulationRpcMs": 1.281,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 227,
+        "honestBlockHash": "0xbe73ec69243c705bb5241592e13962d58560e92cc7d9487b8cf7ef212e0eb710",
+        "background": [
+          {
+            "hash": "0xa1885c01392118875e4d7fbb4b28c284975ae8230c19b3f3c542bf64440c0390",
+            "nonceKey": "161",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 297.648,
+            "submitStartRelativeToHonestMs": -46.782,
+            "responseEndRelativeToHonestMs": 250.866,
+            "simulationRpcMs": 52.036,
+            "traceStartRelativeToHonestMs": 3.118,
+            "traceEndRelativeToHonestMs": 55.154,
+            "mined": {
+              "blockNumber": 221,
+              "blockHash": "0x959697b6781c05005e0de826b93ad455682e3b68b539ce1b1eb476671c32b98e",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x36ec766df812f01c47aa21479e6117194af8269df8766a421f88e0778f6d5da5",
+            "nonceKey": "162",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 246.01,
+            "submitStartRelativeToHonestMs": -46.69,
+            "responseEndRelativeToHonestMs": 199.32,
+            "simulationRpcMs": 46.903,
+            "traceStartRelativeToHonestMs": 2.121,
+            "traceEndRelativeToHonestMs": 49.024,
+            "mined": {
+              "blockNumber": 220,
+              "blockHash": "0x2012662822d94f6a9b70e5d82c5247edff10cb0279200c1b7e053f6e6de2be3c",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x0625b3f090ff214f89015afcc09153d490797f0da6764297a4ddc423fc320dc1",
+            "nonceKey": "163",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 401.713,
+            "submitStartRelativeToHonestMs": -46.649,
+            "responseEndRelativeToHonestMs": 355.064,
+            "simulationRpcMs": 19.942,
+            "traceStartRelativeToHonestMs": 187.474,
+            "traceEndRelativeToHonestMs": 207.417,
+            "mined": {
+              "blockNumber": 223,
+              "blockHash": "0xbd3401f85610a04e9fc024d75126d0fb27bdb9386f828774df2f50e3e842e0d9",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x3874a1879bff54a087f099be89b5e867ebff89a652b2b1f71c99f98d4e63c7eb",
+            "nonceKey": "164",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 457.008,
+            "submitStartRelativeToHonestMs": -46.611,
+            "responseEndRelativeToHonestMs": 410.397,
+            "simulationRpcMs": 22.768,
+            "traceStartRelativeToHonestMs": 241.669,
+            "traceEndRelativeToHonestMs": 264.437,
+            "mined": {
+              "blockNumber": 224,
+              "blockHash": "0x364b0a6ec88eaa17c9f92a339119c6228b4acdc7199ed41af5123524f02bb549",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x8cb021c35cf39ac9cbfdca381eefd7b1003a245d53ea3c1569d7243e62e82a39",
+            "nonceKey": "165",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 488.426,
+            "submitStartRelativeToHonestMs": -46.568,
+            "responseEndRelativeToHonestMs": 441.858,
+            "simulationRpcMs": 21.45,
+            "traceStartRelativeToHonestMs": 294.407,
+            "traceEndRelativeToHonestMs": 315.857,
+            "mined": {
+              "blockNumber": 225,
+              "blockHash": "0xafe6bda825892ee5b32c7c27b5eebb9f16511682ea6ca26ca6a2eae31bf5323f",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x43595df750ca77bd7fdd05a4259cd087254a3365a0680ed611baca156ac8ad89",
+            "nonceKey": "166",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 514.617,
+            "submitStartRelativeToHonestMs": -46.539,
+            "responseEndRelativeToHonestMs": 468.077,
+            "simulationRpcMs": 26.561,
+            "traceStartRelativeToHonestMs": 346.67,
+            "traceEndRelativeToHonestMs": 373.23,
+            "mined": {
+              "blockNumber": 226,
+              "blockHash": "0xda8ab7f1d7c415263751ae245bfc7f154f3f04a1fee3ca80ff93f2f0e65405e7",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0x29b66ef28e2d42ecebc31c7e7a2bb3686acc6a3046a0d026d2639f534f2e4371",
+            "nonceKey": "167",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 218.205,
+            "submitStartRelativeToHonestMs": -46.514,
+            "responseEndRelativeToHonestMs": 171.692,
+            "simulationRpcMs": 30.255,
+            "traceStartRelativeToHonestMs": -0.078,
+            "traceEndRelativeToHonestMs": 30.177,
+            "mined": {
+              "blockNumber": 219,
+              "blockHash": "0xf2c4e659ff869460a01a9838a6f936f84fd0c240984941f61df8211ccc8408ff",
+              "verifyGas": 993512
+            }
+          },
+          {
+            "hash": "0xa8f75da9d659436bbef258946b95c28dc8679a1ce620a287b5c9494a17970221",
+            "nonceKey": "168",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 348.201,
+            "submitStartRelativeToHonestMs": -46.488,
+            "responseEndRelativeToHonestMs": 301.713,
+            "simulationRpcMs": 58.789,
+            "traceStartRelativeToHonestMs": 1.114,
+            "traceEndRelativeToHonestMs": 59.903,
+            "mined": {
+              "blockNumber": 222,
+              "blockHash": "0x0b9a5dd823a50fe6830583a0f2471879c3efef1ca1bfb14047051ebd6cc385a4",
+              "verifyGas": 993512
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 173,
+            "included": 173,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 181,
+            "included": 173,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 19,
+        "kind": "idle",
+        "burst": 0,
+        "admissionHeadHash": "0xbe73ec69243c705bb5241592e13962d58560e92cc7d9487b8cf7ef212e0eb710",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x593ea0db61722eb0daef72280ba0576d6205ba1fdda91cd28dc8a31d1353bed6",
+        "honestMs": 36.53,
+        "honestStakeLookupRpcMs": [
+          0.858
+        ],
+        "beforeHonestTraceMs": 13.116,
+        "afterHonestTraceMs": 22.45,
+        "honestSimulationRpcMs": 0.963,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 228,
+        "honestBlockHash": "0x5e2703ad70724fe2ac65e9c4d7e5b4846b2f8fe2299a535a18fc6e72ec6661ce",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 181,
+            "included": 181,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 181,
+            "included": 181,
+            "status": "ok"
+          }
+        }
+      }
+    ],
+    "backgroundWitnesses": {
+      "valid": "0x0561fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289",
+      "late": "0x0161fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289"
+    },
+    "nonceSetup": {
+      "initializedKeys": 168,
+      "transactions": [
+        "0xddc9f0ce587fabef2bf6d22b1ecec2cf8e91f2872bf71c650847bd4c520289d4",
+        "0xcff3b37e37a1b8a494ae98bbb94a878934bb5f646c50a883283cf25643516861",
+        "0x72ae79abcab695db63c572aad52f2f8b5f5146b898a896c808e3e47b16ba44cc",
+        "0x69a525a77ea871472fb88a717aef38af8c59b0ce87b5b40409f14d2b150d9e85",
+        "0xd2dfeadd3ebe37042d884aa7361045e78e4cda5218670ddfbf8ef1c64d06d7fd",
+        "0xbe4d2225000f6c5abe47822e1a70eb9eb69769e5a842cee1e49bc24a3376c05c",
+        "0x62616405631cb96f8e5256ab02cae251099b7161e9b2de3eaf3412d2125f92a0",
+        "0x3ebf225554168a02071cd6238e24f6ed80bf4ebe33f6332cd8bb35ccb8174dec",
+        "0x71007555d2cca5e8d19bdf214a69bed129e408c1a7424dd76319697d675a756c",
+        "0x90195baa671bb5a72172a9815c93c6f4ffedcdd67395cf6b016c67c567ec16f5",
+        "0x5246fd160a2653c5926b25e70abe6af2720501178ca0d6c8e43c3dea45223684"
+      ]
+    },
+    "relayBundleSize": 1,
+    "completedAt": "2026-11-06T17:13:34.899Z",
+    "secondStake": {
+      "amountWei": "12000000000000000",
+      "delay": 86400,
+      "withdrawal": "0",
+      "transactionHash": "0x66efd3b7a674cd79be10513b59280300586a9621c15d7eba6e0e65a27736e756"
+    },
+    "blockedExternalHttp": [
+      {
+        "method": "CONNECT",
+        "authority": "api.github.com:443"
+      }
+    ],
+    "schedulerReadback": {
+      "mode": "fifo",
+      "slots": 4,
+      "maxHeavyPerSender": 2,
+      "maxWaiting": 64,
+      "heavyThreshold": 100000
+    },
+    "admissionWindow": {
+      "verifyFixedHead": true,
+      "requireSidecarOnChain": true,
+      "deferredIntervalSeconds": 3600,
+      "reconciliationIntervalSeconds": 2
+    }
+  }
+}

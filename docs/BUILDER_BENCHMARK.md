@@ -1,5 +1,7 @@
 # Builder admission benchmark
 
+The original scheduler comparison below ran on Apple Silicon at `7d052e7`. The later hardening experiments used a separate Linux setup and report their own results. [Hardening measurements](HARDENING_VALIDATION.md) · [Operator guide](OPERATOR.md)
+
 ## Scheduler comparison on 6 November 2026
 
 When wallet A submitted eight heavy transactions at once, fair scheduling reduced wallet B’s p95 admission time from 678.0 ms under FIFO to 238.2 ms. A’s median time to admit its whole batch rose from 593.2 ms to 622.1 ms. Both policies had four slots. Fair scheduling allowed one sender to occupy at most two slots with heavy work.

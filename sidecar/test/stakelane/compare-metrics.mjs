@@ -33,6 +33,10 @@ export function effectiveScheduler(config, requested) {
   for (const [key, value] of Object.entries(expected)) {
     assert.equal(actual[key], value, `skandha_config.admissionScheduler.${key} mismatch`);
   }
+  if (Object.hasOwn(actual, "maxWaitingPerSender")) {
+    assert.equal(actual.maxWaitingPerSender, Math.min(16, expected.maxWaiting), "skandha_config.admissionScheduler.maxWaitingPerSender mismatch");
+    expected.maxWaitingPerSender = actual.maxWaitingPerSender;
+  }
   return expected;
 }
 
@@ -46,6 +50,13 @@ function percentiles(values) {
 
 export function summarize(trials, rounds, bursts, scheduler) {
   assert.equal(trials.length, rounds * (bursts.length + 1), "incomplete sweep");
+  const inputs = new Set();
+  for (const trial of trials) {
+    for (const hash of [trial.honestHash, ...trial.background.map(b => b.hash)]) {
+      assert.ok(hash && !inputs.has(hash), "reused or missing signed input");
+      inputs.add(hash);
+    }
+  }
   return [0, ...bursts].map(burst => {
     const group = trials.filter(t => t.burst === burst);
     assert.deepEqual(group.map(t => t.round), Array.from({ length: rounds }, (_, i) => i), "missing or duplicate trial");

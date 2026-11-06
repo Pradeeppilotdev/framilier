@@ -120,6 +120,7 @@ export type GetConfigResponse = {
     slots: number;
     maxHeavyPerSender: number;
     maxWaiting: number;
+    maxWaitingPerSender?: number;
     heavyThreshold: number;
   };
 };

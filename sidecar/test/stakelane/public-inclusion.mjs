@@ -1,3 +1,4 @@
+import { recoverSubmission, saveSubmissionIntent } from "./submission-journal.mjs";
 // One funded, staked witness transaction on the workshop public devnet.
 // Each step saves its hash before broadcast. Reruns follow the same hashes.
 import assert from "node:assert/strict";
@@ -55,6 +56,7 @@ async function contractRead(to, abi, functionName, args = []) {
 async function runStep(label, build, isFrame) {
   const file = work + "/" + label + ".json";
   let intent;
+  let broadcastParams;
   try { intent = JSON.parse(await readFile(file, "utf8")); }
   catch (error) {
     if (error.code !== "ENOENT") throw error;
@@ -62,11 +64,28 @@ async function runStep(label, build, isFrame) {
     const { hash, params, ...details } = await build();
     await checkNetwork();
     intent = { hash, at: new Date().toISOString(), ...details };
-    await writeFile(file, encode(intent), { flag: "wx", mode: 0o600 });
-    console.log(label, "submitting", hash);
+    await saveSubmissionIntent(file, encode(intent));
+    broadcastParams = params;
+  }
+  if (!broadcastParams && mode === "--submit") {
+    broadcastParams = await recoverSubmission(intent, isFrame, async (kind, hash) => {
+      if (kind === "receipt") return read(el, "eth_getTransactionReceipt", [hash]);
+      if (kind === "transaction") return read(el, "eth_getTransactionByHash", [hash]);
+      try { return await read(sidecar, "skandha_frameTransactionStatus", [hash]); }
+      catch (error) {
+        // Only the explicit not-found verdict establishes absence.
+        if (error instanceof RpcError && error.code === -32600 && error.rpcMessage === "Frame transaction not found") return null;
+        throw error;
+      }
+    });
+  }
+  if (broadcastParams) {
+    await checkNetwork();
+    const hash = intent.hash;
+    console.log(label, "submitting original signed hash", hash);
     let returned;
     try {
-      returned = await rpc(isFrame ? sidecar : el, isFrame ? "eth_sendFrameTransaction" : "eth_sendRawTransaction", params);
+      returned = await rpc(isFrame ? sidecar : el, isFrame ? "eth_sendFrameTransaction" : "eth_sendRawTransaction", broadcastParams);
     } catch (e) {
       if (e instanceof RpcError) {
         await writeFile(work + "/" + label + "-rejection.json", encode({ hash, code: e.code, reason: e.rpcMessage }));
@@ -130,7 +149,7 @@ const deploy = await runStep("deploy", async () => {
   assert.equal(await read(el, "eth_getCode", [address, "latest"]), "0x");
   const data = encodeDeployData({ ...contracts.HashChainWallet, args: [owner.address, commitment, BigInt(rounds)] });
   const raw = await owner.signTransaction({ type: "legacy", chainId, nonce, gas, gasPrice, value: walletValue, data });
-  return { hash: keccak256(raw), params: [raw], address, valueWei: walletValue, initialParticipantBalanceWei: BigInt(balance) };
+  return { hash: keccak256(raw), params: [raw], signedTransaction: raw, address, valueWei: walletValue, initialParticipantBalanceWei: BigInt(balance) };
 }, false);
 const wallet = deploy.address;
 assert.equal(deploy.receipt.contractAddress.toLowerCase(), wallet.toLowerCase());

@@ -25,3 +25,6 @@ coverage/
 *.tar
 *.tar.gz
 *.tgz
+
+# Operator-generated reports; curated evidence is committed separately.
+/results/

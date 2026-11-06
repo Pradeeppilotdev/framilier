@@ -1,3 +1,4 @@
+import * as Codes from "@skandha/types/lib/api/errors/rpc-error-codes.js";
 import { Hex, PublicClient } from "viem";
 import { Logger } from "@skandha/types/lib/index.js";
 import { PerChainMetrics } from "@skandha/monitoring/lib/index.js";
@@ -43,6 +44,13 @@ import { FrameTxReceipt } from "@skandha/types/lib/executor/validation/frameTxRe
  */
 /** Most `New` entries whose receipt is looked up in one reconciliation pass. */
 const MAX_INCLUSION_LOOKUPS_PER_PASS = 50;
+
+const INVALID_TRANSACTION_CODES = new Set([
+  Codes.INVALID_USEROP, Codes.VALIDATION_FAILED, Codes.REJECTED_BY_PAYMASTER,
+  Codes.INVALID_OPCODE, Codes.USEROP_EXPIRED, Codes.PAYMASTER_OR_AGGREGATOR_BANNED,
+  Codes.STAKE_DELAY_TOO_LOW, Codes.INVALID_SIGNATURE_AGGREGATOR,
+  Codes.INVALID_SIGNATURE, Codes.PAYMASTER_DEPOSIT_TOO_LOW, Codes.EXECUTION_REVERTED,
+]);
 
 export class MempoolReconciler {
   private lastReconciledBlock = BigInt(-1);
@@ -435,7 +443,7 @@ export class MempoolReconciler {
       }
       try {
         const { validation } = await this.frameTxSimulationService.simulate(
-          entry.tx
+          entry.tx, undefined, "maintenance"
         );
         if (!validation.mempoolMembership[this.networkConfig.standardMempoolId]) {
           await this.mempoolService.updateStatus(
@@ -449,6 +457,13 @@ export class MempoolReconciler {
         }
         this.accessedSlotsCache.set(this.entryKey(entry), validation.accessedSlots);
       } catch (err) {
+        // A failed observation is not evidence that a transaction is invalid.
+        // Retry transport/registry errors, scheduler overload and internal failures
+        // on a later block. Only explicit validation verdicts authorize eviction.
+        if (!(err instanceof RpcError) || err.code === undefined || !INVALID_TRANSACTION_CODES.has(err.code)) {
+          this.logger.error(err, `Revalidation unavailable for ${entry.txHash}; keeping pending`);
+          continue;
+        }
         await this.mempoolService.updateStatus(
           [entry],
           MempoolEntryStatus.Cancelled,

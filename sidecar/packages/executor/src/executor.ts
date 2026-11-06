@@ -1,3 +1,4 @@
+import { SimulationWorkGate } from "./services/AdmissionScheduler/SimulationWorkGate.js";
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import { IDbController, Logger } from "@skandha/types/lib/index.js";
 import { chainsWithoutEIP1559 } from "@skandha/params/lib/index.js";
@@ -160,7 +161,9 @@ export class Executor {
     this.frameTxSimulationService = new FrameTxSimulationService(
       this.publicClient,
       this.frameTxValidationService,
-      this.logger
+      this.logger,
+      new SimulationWorkGate(this.admissionScheduler.slots, this.admissionScheduler.maxWaiting,
+        this.admissionScheduler.mode !== "off")
     );
 
     this.receiptService = new ReceiptService(this.publicClient);

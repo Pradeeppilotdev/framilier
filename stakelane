@@ -1,2 +1,6 @@
 #!/bin/sh
-exec node "$(dirname "$0")/sidecar/test/stakelane/compare.mjs" "$@"
+if ! command -v node >/dev/null 2>&1; then
+  echo "StakeLane requires Node.js 20.12+ (24 LTS recommended). Install Node, then run ./stakelane doctor." >&2
+  exit 2
+fi
+exec node "$(dirname "$0")/sidecar/test/stakelane/operator.mjs" "$@"

@@ -1,0 +1,158 @@
+{
+  "format": 1,
+  "status": "complete",
+  "startedAt": "2026-11-06T18:17:06.910Z",
+  "chainId": 8141337,
+  "preset": "full",
+  "interpretation": "smoke-only",
+  "host": {
+    "os": "darwin",
+    "arch": "arm64",
+    "node": "v26.12.1",
+    "ethrexWorkers": 4
+  },
+  "rounds": 1,
+  "bursts": [
+    4
+  ],
+  "requestedModes": [
+    "fair",
+    "fifo",
+    "off"
+  ],
+  "policies": {
+    "fair": {
+      "status": "measured",
+      "schedulerReadback": {
+        "mode": "fair",
+        "slots": 4,
+        "maxHeavyPerSender": 2,
+        "maxWaiting": 64,
+        "heavyThreshold": 100000,
+        "maxWaitingPerSender": 16
+      },
+      "genesisHash": "0xad5a8d5f402554545746ecf17e7d3247d0c9f78e9c1118c8f6e6d8d4359b638d",
+      "sidecarBuildSha256": "4b3eb83fdc32407d6501e1b5ce5ec4cabb1a5413101853bda166ec1f2b8e8f4c",
+      "ethrexBinarySha256": "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692",
+      "fixtureArtifactSha256": "3c3fbbe8c23ba0402e8f8e5bbb15bb69a513715b6b9d32fb98bafd88942c5bc1",
+      "signedWorkloadSha256": "e187cbd9c808bf6db9de9130aafcd7df7208432d4656cbd27472f389f9808b7c",
+      "evidenceFile": "fair.json",
+      "summary": [
+        {
+          "burst": 0,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 13.548,
+            "p95": 13.548
+          },
+          "aBatchMs": null,
+          "aMined": 0,
+          "bMined": 1
+        },
+        {
+          "burst": 4,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 126.011,
+            "p95": 126.011
+          },
+          "aBatchMs": {
+            "p50": 323.668,
+            "p95": 323.668
+          },
+          "aMined": 4,
+          "bMined": 1
+        }
+      ]
+    },
+    "fifo": {
+      "status": "measured",
+      "schedulerReadback": {
+        "mode": "fifo",
+        "slots": 4,
+        "maxHeavyPerSender": 2,
+        "maxWaiting": 64,
+        "heavyThreshold": 100000,
+        "maxWaitingPerSender": 16
+      },
+      "genesisHash": "0xad5a8d5f402554545746ecf17e7d3247d0c9f78e9c1118c8f6e6d8d4359b638d",
+      "sidecarBuildSha256": "4b3eb83fdc32407d6501e1b5ce5ec4cabb1a5413101853bda166ec1f2b8e8f4c",
+      "ethrexBinarySha256": "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692",
+      "fixtureArtifactSha256": "3c3fbbe8c23ba0402e8f8e5bbb15bb69a513715b6b9d32fb98bafd88942c5bc1",
+      "signedWorkloadSha256": "e187cbd9c808bf6db9de9130aafcd7df7208432d4656cbd27472f389f9808b7c",
+      "evidenceFile": "fifo.json",
+      "summary": [
+        {
+          "burst": 0,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 15.593,
+            "p95": 15.593
+          },
+          "aBatchMs": null,
+          "aMined": 0,
+          "bMined": 1
+        },
+        {
+          "burst": 4,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 128.251,
+            "p95": 128.251
+          },
+          "aBatchMs": {
+            "p50": 251.894,
+            "p95": 251.894
+          },
+          "aMined": 4,
+          "bMined": 1
+        }
+      ]
+    },
+    "off": {
+      "status": "measured",
+      "schedulerReadback": {
+        "mode": "off",
+        "slots": 4,
+        "maxHeavyPerSender": 2,
+        "maxWaiting": 64,
+        "heavyThreshold": 100000,
+        "maxWaitingPerSender": 16
+      },
+      "genesisHash": "0xad5a8d5f402554545746ecf17e7d3247d0c9f78e9c1118c8f6e6d8d4359b638d",
+      "sidecarBuildSha256": "4b3eb83fdc32407d6501e1b5ce5ec4cabb1a5413101853bda166ec1f2b8e8f4c",
+      "ethrexBinarySha256": "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692",
+      "fixtureArtifactSha256": "3c3fbbe8c23ba0402e8f8e5bbb15bb69a513715b6b9d32fb98bafd88942c5bc1",
+      "signedWorkloadSha256": "e187cbd9c808bf6db9de9130aafcd7df7208432d4656cbd27472f389f9808b7c",
+      "evidenceFile": "off.json",
+      "summary": [
+        {
+          "burst": 0,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 15.282,
+            "p95": 15.282
+          },
+          "aBatchMs": null,
+          "aMined": 0,
+          "bMined": 1
+        },
+        {
+          "burst": 4,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 130.314,
+            "p95": 130.314
+          },
+          "aBatchMs": {
+            "p50": 254.263,
+            "p95": 254.263
+          },
+          "aMined": 4,
+          "bMined": 1
+        }
+      ]
+    }
+  },
+  "completedAt": "2026-11-06T18:19:11.926Z"
+}
