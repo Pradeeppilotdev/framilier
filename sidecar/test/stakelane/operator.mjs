@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { constants, createReadStream, existsSync } from "node:fs";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, realpath } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { checkPlan, summarize, workloadDigest, effectiveScheduler } from "./compare-metrics.mjs";
@@ -22,19 +22,33 @@ Setup and binary pins: docs/SIDECAR.md`;
 // Source builds produced with VERGEN_IDEMPOTENT may omit the revision in --version.
 // This is the pinned Apple Silicon executable fingerprint in private-inclusion.json.
 const macEthrexSha256 = "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692";
+const ethrexRevision = "9aa3645d795945c64400f41a70aace0edfa7f383";
 
-async function pinnedEthrex(command, version) {
-  const source = "9aa3645d795945c64400f41a70aace0edfa7f383";
+export async function ethrexProvenance(command, version, source = ethrexRevision) {
   const revisions = version.toLowerCase().match(/\b[0-9a-f]{7,40}\b/g) ?? [];
-  if (revisions.some(revision => source.startsWith(revision))) return true;
-  if (!version.includes("VERGEN_IDEMPOTENT_OUTPUT")) return false;
+  if (revisions.some(revision => source.startsWith(revision))) return "reported revision";
+  if (!version.includes("VERGEN_IDEMPOTENT_OUTPUT")) return null;
   const hash = createHash("sha256");
+  let binary;
   try {
-    for await (const chunk of createReadStream(command)) hash.update(chunk);
+    binary = await realpath(command);
+    for await (const chunk of createReadStream(binary)) hash.update(chunk);
   } catch {
-    return false;
+    return null;
   }
-  return hash.digest("hex") === macEthrexSha256;
+  if (hash.digest("hex") === macEthrexSha256) return "recorded binary SHA-256";
+
+  // A fresh debug build can embed local paths. Its source checkout supplies
+  // local provenance only; compare separately records the actual binary hash.
+  const checkout = path.resolve(path.dirname(binary), "../..");
+  if (binary !== path.join(checkout, "target", "debug", "ethrex")) return null;
+  const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith("GIT_")));
+  const git = (...args) => spawnSync("git", ["--no-optional-locks", "-C", checkout, ...args],
+    { encoding: "utf8", timeout: 10000, env });
+  const revision = git("rev-parse", "--show-toplevel", "HEAD");
+  if (revision.status !== 0 || revision.stdout.trimEnd() !== `${checkout}\n${source}`) return null;
+  const tracked = git("status", "--porcelain=v1", "--untracked-files=no", "--ignore-submodules=none");
+  return tracked.status === 0 && tracked.stdout === "" ? "local build path in clean pinned source checkout" : null;
 }
 
 export async function doctor() {
@@ -51,9 +65,10 @@ export async function doctor() {
     const result = spawnSync(command, ["--version"], { encoding: "utf8", timeout: 10000 });
     const detail = (result.stdout || result.stderr || result.error?.message || "unavailable").trim();
     const bunVersion = /^1\.(\d+)\.(\d+)$/.exec(detail);
-    const valid = name === "ethrex" ? await pinnedEthrex(command, detail)
+    const provenance = name === "ethrex" && result.status === 0 ? await ethrexProvenance(command, detail) : null;
+    const valid = name === "ethrex" ? provenance
       : bunVersion && (Number(bunVersion[1]) > 3 || (Number(bunVersion[1]) === 3 && Number(bunVersion[2]) >= 14));
-    checks.push({ name, ok: result.status === 0 && Boolean(valid), detail, fix });
+    checks.push({ name, ok: result.status === 0 && Boolean(valid), detail: provenance ? `${detail} (${provenance})` : detail, fix });
   }
   for (const [name, file, fix] of [
     ["Dependencies", "node_modules/viem/package.json", "cd sidecar && bun install --frozen-lockfile"],

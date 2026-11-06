@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
-import { access, mkdtemp, readFile, readdir, writeFile, rm } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, readdir, symlink, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { verifyReport } from "./operator.mjs";
+import { ethrexProvenance, verifyReport } from "./operator.mjs";
 import { recoverSubmission, saveSubmissionIntent } from "./submission-journal.mjs";
 import { signedWalletFrame } from "./wallet-frame.mjs";
 import { privateKeyToAccount } from "viem/accounts";
@@ -92,6 +92,46 @@ test("CLI help and doctor provide actionable output without starting a chain", (
   const report = JSON.parse(doctor.stdout);
   assert.equal(report.status, "not-ready");
   assert.match(report.checks.find(c => c.name === "ethrex").fix, /STAKELANE_ETHREX_BIN/);
+});
+
+test("an idempotent build uses only its clean pinned source checkout and real Cargo debug path", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "stakelane-ethrex-source-"));
+  const checkout = path.join(dir, "ethrex");
+  const binary = path.join(checkout, "target/debug/ethrex");
+  const tracked = path.join(checkout, "Cargo.toml");
+  const version = "ethrex/v23-VERGEN_IDEMPOTENT_OUTPUT";
+  const git = (...args) => {
+    const r = spawnSync("git", ["-C", checkout, ...args], { encoding: "utf8" });
+    assert.equal(r.status, 0, r.stderr);
+    return r.stdout.trim();
+  };
+  try {
+    await mkdir(path.dirname(binary), { recursive: true });
+    await writeFile(binary, "disposable build");
+    await writeFile(tracked, "pinned source");
+    git("init", "--quiet");
+    git("add", "Cargo.toml");
+    git("-c", "user.name=Fixture", "-c", "user.email=test@example.invalid", "-c", "commit.gpgSign=false", "commit", "--quiet", "-m", "fixture");
+    const revision = git("rev-parse", "HEAD");
+    const link = path.join(dir, "linked-ethrex");
+    await symlink(binary, link);
+    assert.equal(await ethrexProvenance(link, version, revision), "local build path in clean pinned source checkout");
+    assert.equal(await ethrexProvenance(binary, version, "0".repeat(40)), null);
+    await writeFile(tracked, "changed tracked source");
+    assert.equal(await ethrexProvenance(binary, version, revision), null);
+    git("add", "Cargo.toml");
+    assert.equal(await ethrexProvenance(binary, version, revision), null);
+    git("restore", "--source=HEAD", "--staged", "--worktree", "Cargo.toml");
+    const nested = path.join(checkout, "other/target/debug/ethrex");
+    await mkdir(path.dirname(nested), { recursive: true });
+    await writeFile(nested, "unrelated build under this repo");
+    assert.equal(await ethrexProvenance(nested, version, revision), null);
+    const outside = path.join(dir, "unrelated-engine");
+    await writeFile(outside, "standalone binary");
+    await rm(binary);
+    await symlink(outside, binary);
+    assert.equal(await ethrexProvenance(binary, version, revision), null);
+  } finally { await rm(dir, { recursive: true, force: true }); }
 });
 
 test("recovery reconstructs identical signed frames only after confirmed absence", async () => {
