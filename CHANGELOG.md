@@ -2,6 +2,8 @@
 
 ## Unreleased — admission hardening
 
+- Verify the requested hash across replacement races and reject mislabeled partial reports.
+
 - Share bounded simulation capacity across admission, estimates and maintenance.
 - Bound sender backlogs and coalesce duplicate RPC/gossip admissions before simulation.
 - Preserve pending entries when revalidation infrastructure fails.

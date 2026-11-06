@@ -182,6 +182,15 @@ describe("Eth.sendFrameTransaction", () => {
     expect(validateFrameTxReplaceability).toHaveBeenCalledOnce();
   });
 
+  it("does not acknowledge a different transaction returned by a racing hash lookup", async () => {
+    const simulate = vi.fn().mockRejectedValue(new Error("validation rejected the requested transaction"));
+    const eth = buildEth({ frameTxSimulationService: { simulate }, mempoolService: {
+      getEntryByHash: vi.fn().mockResolvedValue({ status: 0, txHash: `0x${"ff".repeat(32)}` }),
+    } });
+    await expect(eth.sendFrameTransaction(validTx())).rejects.toThrow("validation rejected");
+    expect(simulate).toHaveBeenCalledTimes(1);
+  });
+
   it("rejects a known underpriced replacement without simulation", async () => {
     const simulate = vi.fn();
     const eth = buildEth({ frameTxSimulationService: { simulate },

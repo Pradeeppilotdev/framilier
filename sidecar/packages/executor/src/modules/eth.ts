@@ -200,7 +200,7 @@ export class Eth {
         // Keyed replacement checks can scan the pending pool. Bound the reads
         // alongside simulation; the insertion lock still rechecks the nonce slot.
         const known = await this.mempoolService.getEntryByHash(txHash);
-        if (known && known.status !== MempoolEntryStatus.Cancelled) {
+        if (known?.txHash === txHash && known.status !== MempoolEntryStatus.Cancelled) {
           return false;
         }
         try {

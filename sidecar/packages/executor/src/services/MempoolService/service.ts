@@ -119,9 +119,9 @@ export class MempoolService {
       .get<string>(`${this.FRAMETX_HASHES_COLLECTION_PREFIX}${hash}`)
       .catch(() => null);
     if (!key) return null;
-    // A stored hash points to a reusable sender/nonce slot. Old indexes or
-    // concurrent replacements must never report the new occupant for this hash.
     const entry = await this.findByKey(key);
+    // Replacement updates the slot before removing the old hash index. A read
+    // spanning those writes must not return the replacement for the old hash.
     return entry?.txHash === hash ? entry : null;
   }
 

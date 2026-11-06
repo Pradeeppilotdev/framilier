@@ -122,6 +122,8 @@ export async function verifyReport(directory) {
   assert.equal(comparison.chainId, 8141337, "unexpected evidence chain");
   checkPlan(comparison.rounds, comparison.bursts);
   const requested = comparison.requestedModes;
+  assert.ok(Array.isArray(requested), "invalid requested modes");
+  assert.ok(comparison.policies && typeof comparison.policies === "object" && !Array.isArray(comparison.policies), "invalid policies");
   const fullOrder = ["fair", "fifo", "off"];
   const onlyBaseline = requested?.length === 1 && requested[0] === "off";
   if (!onlyBaseline) assert.deepEqual([...requested].sort(), fullOrder, "invalid requested policies");
