@@ -1,4 +1,4 @@
-import { recoverSubmission } from "./submission-journal.mjs";
+import { recoverSubmission, saveSubmissionIntent } from "./submission-journal.mjs";
 // One funded, staked witness transaction on the workshop public devnet.
 // Each step saves its hash before broadcast. Reruns follow the same hashes.
 import assert from "node:assert/strict";
@@ -64,7 +64,7 @@ async function runStep(label, build, isFrame) {
     const { hash, params, ...details } = await build();
     await checkNetwork();
     intent = { hash, at: new Date().toISOString(), ...details };
-    await writeFile(file, encode(intent), { flag: "wx", mode: 0o600 });
+    await saveSubmissionIntent(file, encode(intent));
     broadcastParams = params;
   }
   if (!broadcastParams && mode === "--submit") {
@@ -74,7 +74,7 @@ async function runStep(label, build, isFrame) {
       try { return await read(sidecar, "skandha_frameTransactionStatus", [hash]); }
       catch (error) {
         // Only the explicit not-found verdict establishes absence.
-        if (error instanceof RpcError && error.code === -32600 && /Frame transaction not found/.test(error.rpcMessage)) return null;
+        if (error instanceof RpcError && error.code === -32600 && error.rpcMessage === "Frame transaction not found") return null;
         throw error;
       }
     });

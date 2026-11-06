@@ -33,6 +33,10 @@ export function effectiveScheduler(config, requested) {
   for (const [key, value] of Object.entries(expected)) {
     assert.equal(actual[key], value, `skandha_config.admissionScheduler.${key} mismatch`);
   }
+  if (Object.hasOwn(actual, "maxWaitingPerSender")) {
+    assert.equal(actual.maxWaitingPerSender, Math.min(16, expected.maxWaiting), "skandha_config.admissionScheduler.maxWaitingPerSender mismatch");
+    expected.maxWaitingPerSender = actual.maxWaitingPerSender;
+  }
   return expected;
 }
 

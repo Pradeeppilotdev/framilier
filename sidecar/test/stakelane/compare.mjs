@@ -86,10 +86,16 @@ async function main() {
   const plan = { rounds: Number(values.rounds ?? (values.preset === "quick" ? 2 : 20)),
     bursts: (values.bursts ?? (values.preset === "quick" ? "1,4" : "1,4,8")).split(",").map(Number) };
   checkPlan(plan.rounds, plan.bursts);
+  const order = values.order.split(",");
+  assert.deepEqual([...order].sort(), ["fair", "fifo", "off"], "order must contain off,fifo,fair exactly once");
   const { doctor } = await import("./operator.mjs");
   const prerequisites = await doctor();
   const missing = prerequisites.checks.filter(check => !check.ok);
-  assert.equal(missing.length, 0, "Cannot start comparison:\n" + missing.map(check => `${check.name}: ${check.detail}\n  Fix: ${check.fix}`).join("\n"));
+  if (missing.length) {
+    console.error("Cannot start comparison:\n" + missing.map(check => `${check.name}: ${check.detail}\n  Fix: ${check.fix}`).join("\n"));
+    process.exitCode = 2;
+    return;
+  }
   const runtime = path.resolve(here, "../../.runtime");
   await mkdir(runtime, { recursive: true });
   let dir;
@@ -102,8 +108,6 @@ async function main() {
   if (plan.rounds < 20) log("SMOKE ONLY: fewer than 20 rounds; tail percentiles are descriptive, not a latency study.");
   const { generatePrivateKey } = await import("viem/accounts");
   const keys = { primaryKey: generatePrivateKey(), secondKey: generatePrivateKey() };
-  const order = values.order.split(",");
-  assert.deepEqual([...order].sort(), ["fair", "fifo", "off"], "order must contain off,fifo,fair exactly once");
   const modes = values["baseline-only"] ? ["off"] : order;
   const report = { format: 1, status: "running", startedAt: new Date().toISOString(), chainId: 8141337,
     preset: values.preset, interpretation: plan.rounds < 20 ? "smoke-only" : "exploratory-local",

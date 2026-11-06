@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile, readdir, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { verifyReport } from "./operator.mjs";
-import { recoverSubmission } from "./submission-journal.mjs";
+import { recoverSubmission, saveSubmissionIntent } from "./submission-journal.mjs";
 import { signedWalletFrame } from "./wallet-frame.mjs";
 import { privateKeyToAccount } from "viem/accounts";
 import { encodeRawFrameTx } from "../../packages/executor/lib/services/FrameTxService/codec.js";
@@ -27,6 +27,57 @@ test("offline report rejects modified statistics", async () => {
     await writeFile(path.join(dir, "comparison.json"), JSON.stringify(report));
     await writeFile(path.join(dir, "off.json"), await readFile(new URL("off.json", base)));
     await assert.rejects(verifyReport(dir), /summary differs/);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
+
+test("report rejects missing fingerprints or receipt records and a mislabeled partial run", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "stakelane-consistency-"));
+  const source = new URL("../../evidence/compare/run-2/", import.meta.url);
+  const raw = JSON.parse(await readFile(new URL("off.json", source)));
+  const report = JSON.parse(await readFile(new URL("comparison.json", source)));
+  try {
+    await writeFile(path.join(dir, "off.json"), JSON.stringify(raw));
+    const mislabeled = { ...report, requestedModes: ["off", "fifo", "fair"] };
+    await writeFile(path.join(dir, "comparison.json"), JSON.stringify(mislabeled));
+    await assert.rejects(verifyReport(dir), /baseline-only requires/);
+
+    await writeFile(path.join(dir, "comparison.json"), JSON.stringify(report));
+    delete raw.benchmark.trials.find(t => t.burst).background[0].mined.blockHash;
+    await writeFile(path.join(dir, "off.json"), JSON.stringify(raw));
+    await assert.rejects(verifyReport(dir), /missing heavy receipt block/);
+
+    const missingPin = JSON.parse(await readFile(new URL("off.json", source)));
+    delete missingPin.ethrexBinarySha256;
+    delete report.policies.off.ethrexBinarySha256;
+    await writeFile(path.join(dir, "off.json"), JSON.stringify(missingPin));
+    await writeFile(path.join(dir, "comparison.json"), JSON.stringify(report));
+    await assert.rejects(verifyReport(dir), /ethrexBinarySha256/);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
+
+test("compare checks order and prerequisites before creating output; existing directories are preserved", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "stakelane-output-"));
+  const cli = fileURLToPath(new URL("./operator.mjs", import.meta.url));
+  const bun = path.join(dir, "bun");
+  const ethrex = path.join(dir, "ethrex");
+  const env = { ...process.env, STAKELANE_BUN_BIN: bun, STAKELANE_ETHREX_BIN: ethrex };
+  const invoke = (...args) => spawnSync(process.execPath, [cli, ...args], { encoding: "utf8", env });
+  try {
+    const empty = path.join(dir, "new");
+    const invalid = invoke("compare", "--order", "fifo,fifo,fair", "--output", empty);
+    assert.equal(invalid.status, 1); assert.match(invalid.stderr, /order must contain/);
+    assert.equal(invoke("compare", "--output", empty).status, 2);
+    await assert.rejects(access(empty), { code: "ENOENT" });
+    await writeFile(bun, "#!/bin/sh\n[ \"$1\" = --version ] || exit 1\necho 1.4.4\n", { mode: 0o700 });
+    await writeFile(ethrex, "#!/bin/sh\n[ \"$1\" = --version ] || exit 1\necho ethrex/v23-9aa3645\n", { mode: 0o700 });
+    const ready = JSON.parse(invoke("doctor", "--json").stdout).checks;
+    assert.equal(ready.find(c => c.name === "Bun").ok, true);
+    assert.equal(ready.find(c => c.name === "ethrex").ok, true);
+    const original = await readdir(dir);
+    const existing = invoke("compare", "--output", dir);
+    assert.equal(existing.status, 1);
+    assert.match(existing.stderr, /EEXIST/);
+    assert.deepEqual(await readdir(dir), original);
   } finally { await rm(dir, { recursive: true, force: true }); }
 });
 
@@ -56,6 +107,21 @@ test("recovery reconstructs identical signed frames only after confirmed absence
   assert.equal(encodeRawFrameTx(params[0]), signedTransaction);
   assert.equal(await recoverSubmission(intent, true, async () => ({ status: "New" })), null);
   await assert.rejects(recoverSubmission(intent, true, async () => { throw new Error("offline"); }), /offline/);
+  await assert.rejects(recoverSubmission(intent, true, async kind => kind === "sidecar" ? false : null), /cannot confirm absence/);
   await assert.rejects(recoverSubmission({ ...intent, hash: `0x${"00".repeat(32)}` }, true, async () => null), /do not match/);
   await assert.rejects(recoverSubmission({ hash: intent.hash }, false, async () => null), /Legacy journal/);
+});
+
+test("concurrent writers publish one complete journal intent and preserve the winner", async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), "stakelane-journal-"));
+  try {
+    const file = path.join(dir, "proof.json");
+    const contents = ['{"hash":"first"}', '{"hash":"second"}'];
+    const results = await Promise.allSettled(contents.map(value => saveSubmissionIntent(file, value)));
+    const winner = results.findIndex(r => r.status === "fulfilled");
+    assert.ok(winner >= 0);
+    assert.equal(results[1 - winner].reason.code, "EEXIST");
+    assert.equal(await readFile(file, "utf8"), contents[winner]);
+    assert.deepEqual(await readdir(dir), ["proof.json"]);
+  } finally { await rm(dir, { recursive: true, force: true }); }
 });
