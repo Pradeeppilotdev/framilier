@@ -1,10 +1,35 @@
 # Builder admission benchmark
 
-For the current three-policy implementation, operator commands and new validation, see [operator guide](OPERATOR.md) and [hardening results](HARDENING_VALIDATION.md). Keep these earlier measurements separate from new policy-effect claims.
+The original scheduler comparison below ran on Apple Silicon at `7d052e7`. The later hardening experiments used a separate Linux setup and report their own results. [Hardening measurements](HARDENING_VALIDATION.md) · [Operator guide](OPERATOR.md)
 
-This exploratory experiment measures admission wall time on one Mac. On two fresh private chains an independent wallet waited longer when four competing transactions supplied correct witnesses than when four supplied incorrect witnesses. Each candidate ran the same 9,664 Keccak hashes. Both kinds of traffic delayed the wallet relative to idle. Only successful submissions increased the submitting wallet's normal reputation `seen` counter.
+## Scheduler comparison on 6 November 2026
+
+When wallet A submitted eight heavy transactions at once, fair scheduling reduced wallet B’s p95 admission time from 678.0 ms under FIFO to 238.2 ms. A’s median time to admit its whole batch rose from 593.2 ms to 622.1 ms. Both policies had four slots. Fair scheduling allowed one sender to occupy at most two slots with heavy work.
+
+`./stakelane compare` replayed the same signed transactions under each policy on a fresh private chain (`8141337`) on one Mac, using commit `7d052e7`. Both wallets staked 0.012 test ETH. When A sent a burst, B submitted one cheap transaction as A’s first simulation started. B’s timer ended when the sidecar returned its transaction hash. A’s batch time ran from its first submission to its last admission response. The runner mined the transactions after these timers stopped.
+
+| Heavy transactions from A | Policy | B median (ms) | B p95 (ms) | A batch median (ms) |
+| ---: | --- | ---: | ---: | ---: |
+| 0 | Off | 20.6 | 25.8 | — |
+| 0 | FIFO | 19.8 | 26.1 | — |
+| 0 | Fair | 20.4 | 25.3 | — |
+| 1 | Off | 134.8 | 142.7 | 134.8 |
+| 1 | FIFO | 133.4 | 142.1 | 134.7 |
+| 1 | Fair | 134.1 | 142.9 | 134.6 |
+| 4 | Off | 234.1 | 256.0 | 277.5 |
+| 4 | FIFO | 242.3 | 249.2 | 319.4 |
+| 4 | Fair | 133.9 | 142.4 | 338.6 |
+| 8 | Off | 301.4 | 400.5 | 367.5 |
+| 8 | FIFO | 590.8 | 678.0 | 593.2 |
+| 8 | Fair | 133.6 | 238.2 | 622.1 |
+
+Each row covers 20 measured rounds. With one heavy transaction, B’s median ranged from 133.4 to 134.8 ms across the three policies. At eight, the observer saw up to eight overlapping simulation requests from A with scheduling off, four with FIFO and two with fair scheduling.
+
+All 340 measured transactions mined under each policy (260 from A and 80 from B), giving 1,020 inclusions across the three chains. Every heavy receipt recorded 993,512 VERIFY gas. The table uses the completed sweep and excludes warm-ups and an earlier interrupted run. [Comparison summary](../sidecar/evidence/compare/merged-main-7d052e7/comparison.json) · [Off trials](../sidecar/evidence/compare/merged-main-7d052e7/off.json) · [FIFO trials](../sidecar/evidence/compare/merged-main-7d052e7/fifo.json) · [Fair trials](../sidecar/evidence/compare/merged-main-7d052e7/fair.json) · [Verification record and checksums](../sidecar/evidence/compare/merged-main-7d052e7/verification.json)
 
 ## Matched hash-chain workloads
+
+This exploratory experiment measures admission wall time on one Mac. On two fresh private chains an independent wallet waited longer when four competing transactions supplied correct witnesses than when four supplied incorrect witnesses. Each candidate ran the same 9,664 Keccak hashes. Both kinds of traffic delayed the wallet relative to idle. Only successful submissions increased the submitting wallet's normal reputation `seen` counter.
 
 | Background traffic from one staked wallet | Run 1 median probe admission | Run 2 median probe admission |
 | --- | ---: | ---: |
@@ -26,7 +51,7 @@ The independent wallet started when the observer saw the first competing simulat
 
 All four competing traced RPCs overlapped in 20 of the original 24 valid bursts. To test whether ethrex also executed work in parallel, we bypassed the sidecar and timed four valid 993,512-gas simulations at a fixed private block. With one execution worker, the median batch took 370 ms sequentially and 368 ms concurrently. With four workers, it took 382 ms sequentially and 103 ms concurrently. The latter batch used 407 ms of ethrex process CPU. Each median covers eight warmed batches on the same Mac.
 
-In a separate 12-round admission measurement with four execution workers, wallet B's median admission rose from 12.8 ms idle to 129.2 ms during a valid burst. Under load, 121.5 ms elapsed before B's traced simulation began. Its stake-registry read took 107.4 ms, up from 0.6 ms idle. B's own traced RPC took 2.9 ms under load. These timings locate the wait at the RPC boundary. A scheduler experiment can now test whether limiting A's in-flight simulations leaves execution capacity for B's preflight. [Measurements, methods and per-trial data](../sidecar/evidence/admission-concurrency-profile.json)
+In a separate 12-round admission measurement with four execution workers, wallet B's median admission rose from 12.8 ms idle to 129.2 ms during a valid burst. Under load, 121.5 ms elapsed before B's traced simulation began. Its stake-registry read took 107.4 ms, up from 0.6 ms idle. B's own traced RPC took 2.9 ms under load. This wait at the RPC boundary motivated the comparison of FIFO and fair scheduling. [Measurements, methods and per-trial data](../sidecar/evidence/admission-concurrency-profile.json)
 
 ## Earlier control using early rejections
 
@@ -53,7 +78,7 @@ In both runs the submitting wallet's `seen` count stayed at **2** and its reputa
 - A local transparent RPC observer timestamps each matched simulation. Under background traffic the valid probe starts when the first competing simulation request reaches the observer. The valid wallet uses its clean 70,000-gas VERIFY path. The timer covers submission to admission response. Signing, reputation reads, relaying, and block inclusion happen outside that timer.
 - One warm-up of each condition is excluded. The runner then executes 12 rounds per fresh chain, cycling through every ordering of the three conditions twice. It verifies the returned hash, exact rejection reasons, one simulation per candidate and a canonical successful receipt for each valid probe.
 - The fixture uses the unoptimized native ethrex executable with four Tokio worker threads on the same Mac as the test client. The upstream release lookup was blocked locally by a non-forwarding HTTP proxy before each benchmark. The shared devnet was never a test target.
-- The scope is one Mac, one client build and bursts of four from one staked wallet. The next experiment compares the same workload with the scheduler off and on. Report the independent wallet's admission latency and time to admit the last valid transaction in the submitting wallet's burst.
+- These earlier controls used one Mac, one client build and bursts of four from one staked wallet. The scheduler comparison also measures how long A waits for its last admission.
 
 For a broader local sweep, report burst size or concurrency separately from offered requests per second. Publish the sample count with p50 and p95. A CPU-cost claim also requires process CPU measurements for the sidecar and execution client. A node-wide budget should count failed verification work. Sender reputation penalties would require evidence that the sender authorized the failed request.
 
@@ -85,11 +110,11 @@ Both sweeps ran on the same Mac with the same ethrex binary and compiled wallet 
 
 Run 1 finished with the original maintenance timer and one observed trace per input. The second completed sweep used the fixed-head procedure above and recorded the exact stake-registry read for B. Its median duration rose from 1.0 ms idle to 114.2 ms with a single heavy transaction, while B’s traced simulation took 3.0 ms in that condition. The lookup measurement includes local transport and waiting for the execution node. [Run 1 summary](../sidecar/evidence/compare/run-1/comparison.json) · [Run 1 samples](../sidecar/evidence/compare/run-1/off.json) · [Fixed-head summary](../sidecar/evidence/compare/run-2/comparison.json) · [Fixed-head samples](../sidecar/evidence/compare/run-2/off.json)
 
-The two-heavy-per-sender limit first applies when A submits a third concurrent heavy transaction. Keep the one-heavy case as a control. Compare the four- and eight-transaction bursts across all three native policies in the same invocation, using B’s p95 and A’s batch time to quantify the trade-off. Both saved sweeps measured the default sidecar.
+Both of these earlier sweeps measured the default sidecar. The two-heavy-per-sender limit first applies when A submits a third concurrent heavy transaction, so the one-heavy case serves as a control in the three-policy comparison.
 
 ### Verify the saved measurements
 
-The following offline check runs from the repository root with Node alone. It recomputes the median and nearest-rank p95 from individual trials, counts the receipt records, checks for reused transaction hashes and verifies the signed-input fingerprint. In the instrumented repeat it also reconstructs A’s batch time from the earliest submission and last admission response.
+The following offline check covers the two earlier baseline sweeps and their replay controls. It runs from the repository root with Node alone. It recomputes the median and nearest-rank p95 from individual trials, counts the receipt records, checks for reused transaction hashes and verifies the signed-input fingerprint. In the instrumented repeat it also reconstructs A’s batch time from the earliest submission and last admission response.
 
 ```sh
 node --test sidecar/test/stakelane/compare-evidence.test.mjs
