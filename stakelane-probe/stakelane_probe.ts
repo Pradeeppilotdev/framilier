@@ -2,11 +2,15 @@
 // Reviewed against workshop bcfe02a196ca97b6fb0d1044db9d0b4c673831fc.
 // A bounded declared-budget probe, not an expensive-validation or load test.
 import { execFileSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { privateKeyToAccount } from "viem/accounts";
 import { decodeFunctionResult, encodeFunctionData } from "viem";
 import { loadConfig } from "../lib/config.js";
 import { readState } from "../lib/state.js";
 import { buildWalletTx, signFrameTx, toWire, txHash } from "../lib/frameTx/build.js";
+import { encodeRawFrameTx } from "../lib/frameTx/codec.js";
 
 class RpcFailure extends Error {
   constructor(public code: number, message: string, public data: unknown) { super(message); }
@@ -23,18 +27,36 @@ function errorDetails(e: unknown) {
 async function main() {
   const args = process.argv.slice(2);
   if (args.includes("--help")) {
-    console.log("yarn tsx src/steps/stakelane_probe.ts --budget 70000 [--submit]\nDefault: estimate only. --submit: submit exactly one zero-value transaction, then wait up to 120 seconds for a receipt. Uses the participant-owned violating wallet on its clean validation path.");
+    console.log("node --import tsx src/steps/stakelane_probe.ts --budget 70000 [--rpc http://127.0.0.1:14337/rpc/] [--submit [--admission-only | --relay-raw]]\nDefault: estimate only. A loopback sidecar in manual mode can record admission alone or forward the identical signed bytes through eth_sendRawTransaction.");
     return;
   }
   let budget = 70000n;
   let submit = false;
+  let admissionOnly = false;
+  let relayRaw = false;
+  let rpcOverride: string | undefined;
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--submit") submit = true;
+    else if (args[i] === "--admission-only") admissionOnly = true;
+    else if (args[i] === "--relay-raw") relayRaw = true;
     else if (args[i] === "--budget" && /^\d+$/.test(args[i + 1] ?? "")) budget = BigInt(args[++i]);
+    else if (args[i] === "--rpc" && args[i + 1]) rpcOverride = args[++i];
     else throw new Error(`Unknown or invalid argument: ${args[i]}`);
   }
   if (budget < 70000n || budget > 1100000n) throw new Error("This bounded probe accepts VERIFY budgets from 70000 to 1100000 only.");
+  if ((admissionOnly || relayRaw) && (!submit || !rpcOverride || (admissionOnly && relayRaw))) {
+    throw new Error("Choose one local mode with --rpc and --submit: --admission-only or --relay-raw.");
+  }
   const cfg = loadConfig();
+  // An override is limited to a locally operated sidecar. The workshop's
+  // public endpoint remains the default; chain and wallet ownership checks stay on.
+  if (rpcOverride) {
+    const url = new URL(rpcOverride);
+    if (url.protocol !== "http:" || !["127.0.0.1", "localhost", "[::1]"].includes(url.hostname) || url.username || url.password) {
+      throw new Error("--rpc must point to a loopback HTTP sidecar");
+    }
+    cfg.gatewayUrl = url.toString();
+  }
   if (cfg.chainId !== 1337) throw new Error("This probe is restricted to the throwaway workshop chain 1337.");
   const state = readState();
   if (!state.participantKey || !state.violating || !state.account || !state.completedSteps?.includes("step_6_tx_violating_canonical")) {
@@ -49,7 +71,7 @@ async function main() {
     const response = await fetch(cfg.gatewayUrl, {
       method: "POST", headers: { "content-type": "application/json" },
       body: JSON.stringify({ jsonrpc: "2.0", id: ++requestId, method, params }),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(60000),
     });
     if (!response.ok) throw new Error(`HTTP ${response.status} from gateway during ${method}`);
     const body: any = await response.json();
@@ -64,7 +86,12 @@ async function main() {
   report.chainId = 1337;
   report.sidecarVersion = await rpc("web3_clientVersion");
   report.noteOnVersion = "web3_clientVersion at the gateway identifies the sidecar, not necessarily the underlying execution client revision.";
-  try { report.workshopCommit = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(); }
+  const workshopRoot = fileURLToPath(new URL("../../", import.meta.url));
+  try {
+    report.workshopCommit = existsSync(join(workshopRoot, ".git"))
+      ? execFileSync("git", ["-C", workshopRoot, "rev-parse", "HEAD"], { encoding: "utf8" }).trim()
+      : JSON.parse(readFileSync(join(workshopRoot, ".stakelane-source.json"), "utf8")).revision;
+  }
   catch { report.workshopCommit = "unknown"; }
   report.blockBefore = await rpc("eth_blockNumber");
   if (await rpc("eth_getCode", [wallet, "latest"]) === "0x") throw new Error("Wallet has no deployed code; the devnet may have reset.");
@@ -88,7 +115,8 @@ async function main() {
   const wire = toWire(signed);
   const predictedHash = txHash(signed);
   report.verifyFrameDeclaredGas = budget;
-  report.signatureAccounting = "Protocol signature-validation costs may be added to the VERIFY frame budget. These probe values are not exact total-prefix thresholds.";
+  report.signatureGas = 2800;
+  report.totalDeclaredValidationGas = budget + 2800n;
   report.actualValidationWork = "Unchanged: the workshop wallet's clean signature-check-and-approve path. No loops, cryptographic workload amplification, or storage violation.";
   report.nonce = nonce;
   report.balanceWei = balance;
@@ -111,13 +139,41 @@ async function main() {
   try {
     hash = await rpc("eth_sendFrameTransaction", [wire]);
     report.admission = { accepted: true, hash };
-    report.explorer = `${cfg.explorerUrl.replace(/\/$/, "")}/tx/${hash}?node=${encodeURIComponent(cfg.gatewayUrl)}`;
+    if (hash.toLowerCase() !== predictedHash.toLowerCase()) throw new Error("Sidecar returned an unexpected transaction hash");
   } catch (e) {
     report.admission = { accepted: false, error: errorDetails(e) };
     report.outcome = e instanceof RpcFailure ? "RPC_REJECTION_INSPECT_ERROR" : "SUBMISSION_OUTCOME_UNKNOWN_TRANSPORT_FAILURE";
     report.nextStep = `Run yarn step_11_debug ${predictedHash}. A failed RPC reply is not automatically a budget-limit finding. Do not resubmit after a transport failure until the hash is checked.`;
     process.exitCode = 2;
     return;
+  }
+  if (rpcOverride) {
+    try {
+      const detail = await rpc("skandha_explorer_getTransaction", [hash]);
+      const admission = detail?.admission ?? detail?.admissions?.[0];
+      report.admissionChecks = admission?.checks;
+      report.simulatedFrames = admission?.frameReceipts;
+    } catch (e) {
+      report.explorerError = errorDetails(e);
+    }
+  }
+  if (admissionOnly) {
+    report.outcome = "ADMITTED_TO_LOCAL_SIDECAR";
+    return;
+  }
+  if (relayRaw) {
+    // Standalone/manual mode isolates local admission from execution-node policy.
+    // Only use the public, ordinary RPC method, with the exact admitted bytes.
+    try {
+      const rawHash = await rpc("eth_sendRawTransaction", [encodeRawFrameTx(signed)]);
+      if (rawHash.toLowerCase() !== predictedHash.toLowerCase()) throw new Error("Execution node returned an unexpected transaction hash");
+      report.canonicalRelay = { accepted: true, hash: rawHash };
+    } catch (e) {
+      report.canonicalRelay = { accepted: e instanceof RpcFailure ? false : null, error: errorDetails(e) };
+      report.outcome = e instanceof RpcFailure ? "LOCAL_ADMISSION_CANONICAL_RELAY_REJECTED" : "LOCAL_ADMISSION_RELAY_OUTCOME_UNKNOWN";
+      process.exitCode = 2;
+      return;
+    }
   }
   const deadline = Date.now() + 120000;
   while (Date.now() < deadline) {
