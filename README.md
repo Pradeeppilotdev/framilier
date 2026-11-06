@@ -1,27 +1,41 @@
 # StakeLane
 
-StakeLane measures how expensive VERIFY frames affect other wallets during admission to an EIP-8141 alternative mempool. Its sidecar implements draft rule `BUDGET-010` at revision `493ba8a` with 100,000 gas per unstaked entity and 1,000,000 per eligible staked entity, including the sender's signature charge. [Pinned ERC-8421 draft](https://github.com/forshtat/ERCs/blob/493ba8ac3be97dc5cf6335eb97d2e8e9f95983c5/ERCS/erc-8421.md)
+StakeLane schedules transaction admission work for EIP-8141 alternative-mempool node operators. It measures whether limiting one sender's concurrent expensive checks lets another wallet get admitted sooner, and what that costs the busy sender's batch. Block builders still choose what gets included.
+
+The sidecar supports **off**, **FIFO** and **fair** policies. Fair mode rotates senders, limits heavy concurrency per sender, bounds per-sender backlogs and shares an execution budget across admission, estimates and revalidation. This is operator resource control, not Sybil resistance or a guarantee of inclusion.
+
+## Run and verify
+
+Install Node.js 20.12+ (24 LTS recommended), Bun 1.3.14 and the [pinned ethrex binary](docs/SIDECAR.md#reproduce-the-mined-transaction), then:
+
+```sh
+cd sidecar
+bun install --frozen-lockfile
+bun run build
+cd ..
+export STAKELANE_ETHREX_BIN=/absolute/path/to/ethrex
+./stakelane doctor
+./stakelane compare --preset quick --output ./results/smoke-001
+./stakelane compare --preset full --output ./results/full-001
+./stakelane report ./results/full-001 --verify
+```
+
+Quick is a two-round smoke test, not a p95 performance study. Full runs 20 measured rounds at bursts 1,4,8 plus idle and excluded warm-ups on disposable loopback chains. The command reports B's admission p50/p95, A's batch completion time and verified receipt counts. An output directory must be new. [Operator guide and failure recovery](docs/OPERATOR.md) · [90-second demo](DEMO.md) · [Validation and current evidence](docs/HARDENING_VALIDATION.md)
+
+## Evidence and scope
+
+Historical matched-workload experiments measured approximately 11 ms idle versus 129 ms under a valid burst. The separate concurrency profile measured 12.8 versus 129.2 ms and located most of the delay before B's traced simulation. These demonstrate contention, not a scheduler benefit. The committed historical comparison runs are explicitly incomplete/baseline-only. A new complete 20-round comparison on Linux measured B median **420.7 → 175.6 ms** at burst 8, while A batch median rose **480.8 → 545.7 ms**. The reverse-order eight-heavy repeat measured **378.3 → 168.9 ms**, with A batch median **401.1 → 487.4 ms**. All **1,620 measured transactions** across both experiments mined. [Results, raw samples and limitations](docs/HARDENING_VALIDATION.md). Do not infer this policy effect from the old contention numbers.
+
+The workload is a synthetic Keccak hash chain, not an implemented privacy withdrawal. Local receipts establish private inclusion after admission timing; public admission alone does not establish mining. Saved-report verification checks arithmetic and input/build consistency, not independent authentication of historical execution.
 
 ## Inherited code and team additions
 
 | Inherited | Added or changed for StakeLane |
 | --- | --- |
-| Workshop sidecar, codec, staking and reputation services, relay and explorer | Per-entity budget accounting, preflight checks, rule reporting and boundary tests |
-| Workshop wallet tooling, staking registry and unmodified Hegota ethrex | Keccak hash-chain wallet workload, private block producer, public submission runner, simulation timing and two-wallet comparisons |
+| Workshop sidecar, codec, staking/reputation services, relay and explorer | Per-entity budget accounting, scheduler, shared simulation gate, duplicate suppression, recovery fixes and regression tests |
+| Workshop tooling, staking registry and unmodified Hegota ethrex | Hash-chain workload, private producer, timing observer, policy comparison CLI and offline report verification |
 
-The initial public workshop checkpoint was `7c9594f`. The fork inventory separates the imported files from the project changes. [Upstream provenance](docs/UPSTREAM.md)
-
-## Compare admission policies
-
-After the [private-node setup](docs/SIDECAR.md#reproduce-the-mined-transaction), run the following command from the repository root.
-
-```sh
-./stakelane compare
-```
-
-The command sends valid transactions from two staked wallets to a local sidecar. It reports wallet B’s median and p95 admission times and the time to admit all of wallet A’s burst. It verifies canonical receipts after timing. Use `./stakelane compare --baseline-only` for the default policy alone. The full comparison checks the node’s active policy before reporting FIFO or fair timings. [Command options, methodology and integration contract](docs/BUILDER_BENCHMARK.md#run-stakelane-compare)
-
-To check the saved measurements with Node alone, run `node --test sidecar/test/stakelane/compare-evidence.test.mjs` from the repository root. [Evidence and audit](docs/BUILDER_BENCHMARK.md#verify-the-saved-measurements)
+Budget policy follows draft `BUDGET-010` revision `493ba8a`: 100,000 per unstaked entity and 1,000,000 per eligible staked entity, including sender signature costs. The early public checkpoint was `7c9594f`. [Upstream provenance](docs/UPSTREAM.md) · [AI usage](AI_USAGE.md) · [License](LICENSE)
 
 ## StakeLane sidecar
 
@@ -33,9 +47,9 @@ On an isolated ethrex chain, a staked wallet verified a 9,664-step Keccak witnes
 
 The local sidecar admitted a signed transaction from a staked wallet at exactly 1,000,000 declared validation gas. It rejected the same wallet at 1,000,001. The public execution node rejected the admitted bytes under its canonical mempool cap. See the [test record and run instructions](docs/SIDECAR.md).
 
-## Public workshop baseline
+## Historical public workshop baseline
 
-On 6 November 2026 (India time), the tested public sidecar enforced a **100,000-gas combined validation-prefix cap**, including signature-verification costs.
+At the recorded early checkpoint on 6 November 2026 (India time), the tested public sidecar enforced a **100,000-gas combined validation-prefix cap**, including signature-verification costs.
 
 | Declared VERIFY execution allowance | Unstaked wallet | Staked wallet |
 | --- | --- | --- |
@@ -55,7 +69,7 @@ See [the full test record](docs/TEST_RESULTS.md), [machine-readable results](sta
 
 The upstream workshop is a local dependency in `mempool-workshop/`; it is excluded from Git. Dependencies, compiled adapters, private participant state and ZIP checkpoints are also excluded. The forked sidecar, its tests and its boundary evidence live in `sidecar/`.
 
-## Set up a fresh checkout
+## Optional: set up the historical workshop probe
 
 The workshop requires Node.js 20.12 or newer and Yarn 1. This run used Node.js 26.12.1 and Yarn 1.22.22.
 
@@ -77,7 +91,7 @@ https://altmempool.forshtat.com/rpc
 
 The recorded test network is chain **1337**. Endpoints and deployments may change when this demonstration network resets. Funding was a separate prerequisite; see the [recorded funding and routing issues](docs/TEST_RESULTS.md#funding-and-routing).
 
-## Reproduce the checks
+## Reproduce the historical probe checks
 
 Run each command individually from `mempool-workshop/` and inspect its result before proceeding. On an existing configured workshop, **do not rerun `step_1_check`**: it resets the recorded deployed addresses and completed steps while retaining the participant key.
 
@@ -109,7 +123,7 @@ yarn tsx src/steps/stakelane_probe.ts --budget 500001 --submit
 
 `--submit` submits exactly one candidate. A rejected budget probe exits with code 2; inspect the error and run `yarn step_11_debug <transaction-hash> --json` for its admission report. If a transaction remains pending, investigate that hash before submitting another probe. The documented run stopped after reproducing the explicit cap; it did not submit a 1,000,001-gas case or run the workshop's reputation-burn step.
 
-## Validation performed
+## Historical workshop validation
 
 ```sh
 yarn typecheck

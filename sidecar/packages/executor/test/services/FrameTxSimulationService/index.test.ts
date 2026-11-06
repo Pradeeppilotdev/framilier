@@ -1,3 +1,4 @@
+import { SimulationWorkGate } from "../../../src/services/AdmissionScheduler/SimulationWorkGate.js";
 import { describe, it, expect, vi } from "vitest";
 import { PublicClient } from "viem";
 import { FrameTxSimulationService } from "../../../src/services/FrameTxSimulationService/index.js";
@@ -432,4 +433,25 @@ describe("FrameTxSimulationService.simulate: ethrex call failures", () => {
     expect(err.message).not.toBe("simulateFrameTransaction_failed");
     expect(collector.toChecks().find((c) => c.rule === "simulation")?.detail).toMatch(/fetch failed/);
   });
+});
+
+
+it("shares the execution budget across admission, estimates and maintenance", async () => {
+  const releases: Array<() => void> = [];
+  const preflight = vi.fn().mockResolvedValue({});
+  const client = { request: vi.fn(async () => {
+    await new Promise<void>(r => releases.push(r));
+    return passingEthrexResult();
+  }) };
+  const validator = { preflight, validate: vi.fn().mockResolvedValue({ mempoolMembership: {} }) };
+  const service = new FrameTxSimulationService(client as any, validator as any, fakeLogger(), new SimulationWorkGate(2));
+  const tx = baseTx([selfVerifyFrame()]);
+  const tasks = [service.simulate(tx, undefined, "estimate"), service.simulate(tx, undefined, "maintenance"), service.simulate(tx)];
+  await new Promise(r => setTimeout(r, 0));
+  expect(preflight).toHaveBeenCalledTimes(2); // one auxiliary + reserved admission
+  expect(client.request).toHaveBeenCalledTimes(2);
+  releases.shift()!(); await new Promise(r => setTimeout(r, 0));
+  expect(client.request).toHaveBeenCalledTimes(3);
+  for (const release of releases) release();
+  await Promise.all(tasks);
 });

@@ -1,5 +1,7 @@
 # Builder admission benchmark
 
+For the current three-policy implementation, operator commands and new validation, see [operator guide](OPERATOR.md) and [hardening results](HARDENING_VALIDATION.md). Keep these earlier measurements separate from new policy-effect claims.
+
 This exploratory experiment measures admission wall time on one Mac. On two fresh private chains an independent wallet waited longer when four competing transactions supplied correct witnesses than when four supplied incorrect witnesses. Each candidate ran the same 9,664 Keccak hashes. Both kinds of traffic delayed the wallet relative to idle. Only successful submissions increased the submitting wallet's normal reputation `seen` counter.
 
 ## Matched hash-chain workloads
@@ -83,7 +85,7 @@ Both sweeps ran on the same Mac with the same ethrex binary and compiled wallet 
 
 Run 1 finished with the original maintenance timer and one observed trace per input. The second completed sweep used the fixed-head procedure above and recorded the exact stake-registry read for B. Its median duration rose from 1.0 ms idle to 114.2 ms with a single heavy transaction, while B’s traced simulation took 3.0 ms in that condition. The lookup measurement includes local transport and waiting for the execution node. [Run 1 summary](../sidecar/evidence/compare/run-1/comparison.json) · [Run 1 samples](../sidecar/evidence/compare/run-1/off.json) · [Fixed-head summary](../sidecar/evidence/compare/run-2/comparison.json) · [Fixed-head samples](../sidecar/evidence/compare/run-2/off.json)
 
-The proposed two-heavy-per-sender limit first applies when A submits a third concurrent heavy transaction. Keep the one-heavy case as a control. Compare the four- and eight-transaction bursts across all three native policies in the same invocation, using B’s p95 and A’s batch time to quantify the trade-off. Both saved sweeps measured the default sidecar.
+The two-heavy-per-sender limit first applies when A submits a third concurrent heavy transaction. Keep the one-heavy case as a control. Compare the four- and eight-transaction bursts across all three native policies in the same invocation, using B’s p95 and A’s batch time to quantify the trade-off. Both saved sweeps measured the default sidecar.
 
 ### Verify the saved measurements
 

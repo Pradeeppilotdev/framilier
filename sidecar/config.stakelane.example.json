@@ -16,5 +16,10 @@
   "stakingRegistryAddress": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
   "minStake": "10000000000000000",
   "minUnstakeDelay": 86400,
+  "schedulerMode": "fair",
+  "schedulerSlots": 4,
+  "schedulerMaxHeavyPerSender": 2,
+  "schedulerMaxWaiting": 64,
+  "schedulerHeavyThreshold": 100000,
   "userOpGasLimit": 10000000
 }

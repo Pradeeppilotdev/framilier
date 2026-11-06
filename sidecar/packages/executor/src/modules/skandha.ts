@@ -170,6 +170,7 @@ export class Skandha {
         slots: this.admissionScheduler.slots,
         maxHeavyPerSender: this.admissionScheduler.maxHeavyPerSender,
         maxWaiting: this.admissionScheduler.maxWaiting,
+        maxWaitingPerSender: this.admissionScheduler.maxWaitingPerSender,
         heavyThreshold: Number(this.admissionScheduler.heavyThreshold),
       },
     };

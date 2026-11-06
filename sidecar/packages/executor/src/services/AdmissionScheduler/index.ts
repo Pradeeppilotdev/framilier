@@ -10,6 +10,7 @@ export interface AdmissionSchedulerOptions {
   slots?: number;
   maxHeavyPerSender?: number;
   maxWaiting?: number;
+  maxWaitingPerSender?: number;
   heavyThreshold?: number | bigint;
 }
 
@@ -56,6 +57,8 @@ export class AdmissionScheduler {
 
   private runningCount: number = 0;
   private waitingCount: number = 0;
+  private waitingPerSender = new Map<string, number>();
+  public readonly maxWaitingPerSender: number;
   private nextJobId: number = 1;
 
   // FIFO mode queue
@@ -78,6 +81,7 @@ export class AdmissionScheduler {
     this.slots = checkedLimit("slots", opts.schedulerSlots ?? opts.slots ?? 4, 1);
     this.maxHeavyPerSender = checkedLimit("maxHeavyPerSender", opts.schedulerMaxHeavyPerSender ?? opts.maxHeavyPerSender ?? 2, 1);
     this.maxWaiting = checkedLimit("maxWaiting", opts.schedulerMaxWaiting ?? opts.maxWaiting ?? 64, 0);
+    this.maxWaitingPerSender = checkedLimit("maxWaitingPerSender", opts.maxWaitingPerSender ?? Math.min(16, this.maxWaiting), 0);
     const threshold = opts.schedulerHeavyThreshold ?? opts.heavyThreshold ?? 100_000;
     this.heavyThreshold = BigInt(checkedLimit("heavyThreshold", Number(threshold), 0));
   }
@@ -116,6 +120,13 @@ export class AdmissionScheduler {
       }
     }
 
+    const owner = this.senderQueues.get(normalizedSender);
+    const needsToWait = this.runningCount >= this.slots || (owner?.queue.length ?? 0) > 0 ||
+      (this.mode === "fair" && isHeavy && (owner?.activeHeavy ?? 0) >= this.maxHeavyPerSender);
+    if (needsToWait && (this.waitingPerSender.get(normalizedSender) ?? 0) >= this.maxWaitingPerSender) {
+      throw new RpcError("Sender admission queue is full; retry later", RpcErrorCodes.SERVER_ERROR);
+    }
+
     return new Promise<T>((resolve, reject) => {
       const job: QueuedJob<T> = {
         id: this.nextJobId++,
@@ -133,6 +144,7 @@ export class AdmissionScheduler {
 
   private enqueue(job: QueuedJob): void {
     this.waitingCount++;
+    this.waitingPerSender.set(job.sender, (this.waitingPerSender.get(job.sender) ?? 0) + 1);
 
     if (this.mode === "fifo") {
       this.fifoQueue.push(job);
@@ -166,7 +178,7 @@ export class AdmissionScheduler {
           break;
         }
         job = this.fifoQueue.shift()!;
-        this.waitingCount--;
+        this.markDispatched(job);
         this.runningCount++;
       } else if (this.mode === "fair") {
         job = this.dequeueNextFairJob();
@@ -209,7 +221,7 @@ export class AdmissionScheduler {
 
       // Found an eligible sender and job
       const job = sq.queue.shift()!;
-      this.waitingCount--;
+      this.markDispatched(job);
       this.runningCount++;
       sq.activeTotal++;
       if (job.isHeavy) {
@@ -224,6 +236,13 @@ export class AdmissionScheduler {
     }
 
     return null;
+  }
+
+  private markDispatched(job: QueuedJob): void {
+    this.waitingCount--;
+    const remaining = (this.waitingPerSender.get(job.sender) ?? 1) - 1;
+    if (remaining) this.waitingPerSender.set(job.sender, remaining);
+    else this.waitingPerSender.delete(job.sender);
   }
 
   private async executeJob(job: QueuedJob): Promise<void> {

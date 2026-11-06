@@ -1216,3 +1216,15 @@ describe("FrameTxValidationService: ethrex's structured failure detail", () => {
     expect(await message({ canonicalMempoolViolation: "BannedOpcode(66)" })).toBe("banned opcode: TIMESTAMP (0x42)");
   });
 });
+
+
+describe("foreign transient writes", () => {
+  it("rejects an unrelated transient write even when the entity is staked", async () => {
+    const inner = ethrexFrame({ from: SENDER, to: OTHER_CONTRACT,
+      accessedSlots: { ...emptyAccessedSlots(), transientWrites: { ["0x" + "00".repeat(32)]: 1 } } });
+    const service = new FrameTxValidationService(fakeStakingRegistry(), fakeReputationService(SENDER),
+      fakeNetworkConfig(), fakeLogger());
+    await expect(service.validate(baseTx([selfVerifyFrame()]),
+      fakeEthrexResult([ethrexFrame({ calls: [inner] })]))).rejects.toThrow("forbidden write");
+  });
+});

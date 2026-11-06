@@ -150,3 +150,12 @@ describe("getAccessInfo transientReads accumulation", () => {
     expect(access[OTHER].transientReads[slot]).toBe(5);
   });
 });
+
+
+it("preserves the first transient write when no persistent access exists", () => {
+  const slot = "0x" + "00".repeat(32);
+  const call = baseFrame({ to: OTHER, accessedSlots: {
+    reads: {}, writes: {}, transientReads: {}, transientWrites: { [slot]: 2 },
+  } });
+  expect(getAccessInfo(call)[OTHER].transientWrites[slot]).toBe(2);
+});

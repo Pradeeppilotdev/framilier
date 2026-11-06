@@ -249,7 +249,7 @@ export function getAccessInfo(
           transientReads: {},
           writes: {},
           transientWrites: {
-            [x]: writes[x],
+            [x]: transientWrites[x],
           },
         };
       }

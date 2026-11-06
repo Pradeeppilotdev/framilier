@@ -817,10 +817,10 @@ export class FrameTxValidationService {
               requireStakeSlot = slot;
             } else if (addr === entityAddr) {
               requireStakeSlot = slot;
-            } else if (writes[slot] == null) {
+            } else if (writes[slot] == null && transientWrites[slot] == null) {
               requireStakeSlot = slot;
             } else {
-              const readWrite = Object.keys(writes).includes(addr)
+              const readWrite = writes[slot] != null || transientWrites[slot] != null
                 ? "write to"
                 : "read from";
               throw new RpcError(

@@ -5,7 +5,7 @@ import { spawn } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
 import { once } from "node:events";
 import { closeSync, createReadStream, existsSync, openSync, readFileSync } from "node:fs";
-import { chmod, mkdir, mkdtemp, readFile, rename, writeFile } from "node:fs/promises";
+import { chmod, mkdir, mkdtemp, readFile, readdir, rename, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import path from "node:path";
 import { setTimeout as pause } from "node:timers/promises";
@@ -34,6 +34,17 @@ const sha256 = value => createHash("sha256").update(value).digest("hex");
 async function fileDigest(file) {
   const hash = createHash("sha256");
   for await (const bytes of createReadStream(file)) hash.update(bytes);
+  return hash.digest("hex");
+}
+async function buildDigest() {
+  const hash = createHash("sha256");
+  for (const pkg of ["types", "utils", "params", "monitoring", "db", "executor", "api", "node", "cli"]) {
+    const base = path.join(root, "packages", pkg, "lib");
+    for (const file of (await readdir(base, { recursive: true })).filter(f => f.endsWith(".js")).sort()) {
+      hash.update(pkg + "/" + file + "\n");
+      hash.update(await readFile(path.join(base, file)));
+    }
+  }
   return hash.digest("hex");
 }
 const localTools = path.join(root, ".runtime", "bin");
@@ -144,7 +155,7 @@ try {
     return receipt.contractAddress;
   }
   const rounds = Number(process.env.STAKELANE_HASH_ROUNDS || 9664);
-  assert.ok(Number.isInteger(rounds) && rounds >= 1 && rounds <= 10000, "rounds outside fixture bounds");
+  assert.ok(Number.isInteger(rounds) && rounds >= 1 && rounds <= 9664, "rounds must be 1–9664 under the fixed 997200 execution-gas allowance");
   if (benchmark) assert.equal(rounds, 9664, "benchmark uses the recorded workload");
   const { witness, commitment } = hashChain(rounds);
   const registry = await deploy("NaiveStakingRegistry");
@@ -230,12 +241,12 @@ try {
   assert.equal(frames.length, 2);
   for (const frame of frames) assert.equal(frame.status, "0x1");
   const verifyUsed = BigInt(frames[0].gasUsed);
-  assert.ok(verifyUsed > 500000n && verifyUsed <= 997200n, "unexpected observed VERIFY gas " + verifyUsed);
+  assert.ok(verifyUsed > 0n && verifyUsed <= 997200n, "unexpected observed VERIFY gas " + verifyUsed);
   if (rounds === 9664) assert.ok(verifyUsed >= 990000n, "default workload should exercise the last one percent of the budget");
   const report = {
     timestamp: new Date().toISOString(), network: "isolated single-node Hegota execution chain",
     chainId, genesisHash: genesisBlock.hash, ethrexSource: "9aa3645d795945c64400f41a70aace0edfa7f383",
-    ethrexBinarySha256: await fileDigest(binary), fixtureArtifactSha256: await fileDigest(path.join(here, "fixtures.json")),
+    sidecarBuildSha256: await buildDigest(), ethrexBinarySha256: await fileDigest(binary), fixtureArtifactSha256: await fileDigest(path.join(here, "fixtures.json")),
     clientVersion: await rpc(el, "web3_clientVersion"), compiler, owner: owner.address, wallet, registry,
     walletCodeHash: keccak256(await rpc(el, "eth_getCode", [wallet, "latest"])),
     workload: { algorithm: "Keccak-256 hash chain", rounds, witness, commitment },

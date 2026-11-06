@@ -139,6 +139,34 @@ describe("Eth.sendFrameTransaction", () => {
       recentRootReferences: [],
     }) as any;
 
+  it("coalesces concurrent RPC/gossip copies and skips known hashes", async () => {
+    let release!: (value: any) => void;
+    const simulate = vi.fn(() => new Promise<any>(r => { release = r; }));
+    const known = vi.fn().mockResolvedValue(null);
+    const addFrameTx = vi.fn();
+    const eth = buildEth({ frameTxSimulationService: { simulate },
+      mempoolService: { getEntryByHash: known, addFrameTx } });
+    const tx = validTx();
+    const first = eth.sendFrameTransaction(tx, "rpc");
+    const second = eth.sendFrameTransaction(tx, "gossip");
+    await new Promise(r => setTimeout(r, 0));
+    expect(simulate).toHaveBeenCalledTimes(1);
+    release({ validation: { roleStakes: {}, mempoolMembership: {} }, simulation: {} });
+    expect(await first).toBe(await second);
+    expect(addFrameTx).toHaveBeenCalledTimes(1);
+    known.mockResolvedValue({ status: 0 });
+    await eth.sendFrameTransaction(tx);
+    expect(simulate).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects a known underpriced replacement without simulation", async () => {
+    const simulate = vi.fn();
+    const eth = buildEth({ frameTxSimulationService: { simulate },
+      mempoolService: { validateFrameTxReplaceability: vi.fn().mockRejectedValue(new Error("fee too low")) } });
+    await expect(eth.sendFrameTransaction(validTx())).rejects.toThrow("fee too low");
+    expect(simulate).not.toHaveBeenCalled();
+  });
+
   it("rejects a transaction for another chain before simulating it", async () => {
     const simulate = vi.fn();
     const eth = buildEth({ frameTxSimulationService: { simulate } });
@@ -342,6 +370,7 @@ describe("Eth.estimateFrameTransactionGas", () => {
         eth.estimateFrameTransactionGas(buildEstimateTx())
       ).resolves.toBeDefined();
       expect(simulate).toHaveBeenCalledTimes(1);
+      expect(simulate).toHaveBeenCalledWith(expect.any(Object), undefined, "estimate");
     }
   );
 

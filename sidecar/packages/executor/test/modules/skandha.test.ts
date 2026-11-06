@@ -87,7 +87,7 @@ describe("Skandha.getConfig", () => {
     const networkConfig = { minStake: 0n, minSignerBalance: 0n, blockscoutApiKeys: [], schedulerMode: "off", schedulerSlots: 9 };
     const scheduler = new AdmissionScheduler({ mode: "fair", slots: 3, maxHeavyPerSender: 1, maxWaiting: 8, heavyThreshold: 75000 });
     const config = await buildSkandha({ networkConfig, scheduler }).getConfig();
-    expect(config.admissionScheduler).toEqual({ mode: "fair", slots: 3, maxHeavyPerSender: 1, maxWaiting: 8, heavyThreshold: 75000 });
+    expect(config.admissionScheduler).toEqual({ mode: "fair", slots: 3, maxHeavyPerSender: 1, maxWaiting: 8, maxWaitingPerSender: 8, heavyThreshold: 75000 });
     expect((await buildSkandha({ networkConfig }).getConfig()).admissionScheduler).toBeUndefined();
   });
 

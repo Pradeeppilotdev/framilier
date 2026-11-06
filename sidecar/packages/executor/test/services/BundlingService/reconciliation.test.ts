@@ -314,11 +314,11 @@ describe("MempoolReconciler.reconcile - New entries (revalidation)", () => {
     );
   });
 
-  it("cancels a New entry whose revalidation throws", async () => {
+  it("cancels a New entry on an explicit invalidity verdict", async () => {
     const entry = buildEntry(buildTx(), MempoolEntryStatus.New);
     const { reconciler, mempoolService } = buildReconciler({
       getReceipt: noReceipt(),
-      simulate: vi.fn().mockRejectedValue(new Error("boom")),
+      simulate: vi.fn().mockRejectedValue(new RpcError("boom", RpcErrorCodes.VALIDATION_FAILED)),
     });
     mempoolService.fetchPendingUserOps.mockResolvedValue([entry]);
 
@@ -600,7 +600,7 @@ describe("MempoolReconciler.reconcile - EIP-8272 recent-root window", () => {
       { revertReason: expect.stringMatching(/expired: usable through slot 261223 .*, as of block 1/) }
     );
     expect(frameTxSimulationService.simulate).toHaveBeenCalledTimes(1);
-    expect(frameTxSimulationService.simulate).toHaveBeenCalledWith(fresh.tx);
+    expect(frameTxSimulationService.simulate).toHaveBeenCalledWith(fresh.tx, undefined, "maintenance");
   });
 
   it("revalidates as before when the chain reports no slot", async () => {
@@ -613,7 +613,7 @@ describe("MempoolReconciler.reconcile - EIP-8272 recent-root window", () => {
 
     await reconciler.reconcile();
 
-    expect(frameTxSimulationService.simulate).toHaveBeenCalledWith(entry.tx);
+    expect(frameTxSimulationService.simulate).toHaveBeenCalledWith(entry.tx, undefined, "maintenance");
   });
 
   it("does not read the head slot when no entry declares a reference", async () => {
@@ -624,5 +624,20 @@ describe("MempoolReconciler.reconcile - EIP-8272 recent-root window", () => {
     await reconciler.reconcile();
 
     expect(publicClient.request).not.toHaveBeenCalled();
+  });
+});
+
+
+describe("revalidation infrastructure failures", () => {
+  it.each([new Error("RPC timeout"), new RpcError("busy", RpcErrorCodes.SERVER_ERROR),
+    new RpcError("trace unavailable", RpcErrorCodes.INTERNAL_ERROR)])("keeps pending on %s", async error => {
+    const entry = buildEntry(buildTx(), MempoolEntryStatus.New);
+    const { reconciler, mempoolService, frameTxSimulationService } = buildReconciler({
+      getReceipt: noReceipt(), simulate: vi.fn().mockRejectedValue(error),
+    });
+    mempoolService.fetchPendingUserOps.mockResolvedValue([entry]);
+    await reconciler.reconcile();
+    expect(mempoolService.updateStatus).not.toHaveBeenCalled();
+    expect(frameTxSimulationService.simulate).toHaveBeenCalledWith(entry.tx, undefined, "maintenance");
   });
 });

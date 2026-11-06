@@ -37,6 +37,8 @@ import {
   FrameTxValidationService,
 } from "../UserOpValidation/validators/frameTx.js";
 
+import { SimulationWorkGate, SimulationLane } from "../AdmissionScheduler/SimulationWorkGate.js";
+
 export interface FrameTxSimulateAndValidateResult {
   simulation: FrameTxSimulationResult;
   validation: FrameTxValidationResult;
@@ -48,15 +50,21 @@ export class FrameTxSimulationService {
   constructor(
     publicClient: PublicClient,
     private frameTxValidationService: FrameTxValidationService,
-    private logger: Logger
+    private logger: Logger,
+    private workGate: SimulationWorkGate = new SimulationWorkGate()
   ) {
     this.gethTracer = new GethTracer(publicClient);
   }
 
   async simulate(
     tx: FrameTransaction,
-    collector?: CheckCollector
+    collector?: CheckCollector,
+    lane: SimulationLane = "admission"
   ): Promise<FrameTxSimulateAndValidateResult> {
+    return this.workGate.submit(lane, () => this.simulateNow(tx, collector));
+  }
+
+  private async simulateNow(tx: FrameTransaction, collector?: CheckCollector): Promise<FrameTxSimulateAndValidateResult> {
     // The same gate is used by RPC admission, gossip admission, estimates and
     // revalidation. Over-budget declarations must never trigger traced execution.
     const prepared = await this.frameTxValidationService.preflight(tx, collector);

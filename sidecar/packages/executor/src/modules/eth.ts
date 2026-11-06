@@ -1,3 +1,4 @@
+import { MempoolEntryStatus } from "@skandha/types/lib/executor/index.js";
 import RpcError from "@skandha/types/lib/api/errors/rpc-error";
 import * as RpcErrorCodes from "@skandha/types/lib/api/errors/rpc-error-codes.js";
 import { Logger } from "@skandha/types/lib/index.js";
@@ -46,6 +47,7 @@ import { Skandha } from "./skandha.js";
  * `eip7702Auth` field.
  */
 export class Eth {
+  private readonly inFlight = new Map<string, Promise<Hex>>();
   constructor(
     private chainId: number,
     private publicClient: PublicClient,
@@ -88,19 +90,30 @@ export class Eth {
     tx: FrameTransaction,
     source: AdmissionSource = "rpc"
   ): Promise<Hex> {
-    const receivedAt = now();
-    const collector = new CheckCollector();
-    try {
-      return await this.admitFrameTransaction(
-        tx,
-        source,
-        collector,
-        receivedAt
-      );
-    } catch (err) {
-      this.recordRejection(tx, source, collector, err, receivedAt);
-      throw err;
-    }
+    const txHash = keccak256(encodeRawFrameTx(tx));
+    const pending = this.inFlight.get(txHash);
+    if (pending) return pending;
+    // Register synchronously before the first lookup to coalesce concurrent
+    // RPC/gossip copies, including identical requests still waiting in a queue.
+    const task = Promise.resolve().then(async () => {
+      const known = await this.mempoolService.getEntryByHash(txHash);
+      if (known && known.status !== MempoolEntryStatus.Cancelled) return txHash;
+      const receivedAt = now();
+      const collector = new CheckCollector();
+      try {
+        // Cheap read-only rejection before execution; addFrameTx rechecks under
+        // its insertion lock because another request can change the nonce slot.
+        try { await this.mempoolService.validateFrameTxReplaceability(tx); }
+        catch (error) { throw collector.failed(EXPLORER_RULES.MEMPOOL, error instanceof Error ? error : new Error(String(error))); }
+        return await this.admitFrameTransaction(tx, source, collector, receivedAt);
+      } catch (err) {
+        this.recordRejection(tx, source, collector, err, receivedAt);
+        throw err;
+      }
+    });
+    this.inFlight.set(txHash, task);
+    try { return await task; }
+    finally { if (this.inFlight.get(txHash) === task) this.inFlight.delete(txHash); }
   }
 
   private recordRejection(
@@ -197,8 +210,6 @@ export class Eth {
         this.logger.debug("Validating frame transaction before sending to mempool...");
         let replacedTxHash: string | undefined;
         try {
-          await this.mempoolService.validateFrameTxReplaceability(tx);
-
           // `roleStakes` came from the same StakingRegistryService lookups
           // `validate()` already made for its opcode/storage checks - not a
           // second round of on-chain reads. A role absent from the validation
@@ -446,7 +457,7 @@ export class Eth {
       blobVersionedHashes: tx.blobVersionedHashes ?? [],
     };
 
-    const { simulation } = await this.frameTxSimulationService.simulate(fullTx);
+    const { simulation } = await this.frameTxSimulationService.simulate(fullTx, undefined, "estimate");
     const gasFee = await this.skandhaModule.getGasPrice();
 
     const frames = simulation.frameReceipts.map((receipt) => ({

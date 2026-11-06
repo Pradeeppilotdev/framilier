@@ -1,0 +1,10 @@
+{
+  "collectedAtUTC": "2026-11-06T17:05:46.628285+00:00",
+  "scope": "Host metadata collected after the first run; not recorded at each individual trial.",
+  "system": "Linux",
+  "kernel": "6.19.10-300.fc44.x86_64",
+  "machine": "x86_64",
+  "logicalCpuCount": 16,
+  "memoryBytes": 16443846656,
+  "cpuModel": "12th Gen Intel(R) Core(TM) i5-1240P"
+}
