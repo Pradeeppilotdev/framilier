@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { Skandha } from "../../src/modules/skandha.js";
+import { AdmissionScheduler } from "../../src/services/AdmissionScheduler/index.js";
 import { MempoolService } from "../../src/services/MempoolService/service.js";
 import RpcError from "@skandha/types/lib/api/errors/rpc-error.js";
 import { MempoolEntryStatus } from "@skandha/types/lib/executor";
@@ -12,6 +13,7 @@ import { MempoolEntryStatus } from "@skandha/types/lib/executor";
 function buildSkandha(overrides: Partial<{
   mempoolService: Partial<MempoolService>;
   networkConfig: Record<string, unknown>;
+  scheduler: AdmissionScheduler;
 }> = {}): Skandha {
   const mempoolService = {
     getEntryByHash: vi.fn().mockResolvedValue(null),
@@ -37,7 +39,8 @@ function buildSkandha(overrides: Partial<{
     {} as any, // publicClient
     config,
     logger,
-    () => null
+    () => null,
+    overrides.scheduler
   );
 }
 
@@ -80,6 +83,14 @@ describe("Skandha.getFrameTransactionStatus", () => {
 });
 
 describe("Skandha.getConfig", () => {
+  it("reports the scheduler installed on the executor", async () => {
+    const networkConfig = { minStake: 0n, minSignerBalance: 0n, blockscoutApiKeys: [], schedulerMode: "off", schedulerSlots: 9 };
+    const scheduler = new AdmissionScheduler({ mode: "fair", slots: 3, maxHeavyPerSender: 1, maxWaiting: 8, heavyThreshold: 75000 });
+    const config = await buildSkandha({ networkConfig, scheduler }).getConfig();
+    expect(config.admissionScheduler).toEqual({ mode: "fair", slots: 3, maxHeavyPerSender: 1, maxWaiting: 8, heavyThreshold: 75000 });
+    expect((await buildSkandha({ networkConfig }).getConfig()).admissionScheduler).toBeUndefined();
+  });
+
   it("reports stakingRegistryAddress, so a tester can confirm which registry a running node uses", async () => {
     const networkConfig = {
       entryPoints: [],

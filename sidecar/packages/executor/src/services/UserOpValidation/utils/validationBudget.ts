@@ -1,6 +1,6 @@
 import { FrameTransaction, FRAME_MODE, APPROVE_SCOPE } from "@skandha/types/lib/contracts/FrameTx.js";
 import { Hex, getAddress } from "viem";
-import { signatureVerificationCost, ValidationPrefixMatch } from "./validationPrefix.js";
+import { signatureVerificationCost, ValidationPrefixMatch, recognizeValidationPrefix } from "./validationPrefix.js";
 
 // ERC-8421 PR #2028, revision 493ba8ac3be97dc5cf6335eb97d2e8e9f95983c5.
 export const MAX_VERIFY_GAS_PER_ENTITY = BigInt(100_000);
@@ -72,4 +72,54 @@ export function collectValidationBudgets(tx: FrameTransaction, prefix: Validatio
 export function budgetDetail(entry: EntityValidationBudget, limit: bigint): string {
   return `entity ${entry.address} (${entry.roles.join("+")}), frames [${entry.frameIndices.join(",")}]: ` +
     `${entry.executionGas} execution + ${entry.signatureGas} signature = ${entry.totalGas}; limit ${limit}`;
+}
+
+/**
+ * StakeLane PR 1: default threshold for classifying a frame transaction
+ * as a heavy admission job.
+ * Total declared VERIFY budget > 100,000 is heavy.
+ */
+export const DEFAULT_HEAVY_VERIFY_GAS_THRESHOLD = BigInt(100_000);
+
+/**
+ * Calculates the total declared verification gas for a frame transaction.
+ *
+ * Reuses pure prefix/budget helpers to count each entity's declared budget
+ * once, including signature cost, plus the separate expiry budget.
+ *
+ * Keep classification free of RPC calls. Malformed inputs retain the ordinary
+ * validation error downstream by returning 0n here.
+ */
+export function calculateDeclaredVerifyGas(tx: FrameTransaction): bigint {
+  if (!tx || !Array.isArray(tx.frames) || !tx.sender) {
+    return BigInt(0);
+  }
+
+  try {
+    const prefix = recognizeValidationPrefix(tx.frames, tx.sender);
+    if (!prefix) {
+      return BigInt(0);
+    }
+
+    const { entities, expiryGas } = collectValidationBudgets(tx, prefix);
+    let total = expiryGas;
+    for (const entity of entities) {
+      total += entity.totalGas;
+    }
+    return total;
+  } catch {
+    return BigInt(0);
+  }
+}
+
+/**
+ * Inexpensive hint indicating whether a frame transaction is heavy.
+ * A transaction is heavy if its total declared VERIFY budget strictly exceeds
+ * the threshold (default 100,000).
+ */
+export function isHeavyFrameTx(
+  tx: FrameTransaction,
+  threshold: bigint | number = DEFAULT_HEAVY_VERIFY_GAS_THRESHOLD
+): boolean {
+  return calculateDeclaredVerifyGas(tx) > BigInt(threshold);
 }

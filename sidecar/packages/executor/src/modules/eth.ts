@@ -9,7 +9,7 @@ import {
 } from "@skandha/types/lib/contracts/FrameTx.js";
 import { FrameTxReceipt } from "@skandha/types/lib/executor/validation/frameTxReceipt.js";
 import { PublicClient, Hex, keccak256 } from "viem";
-import { MempoolService } from "../services/index.js";
+import { MempoolService, AdmissionScheduler, isHeavyFrameTx } from "../services/index.js";
 import { FrameTxSimulationService } from "../services/FrameTxSimulationService/index.js";
 import { recognizeValidationPrefix } from "../services/UserOpValidation/utils/validationPrefix.js";
 import { ReceiptService } from "../services/ReceiptService/index.js";
@@ -57,7 +57,8 @@ export class Eth {
     private logger: Logger,
     private metrics: PerChainMetrics | null,
     private getNodeAPI: GetNodeAPI = () => null,
-    private explorer?: ExplorerService
+    private explorer?: ExplorerService,
+    private readonly admissionScheduler: AdmissionScheduler = new AdmissionScheduler(config, logger)
   ) {}
 
   private markupEstimate(
@@ -177,151 +178,160 @@ export class Eth {
     }
     collector.pass(EXPLORER_RULES.GAS_LIMIT);
 
-    await this.checkRecentRootWindow(tx, collector);
+    const isHeavy = this.admissionScheduler.mode === "fair" &&
+      isHeavyFrameTx(tx, this.admissionScheduler.heavyThreshold);
 
-    const { validation } = await this.frameTxSimulationService.simulate(
-      tx,
-      collector
-    );
+    return await this.admissionScheduler.submit(
+      tx.sender,
+      isHeavy,
+      async () => {
+        await this.checkRecentRootWindow(tx, collector);
 
-    const txHash = keccak256(encodeRawFrameTx(tx));
-
-    this.logger.debug("Validating frame transaction before sending to mempool...");
-    let replacedTxHash: string | undefined;
-    try {
-      await this.mempoolService.validateFrameTxReplaceability(tx);
-
-      // `roleStakes` came from the same StakingRegistryService lookups
-      // `validate()` already made for its opcode/storage checks - not a
-      // second round of on-chain reads. A role absent from the validation
-      // prefix (e.g. "sender" in the Self Relay shape) is simply undefined
-      // here; MempoolService.addFrameTx's reputation gate tolerates that.
-      const added = await this.mempoolService.addFrameTx(
-        tx,
-        txHash,
-        undefined,
-        validation.roleStakes.sender,
-        validation.roleStakes.factory,
-        validation.roleStakes.payer,
-        validation.maxCost
-      );
-      replacedTxHash = added?.replacedTxHash;
-    } catch (err) {
-      throw collector.failed(
-        EXPLORER_RULES.MEMPOOL,
-        err instanceof Error ? err : new Error(String(err))
-      );
-    }
-    collector.pass(EXPLORER_RULES.MEMPOOL);
-    this.logger.debug("Saved in mempool");
-
-    if (this.explorer) {
-      // The tx is already persisted: bookkeeping failures must not turn a
-      // successful admission into an error or skip the gossip publish below.
-      try {
-        this.explorer.recordAdmission({
+        const { validation } = await this.frameTxSimulationService.simulate(
           tx,
-          txHash,
-          source,
-          outcome: "accepted",
-          checks: collector.toChecks(),
-          at: receivedAt,
-          frameReceipts: collector.getFrameReceipts(),
-        });
-        if (replacedTxHash) {
-          this.explorer.markReplaced(replacedTxHash, txHash);
-        }
-      } catch (err) {
-        this.logger.error(err, "explorer bookkeeping failed");
-      }
-    }
-
-    this.metrics?.useropsInMempool.inc();
-
-    try {
-      const nodeApi = this.getNodeAPI();
-      if (nodeApi) {
-        // There is exactly one fixed ENTRY_POINT sentinel under EIP-8141
-        // (see the class doc comment above), so - unlike the old
-        // multi-EntryPoint `sendUserOperation` this mirrors - there is no
-        // per-EntryPoint mempool lookup to do; just resolve whichever
-        // mempool(s) this node is configured to relay on.
-        let supportedMempools = this.config.supportedMempools;
-        if (!supportedMempools || supportedMempools.length === 0) {
-          if (this.config.standardMempoolId && this.config.canonicalEntryPoint) {
-            supportedMempools = [
-              {
-                mempoolId: this.config.standardMempoolId,
-                entryPoint: this.config.canonicalEntryPoint,
-              },
-            ];
-          } else {
-            supportedMempools = [];
-          }
-        }
-
-        const matchingMempool = supportedMempools.find(
-          (mempool) =>
-            mempool.entryPoint.toLowerCase() === ENTRY_POINT.toLowerCase() &&
-            mempool.mempoolId.length > 0
+          collector
         );
 
-        if (matchingMempool) {
-          // Publish if:
-          // 1. The frame tx was found to belong to this specific mempool
-          //    (validation.mempoolMembership[matchingMempool.mempoolId] is
-          //    true - see FrameTxValidationResult's doc comment: no
-          //    mempool is privileged as "canonical" here, this is just
-          //    membership in whichever one this node relays on), OR
-          // 2. We're configured to relay txs with whitelisted entities
-          const belongsToMatchingMempool =
-            validation.mempoolMembership[matchingMempool.mempoolId] === true;
-          const shouldPublish =
-            belongsToMatchingMempool ||
-            this.config.relayOpsWithWhitelistedEntities;
+        const txHash = keccak256(encodeRawFrameTx(tx));
 
-          if (shouldPublish) {
-            const blockNumber = await this.publicClient.getBlockNumber();
-            await nodeApi.publishVerifiedFrameTxJSON(
-              ENTRY_POINT,
-              tx,
-              blockNumber.toString(),
-              matchingMempool.mempoolId
-            );
-            this.metrics?.useropsSent?.inc();
-          } else {
-            // Diagnostic for an otherwise entirely silent no-op: the mempool
-            // matched, but this transaction does not belong to it and the
-            // node is not configured to relay non-member txs anyway.
-            this.logger.debug(
-              `Not publishing frame transaction ${txHash} over gossipsub: ` +
-                `belongsToMatchingMempool=${belongsToMatchingMempool}, ` +
-                `relayOpsWithWhitelistedEntities=${this.config.relayOpsWithWhitelistedEntities}`
-            );
-          }
-        } else {
-          // Diagnostic for an otherwise entirely silent no-op: the most common
-          // misconfiguration is a `supportedMempools`/`canonicalEntryPoint`
-          // still carrying a legacy ERC-4337 EntryPoint address instead of the
-          // fixed EIP-8141 ENTRY_POINT sentinel, which disables gossip
-          // publishing without any error anywhere.
-          this.logger.debug(
-            `Not publishing frame transaction ${txHash} over gossipsub: no ` +
-              `configured mempool matches entryPoint ${ENTRY_POINT}. Configured ` +
-              `mempools: ${JSON.stringify(
-                supportedMempools.map((mempool) => ({
-                  mempoolId: mempool.mempoolId,
-                  entryPoint: mempool.entryPoint,
-                }))
-              )}`
+        this.logger.debug("Validating frame transaction before sending to mempool...");
+        let replacedTxHash: string | undefined;
+        try {
+          await this.mempoolService.validateFrameTxReplaceability(tx);
+
+          // `roleStakes` came from the same StakingRegistryService lookups
+          // `validate()` already made for its opcode/storage checks - not a
+          // second round of on-chain reads. A role absent from the validation
+          // prefix (e.g. "sender" in the Self Relay shape) is simply undefined
+          // here; MempoolService.addFrameTx's reputation gate tolerates that.
+          const added = await this.mempoolService.addFrameTx(
+            tx,
+            txHash,
+            undefined,
+            validation.roleStakes.sender,
+            validation.roleStakes.factory,
+            validation.roleStakes.payer,
+            validation.maxCost
+          );
+          replacedTxHash = added?.replacedTxHash;
+        } catch (err) {
+          throw collector.failed(
+            EXPLORER_RULES.MEMPOOL,
+            err instanceof Error ? err : new Error(String(err))
           );
         }
-      }
-    } catch (err) {
-      this.logger.debug(`Could not send frame transaction over gossipsub: ${err}`);
-    }
+        collector.pass(EXPLORER_RULES.MEMPOOL);
+        this.logger.debug("Saved in mempool");
 
-    return txHash;
+        if (this.explorer) {
+          // The tx is already persisted: bookkeeping failures must not turn a
+          // successful admission into an error or skip the gossip publish below.
+          try {
+            this.explorer.recordAdmission({
+              tx,
+              txHash,
+              source,
+              outcome: "accepted",
+              checks: collector.toChecks(),
+              at: receivedAt,
+              frameReceipts: collector.getFrameReceipts(),
+            });
+            if (replacedTxHash) {
+              this.explorer.markReplaced(replacedTxHash, txHash);
+            }
+          } catch (err) {
+            this.logger.error(err, "explorer bookkeeping failed");
+          }
+        }
+
+        this.metrics?.useropsInMempool.inc();
+
+        try {
+          const nodeApi = this.getNodeAPI();
+          if (nodeApi) {
+            // There is exactly one fixed ENTRY_POINT sentinel under EIP-8141
+            // (see the class doc comment above), so - unlike the old
+            // multi-EntryPoint `sendUserOperation` this mirrors - there is no
+            // per-EntryPoint mempool lookup to do; just resolve whichever
+            // mempool(s) this node is configured to relay on.
+            let supportedMempools = this.config.supportedMempools;
+            if (!supportedMempools || supportedMempools.length === 0) {
+              if (this.config.standardMempoolId && this.config.canonicalEntryPoint) {
+                supportedMempools = [
+                  {
+                    mempoolId: this.config.standardMempoolId,
+                    entryPoint: this.config.canonicalEntryPoint,
+                  },
+                ];
+              } else {
+                supportedMempools = [];
+              }
+            }
+
+            const matchingMempool = supportedMempools.find(
+              (mempool) =>
+                mempool.entryPoint.toLowerCase() === ENTRY_POINT.toLowerCase() &&
+                mempool.mempoolId.length > 0
+            );
+
+            if (matchingMempool) {
+              // Publish if:
+              // 1. The frame tx was found to belong to this specific mempool
+              //    (validation.mempoolMembership[matchingMempool.mempoolId] is
+              //    true - see FrameTxValidationResult's doc comment: no
+              //    mempool is privileged as "canonical" here, this is just
+              //    membership in whichever one this node relays on), OR
+              // 2. We're configured to relay txs with whitelisted entities
+              const belongsToMatchingMempool =
+                validation.mempoolMembership[matchingMempool.mempoolId] === true;
+              const shouldPublish =
+                belongsToMatchingMempool ||
+                this.config.relayOpsWithWhitelistedEntities;
+
+              if (shouldPublish) {
+                const blockNumber = await this.publicClient.getBlockNumber();
+                await nodeApi.publishVerifiedFrameTxJSON(
+                  ENTRY_POINT,
+                  tx,
+                  blockNumber.toString(),
+                  matchingMempool.mempoolId
+                );
+                this.metrics?.useropsSent?.inc();
+              } else {
+                // Diagnostic for an otherwise entirely silent no-op: the mempool
+                // matched, but this transaction does not belong to it and the
+                // node is not configured to relay non-member txs anyway.
+                this.logger.debug(
+                  `Not publishing frame transaction ${txHash} over gossipsub: ` +
+                    `belongsToMatchingMempool=${belongsToMatchingMempool}, ` +
+                    `relayOpsWithWhitelistedEntities=${this.config.relayOpsWithWhitelistedEntities}`
+                );
+              }
+            } else {
+              // Diagnostic for an otherwise entirely silent no-op: the most common
+              // misconfiguration is a `supportedMempools`/`canonicalEntryPoint`
+              // still carrying a legacy ERC-4337 EntryPoint address instead of the
+              // fixed EIP-8141 ENTRY_POINT sentinel, which disables gossip
+              // publishing without any error anywhere.
+              this.logger.debug(
+                `Not publishing frame transaction ${txHash} over gossipsub: no ` +
+                  `configured mempool matches entryPoint ${ENTRY_POINT}. Configured ` +
+                  `mempools: ${JSON.stringify(
+                    supportedMempools.map((mempool) => ({
+                      mempoolId: mempool.mempoolId,
+                      entryPoint: mempool.entryPoint,
+                    }))
+                  )}`
+              );
+            }
+          }
+        } catch (err) {
+          this.logger.debug(`Could not send frame transaction over gossipsub: ${err}`);
+        }
+
+        return txHash;
+      }
+    );
   }
 
   /**

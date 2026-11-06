@@ -11,6 +11,7 @@ import {
   ReputationService,
   ExecutorEventBus,
   SubscriptionService,
+  AdmissionScheduler,
 } from "./services/index.js";
 import { FrameTxValidationService } from "./services/UserOpValidation/validators/frameTx.js";
 import { FrameTxSimulationService } from "./services/FrameTxSimulationService/index.js";
@@ -64,6 +65,8 @@ export class Executor {
   public explorerService: ExplorerService | null = null;
   // Present only with --explorer.enable and SKANDHA_FAUCET_KEY set.
   public faucet: FaucetService | null = null;
+  // StakeLane PR 1: admission scheduler owned by each executor instance
+  public admissionScheduler: AdmissionScheduler;
 
   private db: IDbController;
 
@@ -121,13 +124,15 @@ export class Executor {
       (address) => this.publicClient.getBalance({ address })
     );
 
+    this.admissionScheduler = new AdmissionScheduler(this.networkConfig, this.logger);
     this.skandha = new Skandha(
       this.mempoolService,
       this.chainId,
       this.publicClient,
       this.config,
       this.logger,
-      this.getNodeApi
+      this.getNodeApi,
+      this.admissionScheduler
     );
 
     // The EIP-8421 IStakingRegistry contract address. Zero (the default,
@@ -199,7 +204,8 @@ export class Executor {
       this.logger,
       this.metrics,
       this.getNodeApi,
-      this.explorerService ?? undefined
+      this.explorerService ?? undefined,
+      this.admissionScheduler
     );
 
     this.explorer = new Explorer(
