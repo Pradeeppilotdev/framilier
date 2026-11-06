@@ -566,43 +566,19 @@ export class Config {
       )
     );
 
-    config.schedulerMode = (
+    config.schedulerMode = String(
       fromEnvVar(
         "SCHEDULER_MODE",
-        config.schedulerMode || bundlerDefaultConfigs.schedulerMode
-      ) as string
+        config.schedulerMode ?? bundlerDefaultConfigs.schedulerMode
+      )
     ).toLowerCase() as "off" | "fifo" | "fair";
-
-    config.schedulerSlots = Number(
-      fromEnvVar(
-        "SCHEDULER_SLOTS",
-        config.schedulerSlots || bundlerDefaultConfigs.schedulerSlots
-      )
-    );
-
-    config.schedulerMaxHeavyPerSender = Number(
-      fromEnvVar(
-        "SCHEDULER_MAX_HEAVY_PER_SENDER",
-        config.schedulerMaxHeavyPerSender ||
-          bundlerDefaultConfigs.schedulerMaxHeavyPerSender
-      )
-    );
-
-    config.schedulerMaxWaiting = Number(
-      fromEnvVar(
-        "SCHEDULER_MAX_WAITING",
-        config.schedulerMaxWaiting ||
-          bundlerDefaultConfigs.schedulerMaxWaiting
-      )
-    );
-
-    config.schedulerHeavyThreshold = Number(
-      fromEnvVar(
-        "SCHEDULER_HEAVY_THRESHOLD",
-        config.schedulerHeavyThreshold ||
-          bundlerDefaultConfigs.schedulerHeavyThreshold
-      )
-    );
+    config.schedulerSlots = schedulerNumber("SCHEDULER_SLOTS", config.schedulerSlots ?? bundlerDefaultConfigs.schedulerSlots);
+    config.schedulerMaxHeavyPerSender = schedulerNumber("SCHEDULER_MAX_HEAVY_PER_SENDER",
+      config.schedulerMaxHeavyPerSender ?? bundlerDefaultConfigs.schedulerMaxHeavyPerSender);
+    config.schedulerMaxWaiting = schedulerNumber("SCHEDULER_MAX_WAITING",
+      config.schedulerMaxWaiting ?? bundlerDefaultConfigs.schedulerMaxWaiting);
+    config.schedulerHeavyThreshold = schedulerNumber("SCHEDULER_HEAVY_THRESHOLD",
+      config.schedulerHeavyThreshold ?? bundlerDefaultConfigs.schedulerHeavyThreshold);
 
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (!config.whitelistedEntities) {
@@ -720,6 +696,12 @@ function getEnvVar<T>(envVar: string, fallback: T): T | string {
   const env = process.env[envVar];
   if (!env) return fallback;
   return env;
+}
+
+function schedulerNumber(name: string, fallback: number): number {
+  const value = fromEnvVar(name, fallback);
+  if (typeof value === "number" || (typeof value === "string" && /^\d+$/.test(value))) return Number(value);
+  throw new Error(`Invalid admission scheduler setting ${name}`);
 }
 
 function fromEnvVar<T>(

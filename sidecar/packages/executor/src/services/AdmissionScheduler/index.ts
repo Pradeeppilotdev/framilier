@@ -29,6 +29,13 @@ interface SenderQueue {
   activeTotal: number;
 }
 
+function checkedLimit(name: string, value: number, minimum: number): number {
+  if (!Number.isSafeInteger(value) || value < minimum) {
+    throw new Error(`Admission scheduler ${name} must be a safe integer >= ${minimum}`);
+  }
+  return value;
+}
+
 /**
  * StakeLane PR 1: sender-fair admission scheduler.
  *
@@ -60,31 +67,19 @@ export class AdmissionScheduler {
   private lastDispatchedSender: string | null = null;
 
   constructor(
-    configOrOptions?: Partial<NetworkConfig> | AdmissionSchedulerOptions,
-    private logger?: Logger
+    opts: Partial<NetworkConfig> & AdmissionSchedulerOptions = {},
+    _logger?: Logger
   ) {
-    const opts = configOrOptions ?? {};
-    const mode = (opts as any).schedulerMode ?? (opts as any).mode ?? "off";
-    this.mode = (String(mode).toLowerCase() as SchedulerMode) || "off";
-
-    const slots = (opts as any).schedulerSlots ?? (opts as any).slots ?? 4;
-    this.slots = Number(slots) > 0 ? Number(slots) : 4;
-
-    const maxHeavy =
-      (opts as any).schedulerMaxHeavyPerSender ??
-      (opts as any).maxHeavyPerSender ??
-      2;
-    this.maxHeavyPerSender = Number(maxHeavy) > 0 ? Number(maxHeavy) : 2;
-
-    const maxWait =
-      (opts as any).schedulerMaxWaiting ?? (opts as any).maxWaiting ?? 64;
-    this.maxWaiting = Number(maxWait) > 0 ? Number(maxWait) : 64;
-
-    const threshold =
-      (opts as any).schedulerHeavyThreshold ??
-      (opts as any).heavyThreshold ??
-      100_000;
-    this.heavyThreshold = BigInt(threshold);
+    const mode = String(opts.schedulerMode ?? opts.mode ?? "off").toLowerCase();
+    if (mode !== "off" && mode !== "fifo" && mode !== "fair") {
+      throw new Error(`Unknown admission scheduler mode: ${mode}`);
+    }
+    this.mode = mode;
+    this.slots = checkedLimit("slots", opts.schedulerSlots ?? opts.slots ?? 4, 1);
+    this.maxHeavyPerSender = checkedLimit("maxHeavyPerSender", opts.schedulerMaxHeavyPerSender ?? opts.maxHeavyPerSender ?? 2, 1);
+    this.maxWaiting = checkedLimit("maxWaiting", opts.schedulerMaxWaiting ?? opts.maxWaiting ?? 64, 0);
+    const threshold = opts.schedulerHeavyThreshold ?? opts.heavyThreshold ?? 100_000;
+    this.heavyThreshold = BigInt(checkedLimit("heavyThreshold", Number(threshold), 0));
   }
 
   /**
@@ -107,12 +102,18 @@ export class AdmissionScheduler {
       return await fn();
     }
 
-    // Check waiting queue capacity
+    // A capped sender can fill the waiting queue while other senders can still
+    // use free slots. Apply the backlog limit only to work that must wait.
     if (this.waitingCount >= this.maxWaiting) {
-      throw new RpcError(
-        `Admission queue is full (${this.waitingCount}/${this.maxWaiting} waiting), retry later`,
-        RpcErrorCodes.SERVER_ERROR
-      );
+      const owner = this.senderQueues.get(normalizedSender);
+      const needsToWait = this.runningCount >= this.slots || (owner?.queue.length ?? 0) > 0 ||
+        (isHeavy && (owner?.activeHeavy ?? 0) >= this.maxHeavyPerSender);
+      if (needsToWait) {
+        throw new RpcError(
+          `Admission queue is full (${this.waitingCount}/${this.maxWaiting} waiting), retry later`,
+          RpcErrorCodes.SERVER_ERROR
+        );
+      }
     }
 
     return new Promise<T>((resolve, reject) => {
@@ -187,17 +188,12 @@ export class AdmissionScheduler {
     const n = this.waitingSenderOrder.length;
     if (n === 0) return null;
 
-    let startIndex = 0;
-    if (this.lastDispatchedSender) {
-      const idx = this.waitingSenderOrder.indexOf(this.lastDispatchedSender);
-      if (idx !== -1) {
-        startIndex = (idx + 1) % n;
-      }
+    if (n > 1 && this.waitingSenderOrder[0] === this.lastDispatchedSender) {
+      this.waitingSenderOrder.push(this.waitingSenderOrder.shift()!);
     }
 
     for (let i = 0; i < n; i++) {
-      const senderIndex = (startIndex + i) % n;
-      const senderKey = this.waitingSenderOrder[senderIndex];
+      const senderKey = this.waitingSenderOrder.shift()!;
       const sq = this.senderQueues.get(senderKey);
 
       if (!sq || sq.queue.length === 0) {
@@ -207,7 +203,7 @@ export class AdmissionScheduler {
       const nextJob = sq.queue[0];
       // Cap simultaneous heavy jobs from one sender in fair mode
       if (nextJob.isHeavy && sq.activeHeavy >= this.maxHeavyPerSender) {
-        // Skip a temporarily capped sender when another sender is eligible
+        this.waitingSenderOrder.push(senderKey);
         continue;
       }
 
@@ -221,13 +217,8 @@ export class AdmissionScheduler {
       }
       this.lastDispatchedSender = senderKey;
 
-      // If sender has no more waiting jobs, remove from waiting list
-      if (sq.queue.length === 0) {
-        const orderIdx = this.waitingSenderOrder.indexOf(senderKey);
-        if (orderIdx !== -1) {
-          this.waitingSenderOrder.splice(orderIdx, 1);
-        }
-      }
+      // Leave the successor at the front even when this sender runs dry.
+      if (sq.queue.length) this.waitingSenderOrder.push(senderKey);
 
       return job;
     }
@@ -297,4 +288,3 @@ export class AdmissionScheduler {
     return this.senderQueues.size;
   }
 }
-

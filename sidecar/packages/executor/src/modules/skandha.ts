@@ -12,6 +12,7 @@ import { PublicClient, formatEther } from "viem";
 import { GetNodeAPI, NetworkConfig } from "../interfaces.js";
 import { Config } from "../config.js";
 import { MempoolService } from "../services/index.js";
+import type { AdmissionScheduler } from "../services/AdmissionScheduler/index.js";
 import { FrameTransactionStatus } from "./interfaces.js";
 
 /**
@@ -42,7 +43,8 @@ export class Skandha {
     private publicClient: PublicClient,
     private config: Config,
     private logger: Logger,
-    private getNodeAPI: GetNodeAPI = () => null
+    private getNodeAPI: GetNodeAPI = () => null,
+    private readonly admissionScheduler?: AdmissionScheduler
   ) {
     const networkConfig = this.config.getNetworkConfig();
     this.networkConfig = networkConfig;
@@ -163,12 +165,12 @@ export class Skandha {
       precompiles: this.networkConfig.precompiles,
       relayOpsWithWhitelistedEntities: this.networkConfig.relayOpsWithWhitelistedEntities,
       stakingRegistryAddress: this.networkConfig.stakingRegistryAddress,
-      admissionScheduler: {
-        mode: this.networkConfig.schedulerMode,
-        slots: this.networkConfig.schedulerSlots,
-        maxHeavyPerSender: this.networkConfig.schedulerMaxHeavyPerSender,
-        maxWaiting: this.networkConfig.schedulerMaxWaiting,
-        heavyThreshold: this.networkConfig.schedulerHeavyThreshold,
+      admissionScheduler: this.admissionScheduler && {
+        mode: this.admissionScheduler.mode,
+        slots: this.admissionScheduler.slots,
+        maxHeavyPerSender: this.admissionScheduler.maxHeavyPerSender,
+        maxWaiting: this.admissionScheduler.maxWaiting,
+        heavyThreshold: Number(this.admissionScheduler.heavyThreshold),
       },
     };
   }

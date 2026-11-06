@@ -124,13 +124,15 @@ export class Executor {
       (address) => this.publicClient.getBalance({ address })
     );
 
+    this.admissionScheduler = new AdmissionScheduler(this.networkConfig, this.logger);
     this.skandha = new Skandha(
       this.mempoolService,
       this.chainId,
       this.publicClient,
       this.config,
       this.logger,
-      this.getNodeApi
+      this.getNodeApi,
+      this.admissionScheduler
     );
 
     // The EIP-8421 IStakingRegistry contract address. Zero (the default,
@@ -189,11 +191,6 @@ export class Executor {
       this.mempoolService,
       this.reputationService,
       this.networkConfig
-    );
-
-    this.admissionScheduler = new AdmissionScheduler(
-      this.networkConfig,
-      this.logger
     );
 
     this.eth = new Eth(

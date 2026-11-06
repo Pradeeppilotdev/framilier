@@ -58,12 +58,8 @@ export class Eth {
     private metrics: PerChainMetrics | null,
     private getNodeAPI: GetNodeAPI = () => null,
     private explorer?: ExplorerService,
-    private admissionScheduler?: AdmissionScheduler
-  ) {
-    if (!this.admissionScheduler) {
-      this.admissionScheduler = new AdmissionScheduler(this.config, this.logger);
-    }
-  }
+    private readonly admissionScheduler: AdmissionScheduler = new AdmissionScheduler(config, logger)
+  ) {}
 
   private markupEstimate(
     estimate: bigint,
@@ -182,14 +178,11 @@ export class Eth {
     }
     collector.pass(EXPLORER_RULES.GAS_LIMIT);
 
-    const normalizedSender = (tx.sender ?? "").toLowerCase();
-    const isHeavy = isHeavyFrameTx(
-      tx,
-      this.config.schedulerHeavyThreshold ?? 100_000
-    );
+    const isHeavy = this.admissionScheduler.mode === "fair" &&
+      isHeavyFrameTx(tx, this.admissionScheduler.heavyThreshold);
 
-    return await this.admissionScheduler!.submit(
-      normalizedSender,
+    return await this.admissionScheduler.submit(
+      tx.sender,
       isHeavy,
       async () => {
         await this.checkRecentRootWindow(tx, collector);

@@ -51,6 +51,59 @@ function createHoldableJob<T = string>(name: string, resultValue: T = name as an
 }
 
 describe("AdmissionScheduler", () => {
+  it("rejects invalid modes and invalid operator limits before accepting work", () => {
+    expect(() => new AdmissionScheduler({ mode: "typo" as SchedulerMode })).toThrow(/mode/i);
+    for (const slots of [0, -1, 1.5, Infinity, NaN]) {
+      expect(() => new AdmissionScheduler({ slots })).toThrow(/slots/i);
+    }
+    expect(() => new AdmissionScheduler({ maxHeavyPerSender: 0 })).toThrow(/heavy/i);
+    expect(() => new AdmissionScheduler({ maxWaiting: -1 })).toThrow(/waiting/i);
+    expect(() => new AdmissionScheduler({ heavyThreshold: -1n })).toThrow(/threshold/i);
+  });
+
+  it("keeps the successor's turn when a sender drains its last waiting job", async () => {
+    const scheduler = new AdmissionScheduler({ mode: "fair", slots: 1 });
+    const held = createHoldableJob("A0");
+    const first = scheduler.submit(SENDER_A, false, held.fn);
+    const order: string[] = [];
+    const enqueue = (sender: string, id: string) =>
+      scheduler.submit(sender, false, async () => { order.push(id); });
+    const queued = [
+      enqueue(SENDER_A, "A1"), enqueue(SENDER_A, "A2"),
+      enqueue(SENDER_B, "B1"), enqueue(SENDER_C, "C1"),
+    ];
+    held.release();
+    await Promise.all([first, ...queued]);
+    expect(order).toEqual(["B1", "C1", "A1", "A2"]);
+  });
+
+  it("uses a free slot for another sender when a capped sender fills the waiting queue", async () => {
+    const scheduler = new AdmissionScheduler({ mode: "fair", slots: 4, maxHeavyPerSender: 2, maxWaiting: 1 });
+    const held = createHoldableJob("A");
+    const heavy = Array.from({ length: 3 }, () => scheduler.submit(SENDER_A, true, held.fn));
+    try {
+      expect(scheduler.getWaitingCount()).toBe(1);
+      await expect(scheduler.submit(SENDER_A, false, async () => "jump")).rejects.toThrow(/queue is full/i);
+      await expect(scheduler.submit(SENDER_B, false, async () => "B")).resolves.toBe("B");
+      expect(scheduler.getWaitingCount()).toBe(1);
+    } finally {
+      held.release();
+      await Promise.all(heavy);
+    }
+  });
+
+  it("supports zero waiting slots without dropping work that can start immediately", async () => {
+    const scheduler = new AdmissionScheduler({ mode: "fifo", slots: 1, maxWaiting: 0 });
+    const held = createHoldableJob("first");
+    const first = scheduler.submit(SENDER_A, false, held.fn);
+    await held.waitForStart();
+    const next = scheduler.submit(SENDER_B, false, async () => "second");
+    held.release();
+    await expect(next).rejects.toThrow(/queue is full/i);
+    await first;
+    await expect(scheduler.submit(SENDER_C, false, async () => "third")).resolves.toBe("third");
+  });
+
   describe("Definition of done - Core Requirements", () => {
     it("With four A jobs held, FIFO must leave B waiting until a slot opens", async () => {
       const scheduler = new AdmissionScheduler({
@@ -484,4 +537,3 @@ describe("AdmissionScheduler", () => {
     });
   });
 });
-

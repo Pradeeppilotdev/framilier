@@ -9,6 +9,18 @@ StakeLane implements the per-entity rule `BUDGET-010` from ERC-8421 draft revisi
 
 The example requires a locked deposit of at least 0.01 devnet ETH, an 86,400-second unstake delay, deployed code and a successful stake check. A pending withdrawal removes eligibility. The sidecar checks the limits before requesting an execution trace. A leading protocol expiry verifier has a separate local 100,000-gas bound. The whole-transaction gas ceiling and payer solvency checks still apply.
 
+## Admission scheduling
+
+The executor shares one admission scheduler across RPC, peer gossip and peer sync. `schedulerMode` defaults to `off`. Use `fifo` for a bounded first-come-first-served queue or `fair` to rotate between waiting sender addresses. Only fair mode limits simultaneous heavy requests from each sender.
+
+```json
+{"schedulerMode":"fair","schedulerSlots":4,"schedulerMaxHeavyPerSender":2,"schedulerMaxWaiting":64,"schedulerHeavyThreshold":100000}
+```
+
+A request is heavy when its total declared verification budget exceeds the threshold. The scheduler counts all roles, signature cost and the separate expiry allowance. The existing validator enforces stake eligibility and validity. When the waiting queue fills, a request that needs to wait gets a retryable server error. An eligible sender can still use a free slot. Users of the same sending contract share a turn.
+
+Read `skandha_config.admissionScheduler` to see the active instance’s `mode`, `slots`, `maxHeavyPerSender`, `maxWaiting` and `heavyThreshold`.
+
 ## Updated public devnet on 6 November 2026
 
 The organizers' primary sidecar admitted one StakeLane hash-chain workload on replacement chain `1337`. The participant started with 1 test ETH. Its wallet deployed with 0.02 test ETH in block 959. Its 0.012 test ETH stake mined in block 966 with an 86,400-second withdrawal delay. [Exact relay events and diagnostic](PUBLIC_RELAY_REPORT.md)
