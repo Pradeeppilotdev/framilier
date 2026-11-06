@@ -1,0 +1,27 @@
+{
+  "name": "frameforge-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "EIP-8141 & ERC-8286 Native Frame Transaction SDK, Viem Extension, ZK Recovery & CLI",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test",
+    "cli": "node packages/cli/dist/bin/frameforge.js"
+  },
+  "devDependencies": {
+    "viem": "^2.21.0"
+  },
+  "keywords": [
+    "eip-8141",
+    "erc-8286",
+    "erc-8421",
+    "frame-transactions",
+    "account-abstraction",
+    "zk-snark",
+    "viem",
+    "wagmi"
+  ],
+  "author": "FrameForge Team",
+  "license": "MIT"
+}
+

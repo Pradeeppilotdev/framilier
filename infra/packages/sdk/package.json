@@ -1,0 +1,17 @@
+{
+  "name": "@frameforge/sdk",
+  "version": "1.0.0",
+  "description": "Core TypeScript SDK for EIP-8141 Frame Transactions, ERC-8286 Accounts, and ZK Recovery",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}
+

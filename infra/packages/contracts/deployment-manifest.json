@@ -1,0 +1,30 @@
+{
+  "network": "EIP-8141 Devnet",
+  "rpc": "https://altmempool.forshtat.com",
+  "gateway": "https://altmempoolgateway.forshtat.com/rpc",
+  "explorer": "https://altmempoolexplorer.forshtat.com",
+  "chainId": 1337,
+  "deployedAt": "2026-11-06T22:04:15.739Z",
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "contracts": {
+    "ZKRecoveryValidator": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+    "SimplePaymaster": "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
+    "MultiTenantPaymaster": "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+    "NaiveStakingRegistry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f"
+  },
+  "demoTenant": {
+    "tenantId": "0x32827c27c56d0f6d9612dde219b46c478509118b1a7dee8dc0ad5d8746b99381",
+    "name": "frameforge-demo-tenant",
+    "dailyQuota": 100,
+    "maxGasLimit": 500000,
+    "depositBalanceEth": "0.05"
+  },
+  "explorerUrls": {
+    "ZKRecoveryValidator": "https://altmempoolexplorer.forshtat.com/address/0x5fbdb2315678afecb367f032d93f642f64180aa3",
+    "SimplePaymaster": "https://altmempoolexplorer.forshtat.com/address/0xe7f1725e7734ce288f8367e1bb143e90bb3f0512",
+    "MultiTenantPaymaster": "https://altmempoolexplorer.forshtat.com/address/0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+    "NaiveStakingRegistry": "https://altmempoolexplorer.forshtat.com/address/0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
+    "multiTenantDeployTx": "https://altmempoolexplorer.forshtat.com/tx/0x6434c0456bfcfb3ab1c6d3d9e813ff5393c7e9898a316a8f535ed331af72c902",
+    "stakeTx": "https://altmempoolexplorer.forshtat.com/tx/0x1cfc4c9def3b7c25c5f6734a59594203eaa95eca1fc2b300ee12fca795aa7ab4"
+  }
+}
