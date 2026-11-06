@@ -163,6 +163,13 @@ export class Skandha {
       precompiles: this.networkConfig.precompiles,
       relayOpsWithWhitelistedEntities: this.networkConfig.relayOpsWithWhitelistedEntities,
       stakingRegistryAddress: this.networkConfig.stakingRegistryAddress,
+      admissionScheduler: {
+        mode: this.networkConfig.schedulerMode,
+        slots: this.networkConfig.schedulerSlots,
+        maxHeavyPerSender: this.networkConfig.schedulerMaxHeavyPerSender,
+        maxWaiting: this.networkConfig.schedulerMaxWaiting,
+        heavyThreshold: this.networkConfig.schedulerHeavyThreshold,
+      },
     };
   }
 

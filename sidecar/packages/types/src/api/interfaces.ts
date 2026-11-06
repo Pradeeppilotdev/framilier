@@ -114,7 +114,14 @@ export type GetConfigResponse = {
   binarySearchMaxRetries: number;
   precompiles: string[];
   stakingRegistryAddress: string;
-  relayOpsWithWhitelistedEntities: boolean
+  relayOpsWithWhitelistedEntities: boolean;
+  admissionScheduler?: {
+    mode: "off" | "fifo" | "fair";
+    slots: number;
+    maxHeavyPerSender: number;
+    maxWaiting: number;
+    heavyThreshold: number;
+  };
 };
 
 export type SupportedEntryPoints = string[];

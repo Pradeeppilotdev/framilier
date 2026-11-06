@@ -566,6 +566,44 @@ export class Config {
       )
     );
 
+    config.schedulerMode = (
+      fromEnvVar(
+        "SCHEDULER_MODE",
+        config.schedulerMode || bundlerDefaultConfigs.schedulerMode
+      ) as string
+    ).toLowerCase() as "off" | "fifo" | "fair";
+
+    config.schedulerSlots = Number(
+      fromEnvVar(
+        "SCHEDULER_SLOTS",
+        config.schedulerSlots || bundlerDefaultConfigs.schedulerSlots
+      )
+    );
+
+    config.schedulerMaxHeavyPerSender = Number(
+      fromEnvVar(
+        "SCHEDULER_MAX_HEAVY_PER_SENDER",
+        config.schedulerMaxHeavyPerSender ||
+          bundlerDefaultConfigs.schedulerMaxHeavyPerSender
+      )
+    );
+
+    config.schedulerMaxWaiting = Number(
+      fromEnvVar(
+        "SCHEDULER_MAX_WAITING",
+        config.schedulerMaxWaiting ||
+          bundlerDefaultConfigs.schedulerMaxWaiting
+      )
+    );
+
+    config.schedulerHeavyThreshold = Number(
+      fromEnvVar(
+        "SCHEDULER_HEAVY_THRESHOLD",
+        config.schedulerHeavyThreshold ||
+          bundlerDefaultConfigs.schedulerHeavyThreshold
+      )
+    );
+
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (!config.whitelistedEntities) {
       config.whitelistedEntities = bundlerDefaultConfigs.whitelistedEntities;
@@ -603,6 +641,12 @@ const bundlerDefaultConfigs: BundlerConfig = {
   banSlack: 50,
   minStake: parseEther("0.01"),
   minUnstakeDelay: 0,
+  // StakeLane PR 1: admission scheduler defaults
+  schedulerMode: "off",
+  schedulerSlots: 4,
+  schedulerMaxHeavyPerSender: 2,
+  schedulerMaxWaiting: 64,
+  schedulerHeavyThreshold: 100_000,
   stakingRegistryAddress: AddressZero,
   minSignerBalance: parseEther("0.1"),
   multicall: "0xcA11bde05977b3631167028862bE2a173976CA11", // default multicall address

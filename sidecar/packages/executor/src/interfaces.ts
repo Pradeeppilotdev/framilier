@@ -207,6 +207,12 @@ export interface NetworkConfig {
   precompiles: string[];
   // flag to relay userops to connected peers via p2p when userop is validated because of whitelisted entities
   relayOpsWithWhitelistedEntities: boolean;
+  // StakeLane PR 1: admission scheduler settings
+  schedulerMode: "off" | "fifo" | "fair";
+  schedulerSlots: number;
+  schedulerMaxHeavyPerSender: number;
+  schedulerMaxWaiting: number;
+  schedulerHeavyThreshold: number;
 }
 
 export type BundlerConfig = Omit<
