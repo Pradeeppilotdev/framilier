@@ -72,7 +72,10 @@ export function privateProducer(executionUrl, engineUrl, jwt, feeRecipient) {
   async function receipts(hashes, relay) {
     const results = new Map();
     const pending = new Set(hashes);
-    for (let n = 0; pending.size && n < 8; n++) {
+    // The benchmark relays at most one transaction per block. Larger bursts
+    // need enough blocks for every hash, plus a bounded reconciliation margin.
+    const maxBlocks = 2 * hashes.length + 6;
+    for (let n = 0; pending.size && n < maxBlocks; n++) {
       if (relay) await relay();
       await produce();
       for (const hash of pending) {
@@ -88,7 +91,7 @@ export function privateProducer(executionUrl, engineUrl, jwt, feeRecipient) {
         pending.delete(hash);
       }
     }
-    assert.equal(pending.size, 0, "Missing canonical receipts after eight private blocks: " + [...pending].join(", "));
+    assert.equal(pending.size, 0, `Missing canonical receipts after ${maxBlocks} private blocks: ` + [...pending].join(", "));
     return results;
   }
   async function receipt(hash) {

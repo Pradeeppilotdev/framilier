@@ -9,7 +9,19 @@ StakeLane measures how expensive VERIFY frames affect other wallets during admis
 | Workshop sidecar, codec, staking and reputation services, relay and explorer | Per-entity budget accounting, preflight checks, rule reporting and boundary tests |
 | Workshop wallet tooling, staking registry and unmodified Hegota ethrex | Keccak hash-chain wallet workload, private block producer, public submission runner, simulation timing and two-wallet comparisons |
 
-The initial public workshop checkpoint was `7c9594f`. The fork inventory separates the imported files from the project changes. The scheduler, broader load sweep and operator CLI are proposed next steps. [Upstream provenance](docs/UPSTREAM.md)
+The initial public workshop checkpoint was `7c9594f`. The fork inventory separates the imported files from the project changes. [Upstream provenance](docs/UPSTREAM.md)
+
+## Compare admission policies
+
+After the [private-node setup](docs/SIDECAR.md#reproduce-the-mined-transaction), run the following command from the repository root.
+
+```sh
+./stakelane compare
+```
+
+The command sends valid transactions from two staked wallets to a local sidecar. It reports wallet B’s median and p95 admission times and the time to admit all of wallet A’s burst. It verifies canonical receipts after timing. Use `./stakelane compare --baseline-only` for the default policy alone. The full comparison checks the node’s active policy before reporting FIFO or fair timings. [Command options, methodology and integration contract](docs/BUILDER_BENCHMARK.md#run-stakelane-compare)
+
+To check the saved measurements with Node alone, run `node --test sidecar/test/stakelane/compare-evidence.test.mjs` from the repository root. [Evidence and audit](docs/BUILDER_BENCHMARK.md#verify-the-saved-measurements)
 
 ## StakeLane sidecar
 

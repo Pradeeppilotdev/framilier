@@ -1,0 +1,88 @@
+{
+  "format": 1,
+  "status": "baseline-only",
+  "startedAt": "2026-11-06T14:08:18.009Z",
+  "chainId": 8141337,
+  "host": {
+    "os": "darwin",
+    "arch": "arm64",
+    "node": "v26.12.1",
+    "ethrexWorkers": 4
+  },
+  "rounds": 20,
+  "bursts": [
+    1,
+    4,
+    8
+  ],
+  "requestedModes": [
+    "off"
+  ],
+  "policies": {
+    "off": {
+      "status": "measured",
+      "schedulerReadback": null,
+      "genesisHash": "0x43acef161e4eeef76c8ce363cc753d284b4b2ff2d96603d34631989c484153a7",
+      "ethrexBinarySha256": "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692",
+      "fixtureArtifactSha256": "3c3fbbe8c23ba0402e8f8e5bbb15bb69a513715b6b9d32fb98bafd88942c5bc1",
+      "signedWorkloadSha256": "7c6d21e800b60a6ddf449e8b7d7c31bb8cc58badff36555cf2748315662f0133",
+      "evidenceFile": "off.json",
+      "summary": [
+        {
+          "burst": 0,
+          "n": 20,
+          "bAdmissionMs": {
+            "p50": 17.264,
+            "p95": 26.074
+          },
+          "aBatchMs": null,
+          "aMined": 0,
+          "bMined": 20
+        },
+        {
+          "burst": 1,
+          "n": 20,
+          "bAdmissionMs": {
+            "p50": 134.536,
+            "p95": 144.255
+          },
+          "aBatchMs": {
+            "p50": 133.556,
+            "p95": 142.77
+          },
+          "aMined": 20,
+          "bMined": 20
+        },
+        {
+          "burst": 4,
+          "n": 20,
+          "bAdmissionMs": {
+            "p50": 231.105,
+            "p95": 245.783
+          },
+          "aBatchMs": {
+            "p50": 298.644,
+            "p95": 346.877
+          },
+          "aMined": 80,
+          "bMined": 20
+        },
+        {
+          "burst": 8,
+          "n": 20,
+          "bAdmissionMs": {
+            "p50": 308.539,
+            "p95": 381.019
+          },
+          "aBatchMs": {
+            "p50": 380.399,
+            "p95": 428.77
+          },
+          "aMined": 160,
+          "bMined": 20
+        }
+      ]
+    }
+  },
+  "completedAt": "2026-11-06T14:16:18.845Z"
+}

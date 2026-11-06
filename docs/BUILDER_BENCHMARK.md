@@ -55,7 +55,59 @@ In both runs the submitting wallet's `seen` count stayed at **2** and its reputa
 
 For a broader local sweep, report burst size or concurrency separately from offered requests per second. Publish the sample count with p50 and p95. A CPU-cost claim also requires process CPU measurements for the sidecar and execution client. A node-wide budget should count failed verification work. Sender reputation penalties would require evidence that the sender authorized the failed request.
 
-## Reproduce
+## Run stakelane compare
+
+From the repository root, `./stakelane compare` starts fresh private loopback processes. It uses the Bun, Node and pinned ethrex setup described in [the local runbook](SIDECAR.md#reproduce-the-mined-transaction). The default sweep contains an idle control and bursts of 1, 4 and 8 valid transactions. Each condition has one excluded warm-up and 20 measured rounds. The order of the burst sizes rotates between rounds. For a short baseline smoke test run:
+
+```sh
+./stakelane compare --baseline-only --rounds 2 --bursts 1,4
+```
+
+- B submits a cheap valid transaction when the observer sees the first competing trace. Its timer starts at submission and stops when the sidecar returns the admission hash. A’s batch time runs from its first submission until the last hash comes back. Signing, setup and block production take place outside these timers.
+- For the current sweep, the fixture waits for the private sidecar to mark the previous batch `OnChain`. It defers the sidecar’s periodic recheck timer while admission is timed, verifies the execution head hash on both sides of the interval, and restores the timer before mining. The observer requires exactly one traced simulation per signed input. This separates initial admission from the work of revalidating entries after a block.
+- The report uses the median and the nearest-rank p95, always with a sample count. Every accepted hash must have a successful receipt in its canonical block, two successful frame statuses, and each measured heavy transaction must use 993,512 VERIFY gas. Setup transactions and warm-ups are excluded from the counts.
+- Each policy uses the same two disposable signing identities in an isolated chain. The coordinator compares the genesis, execution binary, compiled fixture and digest of all signed inputs across policies before presenting a comparison. Each policy runs as a separate sweep on the same machine, so background load and temperature can affect differences.
+- The command prints the path to `comparison.json` under `sidecar/.runtime/compare-*`. In that directory a JSON file for each measured policy contains the underlying transaction hashes, canonical block hashes and samples. Exit 0 means the requested comparison or explicit baseline run completed. Exit 2 means the baseline completed and the scheduling modes were unavailable. A failed fixture or a mismatch exits 1.
+- The manifest records an arm as `in-progress` before starting the node. Only `measured` arms with a final summary supply timings. A hard interruption can leave the last progress record on disk.
+
+### Baseline measurements on 6 November 2026
+
+Both sweeps ran on the same Mac with the same ethrex binary and compiled wallet fixture. Each used a fresh private chain and signing keys. Each table cell comes from 20 measured rounds. Per sweep, all 80 transactions from B and all 260 heavy transactions from A mined, with 993,512 VERIFY gas for every heavy transaction. The counts exclude warm-ups.
+
+| Heavy transactions from A | B median, run 1 (ms) | B p95, run 1 (ms) | B median, fixed head (ms) | B p95, fixed head (ms) | A batch median, fixed head (ms) |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 0 | 14.2 | 18.4 | 17.3 | 26.1 | — |
+| 1 | 128.2 | 137.4 | 134.5 | 144.3 | 133.6 |
+| 4 | 136.5 | 243.6 | 231.1 | 245.8 | 298.6 |
+| 8 | 286.3 | 365.5 | 308.5 | 381.0 | 380.4 |
+
+Run 1 finished with the original maintenance timer and one observed trace per input. The second completed sweep used the fixed-head procedure above and recorded the exact stake-registry read for B. Its median duration rose from 1.0 ms idle to 114.2 ms with a single heavy transaction, while B’s traced simulation took 3.0 ms in that condition. The lookup measurement includes local transport and waiting for the execution node. [Run 1 summary](../sidecar/evidence/compare/run-1/comparison.json) · [Run 1 samples](../sidecar/evidence/compare/run-1/off.json) · [Fixed-head summary](../sidecar/evidence/compare/run-2/comparison.json) · [Fixed-head samples](../sidecar/evidence/compare/run-2/off.json)
+
+The proposed two-heavy-per-sender limit first applies when A submits a third concurrent heavy transaction. Keep the one-heavy case as a control. Compare the four- and eight-transaction bursts across all three native policies in the same invocation, using B’s p95 and A’s batch time to quantify the trade-off. Both saved sweeps measured the default sidecar.
+
+### Verify the saved measurements
+
+The following offline check runs from the repository root with Node alone. It recomputes the median and nearest-rank p95 from individual trials, counts the receipt records, checks for reused transaction hashes and verifies the signed-input fingerprint. In the instrumented repeat it also reconstructs A’s batch time from the earliest submission and last admission response.
+
+```sh
+node --test sidecar/test/stakelane/compare-evidence.test.mjs
+```
+
+One interrupted attempt left no final report. A separate attempt recorded two traced simulations for a single hash and stopped before producing a timing row. The sidecar can revalidate pending entries after it observes a new block. The current fixture separates that maintenance from initial admission and retains the exact-one-trace check. [Excluded attempt](../sidecar/evidence/compare/excluded-attempt.json)
+
+A separate replay control started two private nodes with identical disposable signing identities. Both produced the same genesis hash and signed-transaction fingerprint across the idle and one-heavy cases. Requesting FIFO directly on the original sidecar failed before timing. A deliberate interruption of the CLI during setup changed its progress manifest to `failed` and produced no timing summary. [Replay and failure controls](../sidecar/evidence/compare/replay-control.json)
+
+### Scheduler integration
+
+The CLI sets these network configuration keys on each fresh sidecar. It reads `skandha_config.admissionScheduler` and checks the effective `mode`, `slots`, `maxHeavyPerSender`, `maxWaiting` and `heavyThreshold` before reporting enabled-mode measurements. The comparison adapter in `sidecar/test/stakelane/compare-metrics.mjs` owns this mapping. The sidecar schedules the work.
+
+```json
+{"schedulerMode":"fair","schedulerSlots":4,"schedulerMaxHeavyPerSender":2,"schedulerMaxWaiting":64,"schedulerHeavyThreshold":100000}
+```
+
+The enabled modes are `fifo` and `fair`. Both use four total slots. In fair mode, one sender may use two heavy slots. The comparison checks the observed trace overlap against the reported limits. On the original sidecar the config RPC omits scheduling information. The CLI prints that measured row as `default` and leaves enabled-mode timings unreported.
+
+## Reproduce the earlier controls
 
 Run the matched hash-chain workload comparison from `sidecar/`.
 
