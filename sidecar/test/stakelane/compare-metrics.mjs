@@ -15,7 +15,14 @@ export function checkPlan(rounds, bursts) {
 // A node that ignores unknown config must never produce a FIFO or fair result.
 export function schedulerSettings(mode) {
   assert.ok(["off", "fifo", "fair"].includes(mode), "unknown scheduler mode");
-  return { mode, maxConcurrent: 4, maxHeavyPerSender: 2, maxQueued: 64, heavyThreshold: 100000 };
+  return { mode, slots: 4, maxHeavyPerSender: 2, maxWaiting: 64, heavyThreshold: 100000 };
+}
+
+// The node accepts flat network config keys and reports the live instance under admissionScheduler.
+export function schedulerConfig(mode) {
+  const s = schedulerSettings(mode);
+  return { schedulerMode: s.mode, schedulerSlots: s.slots, schedulerMaxHeavyPerSender: s.maxHeavyPerSender,
+    schedulerMaxWaiting: s.maxWaiting, schedulerHeavyThreshold: s.heavyThreshold };
 }
 
 export function effectiveScheduler(config, requested) {
@@ -46,7 +53,7 @@ export function summarize(trials, rounds, bursts, scheduler) {
       assert.equal(trial.background.length, burst);
       assert.ok(trial.honestBlockHash && trial.background.every(b => b.mined?.verifyGas === 993512), "missing verified receipt");
       if (scheduler && scheduler.mode !== "off") {
-        assert.ok(trial.peakTraces <= scheduler.maxConcurrent, "observed more concurrent traces than the scheduler allows");
+        assert.ok(trial.peakTraces <= scheduler.slots, "observed more concurrent traces than the scheduler allows");
         if (scheduler.mode === "fair") assert.ok(trial.peakBackgroundTraces <= scheduler.maxHeavyPerSender,
           "one sender exceeded the fair policy's heavy-work limit");
       }

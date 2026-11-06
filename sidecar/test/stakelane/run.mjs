@@ -18,7 +18,7 @@ import { privateProducer, rpc, RpcError } from "./producer.mjs";
 import { backgroundCandidateCount, measureAdmission } from "./failure-benchmark.mjs";
 import { startTraceMeter } from "./trace-meter.mjs";
 import { denyExternalHttp } from "./private-network.mjs";
-import { checkPlan, effectiveScheduler, schedulerSettings } from "./compare-metrics.mjs";
+import { checkPlan, effectiveScheduler, schedulerConfig } from "./compare-metrics.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "../..");
@@ -159,7 +159,7 @@ try {
   const reconciliationSeconds = 2;
   const deferredSeconds = 3600;
   if (comparing) {
-    settings.admissionScheduler = schedulerSettings(sweep.mode);
+    Object.assign(settings, schedulerConfig(sweep.mode));
     settings.bundleInterval = reconciliationSeconds * 1000;
   }
   const configFile = path.join(work, "sidecar.json");

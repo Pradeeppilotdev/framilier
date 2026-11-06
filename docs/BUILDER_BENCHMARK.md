@@ -99,10 +99,10 @@ A separate replay control started two private nodes with identical disposable si
 
 ### Scheduler integration
 
-The CLI requests the following configuration. The scheduler implementation must report its **effective** values in `skandha_config.admissionScheduler` for enabled-mode measurements. The comparison adapter in `sidecar/test/stakelane/compare-metrics.mjs` owns this mapping. If the scheduler PR chooses a different schema, adapt the mapping to its actual implementation before comparing. The CLI does no scheduling of its own.
+The CLI sets these network configuration keys on each fresh sidecar. It reads `skandha_config.admissionScheduler` and checks the effective `mode`, `slots`, `maxHeavyPerSender`, `maxWaiting` and `heavyThreshold` before reporting enabled-mode measurements. The comparison adapter in `sidecar/test/stakelane/compare-metrics.mjs` owns this mapping. The sidecar schedules the work.
 
 ```json
-{"admissionScheduler":{"mode":"fair","maxConcurrent":4,"maxHeavyPerSender":2,"maxQueued":64,"heavyThreshold":100000}}
+{"schedulerMode":"fair","schedulerSlots":4,"schedulerMaxHeavyPerSender":2,"schedulerMaxWaiting":64,"schedulerHeavyThreshold":100000}
 ```
 
 The enabled modes are `fifo` and `fair`. Both use four total slots. In fair mode, one sender may use two heavy slots. The comparison checks the observed trace overlap against the reported limits. On the original sidecar the config RPC omits scheduling information. The CLI prints that measured row as `default` and leaves enabled-mode timings unreported.

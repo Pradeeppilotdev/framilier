@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { once } from "node:events";
 import { createServer } from "node:http";
-import { checkPlan, effectiveScheduler, schedulerSettings, summarize, workloadDigest } from "./compare-metrics.mjs";
+import { checkPlan, effectiveScheduler, schedulerConfig, schedulerSettings, summarize, workloadDigest } from "./compare-metrics.mjs";
 import { startTraceMeter } from "./trace-meter.mjs";
 
 // Synthetic samples exercise report arithmetic and failure paths only.
@@ -22,10 +22,12 @@ test("bounds include warm-ups and avoid duplicate cases", () => {
 test("unreported configuration can identify only the legacy default", () => {
   assert.equal(effectiveScheduler({}, "off"), null);
   for (const mode of ["fifo", "fair"]) {
+    assert.deepEqual(schedulerConfig(mode), { schedulerMode: mode, schedulerSlots: 4,
+      schedulerMaxHeavyPerSender: 2, schedulerMaxWaiting: 64, schedulerHeavyThreshold: 100000 });
     const config = { admissionScheduler: schedulerSettings(mode) };
     assert.deepEqual(effectiveScheduler(config, mode), config.admissionScheduler);
     assert.throws(() => effectiveScheduler({}, mode));
-    assert.throws(() => effectiveScheduler({ admissionScheduler: { ...config.admissionScheduler, maxConcurrent: 8 } }, mode));
+    assert.throws(() => effectiveScheduler({ admissionScheduler: { ...config.admissionScheduler, slots: 8 } }, mode));
     assert.throws(() => effectiveScheduler({ admissionScheduler: schedulerSettings("off") }, mode));
   }
 });

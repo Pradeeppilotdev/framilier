@@ -19,7 +19,7 @@ After the [private-node setup](docs/SIDECAR.md#reproduce-the-mined-transaction),
 ./stakelane compare
 ```
 
-The command sends valid transactions from two staked wallets to a local sidecar. It reports wallet B’s median and p95 admission times and the time to admit all of wallet A’s burst. It verifies canonical receipts after timing. The current sidecar supports the baseline experiment. Use `./stakelane compare --baseline-only` for that run. The full comparison marks FIFO and fair as unavailable until a scheduling sidecar reports its active policy. [Command options, methodology and integration contract](docs/BUILDER_BENCHMARK.md#run-stakelane-compare)
+The command sends valid transactions from two staked wallets to a local sidecar. It reports wallet B’s median and p95 admission times and the time to admit all of wallet A’s burst. It verifies canonical receipts after timing. Use `./stakelane compare --baseline-only` for the default policy alone. The full comparison checks the node’s active policy before reporting FIFO or fair timings. [Command options, methodology and integration contract](docs/BUILDER_BENCHMARK.md#run-stakelane-compare)
 
 To check the saved measurements with Node alone, run `node --test sidecar/test/stakelane/compare-evidence.test.mjs` from the repository root. [Evidence and audit](docs/BUILDER_BENCHMARK.md#verify-the-saved-measurements)
 
