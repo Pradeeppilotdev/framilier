@@ -54,6 +54,16 @@ import {
 } from "../utils.js";
 import { StakingRegistryService } from "../../StakingRegistryService/index.js";
 import { ReputationService } from "../../ReputationService.js";
+import {
+  collectValidationBudgets, budgetDetail, entityAddress,
+  MAX_VERIFY_GAS_PER_ENTITY, MAX_VERIFY_GAS_STAKED_ENTITY, MAX_EXPIRY_VERIFY_GAS,
+} from "../utils/validationBudget.js";
+
+interface ValidationPreflight {
+  prefix: ValidationPrefixMatch;
+  roleStakes: Partial<Record<EntityRole, StakeInfo & { addr: Hex }>>;
+  stakeCheckCache: Map<string, { code: number; msg: string }>;
+}
 
 /**
  * Some opcodes like:
@@ -200,7 +210,9 @@ export class FrameTxValidationService {
     private networkConfig: NetworkConfig,
     private logger: Logger,
     /** Reads an account's balance, to say when a payer cannot afford a transaction. Optional. */
-    private getBalance?: (address: Hex) => Promise<bigint>
+    private getBalance?: (address: Hex) => Promise<bigint>,
+    /** Required for the higher budget: default-code accounts are never staked entities. */
+    private getCode?: (address: Hex) => Promise<Hex | undefined>
   ) {}
 
   /**
@@ -278,23 +290,11 @@ export class FrameTxValidationService {
     return `${reason} (validation gas limits: ${limits}; a frame may have reverted or run out of gas)`;
   }
 
-  /**
-   * Takes an already-fetched, traced `simResult` rather than fetching its
-   * own - this service has no `GethTracer` of its own to call. Its only
-   * caller, `FrameTxSimulationService.simulate`, fetches exactly one traced
-   * `ethrex_simulateFrameTransaction` result per admission attempt and
-   * reuses it both here and for its own gas/receipt mapping (both are
-   * present on any traced response - `{trace: true}` only adds
-   * `erc7562Trace` on top of the same `gasUsed`/`frames`/`payer` fields a
-   * `{trace: false}` call would have had) - see that class's header
-   * comment for why a second, untraced call used to exist and no longer
-   * does.
-   */
-  async validate(
+  /** Check prefix structure, address budgets and signatures before invoking the tracer. */
+  async preflight(
     tx: FrameTransaction,
-    simResult: EthrexSimulateFrameTransactionResult,
     collector: CheckCollector = new CheckCollector()
-  ): Promise<FrameTxValidationResult> {
+  ): Promise<ValidationPreflight> {
     const prefix = recognizeValidationPrefix(tx.frames, tx.sender);
     if (prefix == null) {
       throw collector.failed(
@@ -307,7 +307,7 @@ export class FrameTxValidationService {
     }
     collector.pass(EXPLORER_RULES.PREFIX);
 
-    const structural = validateStructuralRules(tx, prefix);
+    const structural = validateStructuralRules(tx, prefix, "per-entity");
     if (!structural.valid) {
       throw collector.failed(
         EXPLORER_RULES.STRUCTURE,
@@ -315,6 +315,71 @@ export class FrameTxValidationService {
       );
     }
     collector.pass(EXPLORER_RULES.STRUCTURE);
+
+    // Reject oversized declarations before signature verification or traced execution.
+    let budgets: ReturnType<typeof collectValidationBudgets>;
+    try {
+      budgets = collectValidationBudgets(tx, prefix);
+    } catch (error) {
+      throw collector.failed(EXPLORER_RULES.BUDGET,
+        new RpcError(String(error), RpcErrorCodes.INVALID_USEROP));
+    }
+    if (budgets.expiryGas > MAX_EXPIRY_VERIFY_GAS) {
+      throw collector.failed(EXPLORER_RULES.BUDGET, new RpcError(
+        `expiry verification gas ${budgets.expiryGas} exceeds local limit ${MAX_EXPIRY_VERIFY_GAS}`,
+        RpcErrorCodes.INVALID_USEROP));
+    }
+    for (const entry of budgets.entities) {
+      if (entry.totalGas > MAX_VERIFY_GAS_STAKED_ENTITY) {
+        throw collector.failed(EXPLORER_RULES.BUDGET, new RpcError(
+          `BUDGET-010 exceeded: ${budgetDetail(entry, MAX_VERIFY_GAS_STAKED_ENTITY)}`,
+          RpcErrorCodes.INVALID_USEROP));
+      }
+    }
+    const roleStakes = await this.resolveRoleStakes(tx, prefix);
+    const stakeCheckCache = new Map<string, { code: number; msg: string }>();
+    for (const entry of budgets.entities) {
+      const info = Object.values(roleStakes).find((value) =>
+        value && entityAddress(value.addr) === entry.address);
+      // Do not use whitelist-aware checkStake alone as evidence of an actual stake.
+      const locked = info && BigInt(info.stake) > BigInt(0) &&
+        BigInt(info.stake) >= this.networkConfig.minStake &&
+        BigInt(info.unstakeDelaySec) >= BigInt(this.networkConfig.minUnstakeDelay ?? 0) &&
+        BigInt(info.withdrawTime) === BigInt(0);
+      let staked = false;
+      if (locked && info && this.getCode) {
+        const code = await this.getCode(entry.address);
+        staked = !!code && code !== "0x" &&
+          (await this.checkStakeCached(info, stakeCheckCache)).code === 0;
+      }
+      const limit = staked ? MAX_VERIFY_GAS_STAKED_ENTITY : MAX_VERIFY_GAS_PER_ENTITY;
+      const detail = budgetDetail(entry, limit);
+      if (entry.totalGas > limit) {
+        throw collector.failed(EXPLORER_RULES.BUDGET,
+          new RpcError(`BUDGET-010 exceeded: ${detail}`, RpcErrorCodes.INVALID_USEROP));
+      }
+      collector.pass(EXPLORER_RULES.BUDGET, {}, detail);
+    }
+
+    // Signature verification is also metered by the sender's budget above.
+    const sigHash = computeSigHash(tx);
+    for (const sig of tx.signatures) {
+      if (!(await validateSignature(sig, tx.sender, sigHash))) {
+        throw collector.failed(EXPLORER_RULES.SIGNATURE,
+          new RpcError("Invalid frame transaction signature", RpcErrorCodes.INVALID_SIGNATURE));
+      }
+    }
+    collector.pass(EXPLORER_RULES.SIGNATURE);
+    return { prefix, roleStakes, stakeCheckCache };
+  }
+
+  async validate(
+    tx: FrameTransaction,
+    simResult: EthrexSimulateFrameTransactionResult,
+    collector: CheckCollector = new CheckCollector(),
+    prepared?: ValidationPreflight
+  ): Promise<FrameTxValidationResult> {
+    const { prefix, roleStakes, stakeCheckCache } = prepared ?? await this.preflight(tx, collector);
 
     // The validation prefix's last real frame index (recognizeValidationPrefix
     // already computes each role's real frameIndex, including the shift a
@@ -324,27 +389,6 @@ export class FrameTxValidationService {
     // check work off the same value rather than each re-deriving it
     // independently.
     const lastPrefixIndex = Math.max(...prefix.frames.map((f) => f.frameIndex));
-
-    // Per EIP-8141 §Behavior: "For each sig in tx.signatures, ensure
-    // validate_signature(...) == true". This replaces safe.ts's
-    // `returnInfo.sigFailed` check, which read an aggregate bit out of the
-    // EntryPoint's ABI-decoded validateUserOp/validatePaymasterUserOp
-    // return data - there is no such contract call for a frame transaction,
-    // so signature validity is checked directly off-chain instead.
-    const sigHash = computeSigHash(tx);
-    for (const sig of tx.signatures) {
-      const ok = await validateSignature(sig, tx.sender, sigHash);
-      if (!ok) {
-        throw collector.failed(
-          EXPLORER_RULES.SIGNATURE,
-          new RpcError(
-            "Invalid frame transaction signature",
-            RpcErrorCodes.INVALID_SIGNATURE
-          )
-        );
-      }
-    }
-    collector.pass(EXPLORER_RULES.SIGNATURE);
 
     // `simResult` (the caller's already-fetched, traced
     // `ethrex_simulateFrameTransaction` response) carries a native ERC-7562
@@ -445,7 +489,9 @@ export class FrameTxValidationService {
       tx,
       prefix,
       lastPrefixIndex,
-      collector
+      collector,
+      roleStakes,
+      stakeCheckCache
     );
     return {
       ...result,
@@ -467,15 +513,17 @@ export class FrameTxValidationService {
   ): Promise<Partial<Record<EntityRole, StakeInfo & { addr: Hex }>>> {
     const roleStakes: Partial<Record<EntityRole, StakeInfo & { addr: Hex }>> =
       {};
+    const deposits = new Map<string, StakeInfo & { addr: Hex }>();
     for (const { frame, role } of prefix.frames) {
       const addr = resolveRoleAddr(role, frame, tx.sender);
-      const deposit = await this.stakingRegistryService.getDepositInfo(addr);
-      roleStakes[role] = {
-        addr,
-        stake: deposit.stake,
-        unstakeDelaySec: deposit.unstakeDelaySec,
-        withdrawTime: deposit.withdrawTime,
-      };
+      const key = addr.toLowerCase();
+      let info = deposits.get(key);
+      if (!info) {
+        const deposit = await this.stakingRegistryService.getDepositInfo(addr);
+        info = { addr, ...deposit };
+        deposits.set(key, info);
+      }
+      roleStakes[role] = info;
     }
     return roleStakes;
   }
@@ -518,7 +566,9 @@ export class FrameTxValidationService {
     tx: FrameTransaction,
     prefix: ValidationPrefixMatch,
     lastPrefixIndex: number,
-    collector: CheckCollector
+    collector: CheckCollector,
+    roleStakes: ValidationPreflight["roleStakes"],
+    stakeCheckCache: ValidationPreflight["stakeCheckCache"]
   ): Promise<Omit<FrameTxValidationResult, "maxCost">> {
     let satisfiesStandardMempool = true; // false if some entity is in whitelist
 
@@ -579,11 +629,7 @@ export class FrameTxValidationService {
     }
     collector.pass(EXPLORER_RULES.EXECUTION);
 
-    const roleStakes = await this.resolveRoleStakes(tx, prefix);
     const hasFactory = prefix.frames.some((f) => f.role === "factory");
-    // Memoizes ReputationService.checkStake per address for the
-    // duration of this validate() call.
-    const stakeCheckCache = new Map<string, { code: number; msg: string }>();
 
     const entitySlots: { [addr: string]: Set<string> } = parseEntitySlots(
       roleStakes,

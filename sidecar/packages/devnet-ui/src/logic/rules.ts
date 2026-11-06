@@ -28,7 +28,11 @@ const RULE_INFO: Record<string, RuleInfo> = {
   },
   structure: {
     label: "Frame structure",
-    explain: "The prefix follows EIP-8141's structural rules for targets, flags and verification gas.",
+    explain: "The prefix follows EIP-8141's structural rules for targets and flags.",
+  },
+  "BUDGET-010": {
+    label: "Per-entity validation budget",
+    explain: "Each address has a separate 100,000 gas budget, or 1,000,000 with eligible locked stake. Sender signatures and repeated roles share that address's budget.",
   },
   signature: {
     label: "Signatures",

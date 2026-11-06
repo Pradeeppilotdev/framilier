@@ -5,7 +5,7 @@
  * deployed EntryPoint contract. There is no on-chain contract to
  * `eth_call`/`debug_traceCall` against here.
  *
- * Exactly one RPC round-trip per `simulate()` call:
+ * Eligible transactions make one traced-simulation RPC after the budget preflight:
  * `GethTracer.simulateFrameTransaction(rawTx, true)`. A traced response
  * carries every field an untraced one would (`gasUsed`/`frames`/`payer`/
  * `executionStatus`/`executionError`) plus `erc7562Trace` on top - so the
@@ -57,6 +57,9 @@ export class FrameTxSimulationService {
     tx: FrameTransaction,
     collector?: CheckCollector
   ): Promise<FrameTxSimulateAndValidateResult> {
+    // The same gate is used by RPC admission, gossip admission, estimates and
+    // revalidation. Over-budget declarations must never trigger traced execution.
+    const prepared = await this.frameTxValidationService.preflight(tx, collector);
     const rawTx = encodeRawFrameTx(tx);
 
     const result = await this.gethTracer
@@ -125,7 +128,8 @@ export class FrameTxSimulationService {
     const validation = await this.frameTxValidationService.validate(
       tx,
       result,
-      collector
+      collector,
+      prepared
     );
 
     // Fail closed, mirroring FrameTxValidationService.validate()'s own

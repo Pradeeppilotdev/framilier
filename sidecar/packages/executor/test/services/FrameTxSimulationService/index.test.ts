@@ -316,20 +316,11 @@ describe("FrameTxSimulationService.simulate", () => {
   });
 
   it("sets the collector's frame receipts from the trace even when validate() rejects the tx", async () => {
-    // Same unrecognized-prefix rejection as above, but this time asserting
-    // that the trace's per-frame receipts reached the collector before
-    // validate() threw - the explorer needs them for a rejected tx's detail
-    // page, which never gets simulate()'s own return value.
-    const unrecognizedFrame: Frame = {
-      mode: FRAME_MODE.VERIFY,
-      flags: APPROVE_SCOPE.NONE,
-      target: null,
-      limits: { execution: 1n, state: 0n },
-      value: 0n,
-      data: "0x",
-    };
-
-    const publicClient = fakePublicClient(passingEthrexResult());
+    // Shape/budget failures now stop before tracing. Use a real trace-stage
+    // rejection to check that available receipts survive the later failure.
+    const result = passingEthrexResult();
+    result.executionError = "validation reverted";
+    const publicClient = fakePublicClient(result);
     const frameTxValidationService = new FrameTxValidationService(
       fakeStakingRegistry(),
       fakeReputationService(),
@@ -342,10 +333,10 @@ describe("FrameTxSimulationService.simulate", () => {
       fakeLogger()
     );
 
-    const tx = baseTx([unrecognizedFrame]);
+    const tx = baseTx([selfVerifyFrame()]);
     const collector = new CheckCollector();
 
-    await expect(service.simulate(tx, collector)).rejects.toThrow(RpcError);
+    await expect(service.simulate(tx, collector)).rejects.toThrow("validation reverted");
 
     expect(collector.getFrameReceipts()).toEqual([
       { status: "success", gasUsed: { execution: "0x64", state: "0x0" }, logs: [] },

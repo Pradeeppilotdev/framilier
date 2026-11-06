@@ -7,6 +7,8 @@
     "node": ">=18.0.0"
   },
   "scripts": {
+    "start:stakelane": "bun --bun ./packages/cli/bin/skandha.js standalone --configFile config.stakelane.example.json --dataDir .runtime/data --api.address 127.0.0.1 --api.port 14337 --api.ws false --executor.bundlingMode manual --explorer.enable --redirectRpc",
+    "test:stakelane": "cd packages/executor && bun run vitest run test/services test/modules test/entities",
     "clean": "rm -rf ./packages/*/lib ./packages/*/*.tsbuildinfo",
     "bootstrap": "bun install",
     "prebuild": "bun run --filter @skandha/types build",

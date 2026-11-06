@@ -136,3 +136,7 @@ packages/cli/.git-data.json
 
 # devnet playground state (deploy/devnet/playground)
 .playground-state.json
+
+# The source launcher is tracked in the upstream repository.
+!/skandha
+!/packages/devnet-ui/src/data/

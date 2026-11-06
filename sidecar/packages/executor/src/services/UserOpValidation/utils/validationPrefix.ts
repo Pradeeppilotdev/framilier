@@ -16,10 +16,8 @@ export const MAX_VERIFY_GAS = BigInt(100_000);
  * ethrex's real implementation (`FrameTransaction::
  * signature_verification_cost`, crates/common/types/transaction.rs), the
  * reference this bundler validates every transaction against - not a guess.
- * A scheme outside this table costs 0: unrecognized schemes are already
- * rejected before this runs (`SignatureEntryDto`'s own membership check at
- * the API boundary), so this is an unreachable-in-practice default, not a
- * silent undercount.
+ * Unknown schemes are rejected even when a caller enters the validation
+ * service directly and does not pass through SignatureEntryDto.
  */
 const SIGNATURE_VERIFICATION_GAS_COST: Record<SigScheme, bigint> = {
   [SIG_SCHEME.ARBITRARY]: BigInt(100),
@@ -29,9 +27,13 @@ const SIGNATURE_VERIFICATION_GAS_COST: Record<SigScheme, bigint> = {
 
 /** Sum of `signatureVerificationCost(sig)` over `tx.signatures` - see
  * `SIGNATURE_VERIFICATION_GAS_COST`. */
-function signatureVerificationCost(tx: FrameTransaction): bigint {
+export function signatureVerificationCost(tx: FrameTransaction): bigint {
   return tx.signatures.reduce(
-    (sum, sig) => sum + (SIGNATURE_VERIFICATION_GAS_COST[sig.scheme] ?? BigInt(0)),
+    (sum, sig) => {
+      const cost = SIGNATURE_VERIFICATION_GAS_COST[sig.scheme];
+      if (cost === undefined) throw new Error(`Unknown signature scheme ${sig.scheme}`);
+      return sum + cost;
+    },
     BigInt(0)
   );
 }
@@ -247,7 +249,11 @@ export type StructuralRulesResult = { valid: true } | { valid: false; reason: st
  * rejection condition on the transaction's validity — it doesn't reject
  * anything, so it is intentionally not implemented here.
  */
-export function validateStructuralRules(tx: FrameTransaction, prefix: ValidationPrefixMatch): StructuralRulesResult {
+export function validateStructuralRules(
+  tx: FrameTransaction,
+  prefix: ValidationPrefixMatch,
+  budgetPolicy: "canonical" | "per-entity" = "canonical"
+): StructuralRulesResult {
   const prefixFrameIndices = prefix.frames.map((f) => f.frameIndex);
   const lastPrefixIndex = Math.max(...prefixFrameIndices);
 
@@ -265,7 +271,7 @@ export function validateStructuralRules(tx: FrameTransaction, prefix: Validation
     if (
       (subclass === FRAME_SUBCLASS.SELF_VERIFY || subclass === FRAME_SUBCLASS.ONLY_VERIFY) &&
       frame.target !== null &&
-      frame.target !== tx.sender
+      frame.target.toLowerCase() !== tx.sender.toLowerCase()
     ) {
       return { valid: false, reason: `frame ${i} (${subclass}) targets ${frame.target}, expected tx.sender ${tx.sender} or null` };
     }
@@ -283,15 +289,17 @@ export function validateStructuralRules(tx: FrameTransaction, prefix: Validation
   // PLUS the intrinsic cost of validating tx.signatures, MUST NOT exceed
   // MAX_VERIFY_GAS - see SIGNATURE_VERIFICATION_GAS_COST for where that
   // per-scheme cost comes from.
-  const sigCost = signatureVerificationCost(tx);
+  const sigCost = budgetPolicy === "canonical" ? signatureVerificationCost(tx) : BigInt(0);
   const totalVerifyGas = executionSum + sigCost;
-  if (totalVerifyGas > MAX_VERIFY_GAS) {
+  // StakeLane enforces BUDGET-010 separately, using address attribution and
+  // registry state. Keep the canonical policy for explicit comparisons/tests.
+  if (budgetPolicy === "canonical" && totalVerifyGas > MAX_VERIFY_GAS) {
     return {
       valid: false,
       reason: `validation prefix execution gas sum ${executionSum} + signature-verification cost ${sigCost} = ${totalVerifyGas} exceeds MAX_VERIFY_GAS ${MAX_VERIFY_GAS}`,
     };
   }
-  if (stateSum > MAX_VERIFY_STATE_GAS) {
+  if (budgetPolicy === "canonical" && stateSum > MAX_VERIFY_STATE_GAS) {
     return {
       valid: false,
       reason: `validation prefix state gas sum ${stateSum} exceeds MAX_VERIFY_STATE_GAS ${MAX_VERIFY_STATE_GAS}`,
