@@ -1,0 +1,1960 @@
+{
+  "timestamp": "2026-11-06T06:02:27.813Z",
+  "network": "isolated single-node Hegota execution chain",
+  "chainId": 8141337,
+  "genesisHash": "0x2946bb292b67501702cfcd8fa123f19960b495b80bd22e2dcc7f6506a34fbf00",
+  "ethrexSource": "9aa3645d795945c64400f41a70aace0edfa7f383",
+  "ethrexBinarySha256": "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692",
+  "fixtureArtifactSha256": "3c3fbbe8c23ba0402e8f8e5bbb15bb69a513715b6b9d32fb98bafd88942c5bc1",
+  "clientVersion": "ethrex/v23.0.0-VERGEN_IDEMPOTENT_OUTPUT-VERGEN_IDEMPOTENT_OUTPUT/aarch64-apple-darwin/rustc-v1.93.1",
+  "compiler": "0.8.28+commit.7893614a.Emscripten.clang",
+  "owner": "0x5EBB377E34fE110a067B358EEF704813D06aAC69",
+  "wallet": "0xb3e23aa33d6778688f7760458adcba24de828e25",
+  "registry": "0xe77068a219bb6c933b95e19910633a381d4d9f55",
+  "walletCodeHash": "0x77b6ea4ebeaf901ee2eb782475d4cf94e15695f353de046a2bb33241cc6c8ffc",
+  "workload": {
+    "algorithm": "Keccak-256 hash chain",
+    "rounds": 9664,
+    "witness": "0x0561fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289",
+    "commitment": "0x369b0408dd1c7a153b0a7a0cc34b4c8b41bf9c36476bddad2af01cd8e8f5238a"
+  },
+  "stake": {
+    "before": {
+      "amountWei": "0",
+      "delay": 0,
+      "withdrawal": "0"
+    },
+    "after": {
+      "amountWei": "12000000000000000",
+      "delay": 86400,
+      "withdrawal": "0"
+    },
+    "transactionHash": "0x6cb5e968b040a29cc0c39f5e0e8451087dd546c9459b1183ba1c3dee54e0a913"
+  },
+  "controls": {
+    "unstaked": {
+      "hash": "0x947c2f321f4086f98f514f845c3d827ed340fc9cacb76210697428a4454a7bf3",
+      "code": -32602,
+      "reason": "BUDGET-010 exceeded: entity 0xb3e23aa33d6778688f7760458adcba24de828e25 (sender+payer), frames [0]: 997200 execution + 2800 signature = 1000000; limit 100000"
+    },
+    "stakedOneOver": {
+      "hash": "0x489c18614f20296a228aa853d02a765dbfff0adaf3adafd43006571d057359fd",
+      "code": -32602,
+      "reason": "BUDGET-010 exceeded: entity 0xb3e23aa33d6778688f7760458adcba24de828e25 (sender+payer), frames [0]: 997201 execution + 2800 signature = 1000001; limit 1000000"
+    },
+    "incorrectWitness": {
+      "hash": "0x47925ffb4b4b9ad8beeb662de3f289cc9a4ef34ad6d96f111d10432d7a54f9ff",
+      "code": -32500,
+      "reason": "validation frame 0: reverted with data 0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000d77726f6e67207769746e65737300000000000000000000000000000000000000"
+    }
+  },
+  "accepted": {
+    "declaredVerifyGas": 997200,
+    "signatureGas": 2800,
+    "totalDeclaredGas": 1000000,
+    "actualVerifyGas": 993512,
+    "signedTransaction": "0x06f8d6837c3a19c1800994b3e23aa33d6778688f7760458adcba24de828e25f84ceb010380c5830f37508080a00561fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289df0280945ebb377e34fe110a067b358eef704813d06aac69c5830249f0808080f85cf85a01945ebb377e34fe110a067b358eef704813d06aac6980b84101947d5393e2854d75227cbad14c302e929cc3705f360926f7fa7d77830e0ffda70233dc378192d61e1438aef07395ed2e13b25c31a88c734f69186b33adabf936cb843b9aca00847735940080c0c0",
+    "receipt": {
+      "blockHash": "0x88d9e592a20a6bd3c2a4962f06baf2c99f9a34f0711a6f47d922a3f189e639e8",
+      "blockNumber": "0x5",
+      "contractAddress": null,
+      "cumulativeGasUsed": "0xf6e52",
+      "effectiveGasPrice": "0x5c592522",
+      "frameReceipts": [
+        {
+          "gasUsed": "0xf28e8",
+          "logs": [],
+          "stateGasUsed": "0x0",
+          "status": "0x1"
+        },
+        {
+          "gasUsed": "0x64",
+          "logs": [],
+          "stateGasUsed": "0x0",
+          "status": "0x1"
+        }
+      ],
+      "from": "0xb3e23aa33d6778688f7760458adcba24de828e25",
+      "gasUsed": "0xf6e52",
+      "logs": [],
+      "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "payer": "0xb3e23aa33d6778688f7760458adcba24de828e25",
+      "status": "0x1",
+      "to": "0xb3e23aa33d6778688f7760458adcba24de828e25",
+      "transactionHash": "0xef7c9e177d634b16b60269e82fcabf5fdb1fe63f7e42115a72e16d184e5b25f9",
+      "transactionIndex": "0x0",
+      "type": "0x6"
+    },
+    "block": {
+      "number": "0x5",
+      "hash": "0x88d9e592a20a6bd3c2a4962f06baf2c99f9a34f0711a6f47d922a3f189e639e8",
+      "transactions": [
+        "0xef7c9e177d634b16b60269e82fcabf5fdb1fe63f7e42115a72e16d184e5b25f9"
+      ]
+    }
+  },
+  "producer": {
+    "forkchoice": "engine_forkchoiceUpdatedV5",
+    "build": "engine_getPayloadV6",
+    "import": "engine_newPayloadV6",
+    "importStatus": "VALID"
+  },
+  "benchmark": {
+    "burst": 4,
+    "pairedRounds": 12,
+    "conditionOrders": [
+      [
+        "idle",
+        "early",
+        "late"
+      ],
+      [
+        "early",
+        "late",
+        "idle"
+      ],
+      [
+        "late",
+        "idle",
+        "early"
+      ],
+      [
+        "idle",
+        "late",
+        "early"
+      ],
+      [
+        "late",
+        "early",
+        "idle"
+      ],
+      [
+        "early",
+        "idle",
+        "late"
+      ]
+    ],
+    "noisyWallet": "0xb3e23aa33d6778688f7760458adcba24de828e25",
+    "honestWallet": "0x7a4b30cf1df224cd6a34381b2994e2d102c5860d",
+    "observed": {
+      "conditions": {
+        "idle": {
+          "honestAdmittedAndMined": 12,
+          "honestAdmissionMs": {
+            "n": 12,
+            "min": 8.342,
+            "median": 13.295,
+            "max": 13.971
+          },
+          "honestSimulationRpcMs": {
+            "n": 12,
+            "min": 3.025,
+            "median": 5.386,
+            "max": 5.767
+          },
+          "backgroundRejections": 0,
+          "backgroundSimulationCalls": 0,
+          "backgroundSimulationRpcMs": null,
+          "honestStartedDuringBackgroundTrace": 0
+        },
+        "early": {
+          "honestAdmittedAndMined": 12,
+          "honestAdmissionMs": {
+            "n": 12,
+            "min": 9.621,
+            "median": 12.262,
+            "max": 14.694
+          },
+          "honestSimulationRpcMs": {
+            "n": 12,
+            "min": 3.154,
+            "median": 4.082,
+            "max": 4.558
+          },
+          "backgroundRejections": 48,
+          "backgroundSimulationCalls": 48,
+          "backgroundSimulationRpcMs": {
+            "n": 48,
+            "min": 2.596,
+            "median": 4.816,
+            "max": 6.325
+          },
+          "honestStartedDuringBackgroundTrace": 12
+        },
+        "late": {
+          "honestAdmittedAndMined": 12,
+          "honestAdmissionMs": {
+            "n": 12,
+            "min": 41.12,
+            "median": 46.874,
+            "max": 50.328
+          },
+          "honestSimulationRpcMs": {
+            "n": 12,
+            "min": 2.682,
+            "median": 2.762,
+            "max": 3.067
+          },
+          "backgroundRejections": 48,
+          "backgroundSimulationCalls": 48,
+          "backgroundSimulationRpcMs": {
+            "n": 48,
+            "min": 33.323,
+            "median": 68.786,
+            "max": 71.767
+          },
+          "honestStartedDuringBackgroundTrace": 12
+        }
+      },
+      "lateMinusEarly": {
+        "medianDifferenceMs": 35.014,
+        "slowerRounds": 12,
+        "rounds": 12
+      },
+      "lateMinusIdle": {
+        "medianDifferenceMs": 34.417,
+        "slowerRounds": 12,
+        "rounds": 12
+      },
+      "reputation": {
+        "initial": {
+          "seen": 2,
+          "included": 0,
+          "status": "ok"
+        },
+        "final": {
+          "seen": 2,
+          "included": 2,
+          "status": "ok"
+        }
+      }
+    },
+    "warmup": [
+      {
+        "round": -1,
+        "kind": "idle",
+        "honestHash": "0x61a24cce1e088b4e3476087ab2c3e011a7290ffa60e4d2c8fce368823f3b8d21",
+        "honestMs": 11.902,
+        "honestSimulationRpcMs": 4.291,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 8,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": -1,
+        "kind": "early",
+        "honestHash": "0xe589b27049081ff9ce23a74c6d5bb67625d7efc007a796659574d460aa09b002",
+        "honestMs": 12.332,
+        "honestSimulationRpcMs": 4.092,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 9,
+        "background": [
+          {
+            "hash": "0x75f515d73a1125a4d0c45826b975788012168f188a5880255d4f3bb3a34be358",
+            "rejectionCode": -32500,
+            "admissionMs": 11.05,
+            "simulationRpcMs": 3.648,
+            "traceStartRelativeToHonestMs": -0.075,
+            "traceEndRelativeToHonestMs": 3.572
+          },
+          {
+            "hash": "0xe4d252f7f433d07cdcc7efa5d4be7394e749efe53679459bdadaff410b297e5f",
+            "rejectionCode": -32500,
+            "admissionMs": 13.619,
+            "simulationRpcMs": 4.727,
+            "traceStartRelativeToHonestMs": 1.715,
+            "traceEndRelativeToHonestMs": 6.442
+          },
+          {
+            "hash": "0x65a81723d519f3299a98070740419b885b7eef6590c89ee6ef4a8a24aafe185c",
+            "rejectionCode": -32500,
+            "admissionMs": 13.379,
+            "simulationRpcMs": 5.555,
+            "traceStartRelativeToHonestMs": 0.78,
+            "traceEndRelativeToHonestMs": 6.335
+          },
+          {
+            "hash": "0x099873c9ca4ce67a8b680fe5f59942da129a5c0d90dd5a424dff6387f58b899d",
+            "rejectionCode": -32500,
+            "admissionMs": 13.627,
+            "simulationRpcMs": 3.802,
+            "traceStartRelativeToHonestMs": 2.696,
+            "traceEndRelativeToHonestMs": 6.497
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": -1,
+        "kind": "late",
+        "honestHash": "0x0530f4bd576195937d79abae71fd77d282ecbbc8f42dfe97e4130d77ffb4afd6",
+        "honestMs": 47.527,
+        "honestSimulationRpcMs": 2.768,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 10,
+        "background": [
+          {
+            "hash": "0x7619f7403bb14fb4e13e36fc6a1afa34f0a6eac80e4f2dc93d70108e1ba71ab0",
+            "rejectionCode": -32500,
+            "admissionMs": 46.811,
+            "simulationRpcMs": 40.828,
+            "traceStartRelativeToHonestMs": -0.074,
+            "traceEndRelativeToHonestMs": 40.754
+          },
+          {
+            "hash": "0x4de43f0c2a2d16daa4c75404d954416be92e5e75239f2d44fdc69c3859c9654d",
+            "rejectionCode": -32500,
+            "admissionMs": 76.873,
+            "simulationRpcMs": 70.26,
+            "traceStartRelativeToHonestMs": 0.901,
+            "traceEndRelativeToHonestMs": 71.161
+          },
+          {
+            "hash": "0x9ff2bcfdcaec5726ed8920aea08a48b92caf4d45f87a904cd9982f8787b7df4e",
+            "rejectionCode": -32500,
+            "admissionMs": 76.65,
+            "simulationRpcMs": 68.987,
+            "traceStartRelativeToHonestMs": 2.099,
+            "traceEndRelativeToHonestMs": 71.085
+          },
+          {
+            "hash": "0x576836e1ceedd86643811983a9664f2c72fade7a706717d8b18ae7ae5f01f16d",
+            "rejectionCode": -32500,
+            "admissionMs": 76.711,
+            "simulationRpcMs": 67.672,
+            "traceStartRelativeToHonestMs": 3.783,
+            "traceEndRelativeToHonestMs": 71.455
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      }
+    ],
+    "trials": [
+      {
+        "round": 0,
+        "kind": "idle",
+        "honestHash": "0x04c54e64761b35e9e8b01a83b83aea17b8c3e979316c7eb06a2bf3d0d6f40153",
+        "honestMs": 11.547,
+        "honestSimulationRpcMs": 4.533,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 11,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 0,
+        "kind": "early",
+        "honestHash": "0x3c5eb03c30418984e6e1d087a1772125f59a2fcf633840de8f00dd807a0cce5d",
+        "honestMs": 12.403,
+        "honestSimulationRpcMs": 4.273,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 12,
+        "background": [
+          {
+            "hash": "0xefc612fa07a692b7af720cb1498fd061ab0d55e1172bbac14312b3145a39e4ab",
+            "rejectionCode": -32500,
+            "admissionMs": 9.335,
+            "simulationRpcMs": 3.815,
+            "traceStartRelativeToHonestMs": -0.058,
+            "traceEndRelativeToHonestMs": 3.757
+          },
+          {
+            "hash": "0x5e13b946120cbd3a28c35d69122aca8d49e8ae669a7d62f4ca86ea0d3131dc1f",
+            "rejectionCode": -32500,
+            "admissionMs": 12.033,
+            "simulationRpcMs": 4.157,
+            "traceStartRelativeToHonestMs": 2.703,
+            "traceEndRelativeToHonestMs": 6.86
+          },
+          {
+            "hash": "0x7ffdef629070827563374b32127a5013d1688b1c2268a2501fb8b82a20e0d205",
+            "rejectionCode": -32500,
+            "admissionMs": 11.826,
+            "simulationRpcMs": 5.429,
+            "traceStartRelativeToHonestMs": 1.3,
+            "traceEndRelativeToHonestMs": 6.729
+          },
+          {
+            "hash": "0xae5787def19885111f1a1e05f451131048bdae8ff11dfc3ada152140945b39a7",
+            "rejectionCode": -32500,
+            "admissionMs": 11.922,
+            "simulationRpcMs": 4.96,
+            "traceStartRelativeToHonestMs": 1.99,
+            "traceEndRelativeToHonestMs": 6.951
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 0,
+        "kind": "late",
+        "honestHash": "0x24ee304fe0ff8b69d9361014bd730a45cdfbb05fb231e14445b774e6c7635fc3",
+        "honestMs": 46.627,
+        "honestSimulationRpcMs": 2.875,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 13,
+        "background": [
+          {
+            "hash": "0xd82d5087a08354a4f6c90cc42124706a950ed8b3b11a9f3a3127d3024d6e662d",
+            "rejectionCode": -32500,
+            "admissionMs": 75.062,
+            "simulationRpcMs": 69.282,
+            "traceStartRelativeToHonestMs": 0.854,
+            "traceEndRelativeToHonestMs": 70.135
+          },
+          {
+            "hash": "0x22a0fc1c66ee702bc37e44ada249b7de4e288537bbfe5cdef131443ecaa123ac",
+            "rejectionCode": -32500,
+            "admissionMs": 45.359,
+            "simulationRpcMs": 40.201,
+            "traceStartRelativeToHonestMs": -0.052,
+            "traceEndRelativeToHonestMs": 40.149
+          },
+          {
+            "hash": "0xc8919438fddbbc1fe862adf5dc0f85530b1973650fc7266e5862a5c6e7d0a9a5",
+            "rejectionCode": -32500,
+            "admissionMs": 74.952,
+            "simulationRpcMs": 68.098,
+            "traceStartRelativeToHonestMs": 2.103,
+            "traceEndRelativeToHonestMs": 70.201
+          },
+          {
+            "hash": "0xed133a97dfde1fb2d3287d3ba8989e4d1d03158e400d2e619056a22a264bfcc1",
+            "rejectionCode": -32500,
+            "admissionMs": 74.856,
+            "simulationRpcMs": 68.7,
+            "traceStartRelativeToHonestMs": 1.473,
+            "traceEndRelativeToHonestMs": 70.173
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 1,
+        "kind": "early",
+        "honestHash": "0x258ec819de78d63cd2f356b56b968ecb56a556940c96c5ac93e96fe5af405f05",
+        "honestMs": 11.866,
+        "honestSimulationRpcMs": 4.051,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 14,
+        "background": [
+          {
+            "hash": "0x8906e0a0ab95a86477cef0d45702868bbfcfe816b1d4a67c76802032fd4d4594",
+            "rejectionCode": -32500,
+            "admissionMs": 11.877,
+            "simulationRpcMs": 5.819,
+            "traceStartRelativeToHonestMs": 0.639,
+            "traceEndRelativeToHonestMs": 6.458
+          },
+          {
+            "hash": "0x6460de664d4b8b06644b99ae7d9c5d5bf26162e1683b35ede8e5cde273aa61b8",
+            "rejectionCode": -32500,
+            "admissionMs": 8.988,
+            "simulationRpcMs": 3.527,
+            "traceStartRelativeToHonestMs": -0.048,
+            "traceEndRelativeToHonestMs": 3.479
+          },
+          {
+            "hash": "0x109d9cf83bc473607cdfd5383a3d4ac725b01ee00f2f77fbcc549f893bc175f6",
+            "rejectionCode": -32500,
+            "admissionMs": 11.68,
+            "simulationRpcMs": 5.155,
+            "traceStartRelativeToHonestMs": 1.346,
+            "traceEndRelativeToHonestMs": 6.501
+          },
+          {
+            "hash": "0x3c3aee0a47474cfec851739b7e1e697310f3f8064ac908daa67959cd3952afe8",
+            "rejectionCode": -32500,
+            "admissionMs": 11.454,
+            "simulationRpcMs": 3.83,
+            "traceStartRelativeToHonestMs": 2.564,
+            "traceEndRelativeToHonestMs": 6.394
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 1,
+        "kind": "late",
+        "honestHash": "0xb057e0d599ab0abf49dc331768c466d0dcb0f49ce31cc2060654eec74c26992a",
+        "honestMs": 46.755,
+        "honestSimulationRpcMs": 2.771,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 15,
+        "background": [
+          {
+            "hash": "0xadfe2d591cd4aea9650ed10b2068d766ffe5f9ebbed6d720d35f80670b152089",
+            "rejectionCode": -32500,
+            "admissionMs": 46.212,
+            "simulationRpcMs": 40.683,
+            "traceStartRelativeToHonestMs": -0.075,
+            "traceEndRelativeToHonestMs": 40.608
+          },
+          {
+            "hash": "0x9940742e459b1d94b0f1590eab7623e65b0b5f6c7e4bae3ef1dce9e5e7e1250c",
+            "rejectionCode": -32500,
+            "admissionMs": 75.751,
+            "simulationRpcMs": 69.13,
+            "traceStartRelativeToHonestMs": 1.432,
+            "traceEndRelativeToHonestMs": 70.562
+          },
+          {
+            "hash": "0xd631a9d867a72c83120dbb209691eebde59bb04d09843af123a9d5aed4dc9ced",
+            "rejectionCode": -32500,
+            "admissionMs": 75.943,
+            "simulationRpcMs": 70.159,
+            "traceStartRelativeToHonestMs": 0.754,
+            "traceEndRelativeToHonestMs": 70.913
+          },
+          {
+            "hash": "0xe72a000cd1d5560e4e9cf541d4e87b409da7f326318c067776882e165941d0e7",
+            "rejectionCode": -32500,
+            "admissionMs": 75.695,
+            "simulationRpcMs": 68.657,
+            "traceStartRelativeToHonestMs": 2.041,
+            "traceEndRelativeToHonestMs": 70.697
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 1,
+        "kind": "idle",
+        "honestHash": "0xa228e605420ed3c4279d5f01f53cb2fa60d60b7bc8eaf7c5d6158b91de233af6",
+        "honestMs": 11.08,
+        "honestSimulationRpcMs": 5.125,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 16,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 2,
+        "kind": "late",
+        "honestHash": "0x27f225c0b63c9d27b0913f20e34de8c1e2a26f5bd77e880764f7ef788868b836",
+        "honestMs": 46.879,
+        "honestSimulationRpcMs": 2.749,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 17,
+        "background": [
+          {
+            "hash": "0xcbfa5d73997ca351d7b09c476f1f4901448fa59c16372f282527196a356663a3",
+            "rejectionCode": -32500,
+            "admissionMs": 46.021,
+            "simulationRpcMs": 41.022,
+            "traceStartRelativeToHonestMs": -0.042,
+            "traceEndRelativeToHonestMs": 40.98
+          },
+          {
+            "hash": "0xaaa2ca3a00cb840d8c5f13722a10e825d5dd4f3413596d4baf23f79c3f256bc2",
+            "rejectionCode": -32500,
+            "admissionMs": 76.108,
+            "simulationRpcMs": 69.994,
+            "traceStartRelativeToHonestMs": 1.484,
+            "traceEndRelativeToHonestMs": 71.478
+          },
+          {
+            "hash": "0xfcd1cf77dc4640c26c859765ab0bb81baac30f8cbd56d74297ceb26997d8385b",
+            "rejectionCode": -32500,
+            "admissionMs": 75.733,
+            "simulationRpcMs": 69.015,
+            "traceStartRelativeToHonestMs": 2.039,
+            "traceEndRelativeToHonestMs": 71.054
+          },
+          {
+            "hash": "0xaac1800da63e91e16e200c470b7e612a3c0c1f9b6d4a04bbcf85fc50b1797ad1",
+            "rejectionCode": -32500,
+            "admissionMs": 75.749,
+            "simulationRpcMs": 70.248,
+            "traceStartRelativeToHonestMs": 0.844,
+            "traceEndRelativeToHonestMs": 71.092
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 2,
+        "kind": "idle",
+        "honestHash": "0x32a441ffff3c94889ca8dfc8b57a17b75baf72551d8609dfea57554ee224f98c",
+        "honestMs": 13.328,
+        "honestSimulationRpcMs": 5.358,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 18,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 2,
+        "kind": "early",
+        "honestHash": "0xd47796489049cd14b23bf29a807d08bcb8ed8707a106b32d959bdd2b80fc121a",
+        "honestMs": 11.669,
+        "honestSimulationRpcMs": 4.014,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 19,
+        "background": [
+          {
+            "hash": "0x8aba69ff000daca0fcf10cd49ec507b1d98c013956ca6eb6c090c8450159081c",
+            "rejectionCode": -32500,
+            "admissionMs": 8.411,
+            "simulationRpcMs": 3.625,
+            "traceStartRelativeToHonestMs": -0.058,
+            "traceEndRelativeToHonestMs": 3.567
+          },
+          {
+            "hash": "0x69d21860c528ca542b989d3e2eab1558c0872c4d1ce8d50dc7bca53c4d8ffecf",
+            "rejectionCode": -32500,
+            "admissionMs": 11.256,
+            "simulationRpcMs": 5.994,
+            "traceStartRelativeToHonestMs": 0.597,
+            "traceEndRelativeToHonestMs": 6.591
+          },
+          {
+            "hash": "0x5abe9e29b19e322bdbe4bf48c5ce9b22094c8c1df8c37bdb0964169b01dfce3f",
+            "rejectionCode": -32500,
+            "admissionMs": 10.979,
+            "simulationRpcMs": 4.782,
+            "traceStartRelativeToHonestMs": 1.763,
+            "traceEndRelativeToHonestMs": 6.546
+          },
+          {
+            "hash": "0x3b4425fa84178863dc789af86e920d73b7ab2f7f84732c0da4c6ce5d553117a6",
+            "rejectionCode": -32500,
+            "admissionMs": 10.829,
+            "simulationRpcMs": 4.06,
+            "traceStartRelativeToHonestMs": 2.363,
+            "traceEndRelativeToHonestMs": 6.423
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 3,
+        "kind": "idle",
+        "honestHash": "0xb963e19a15727cdee21323d826f4eb0d69807bec594ce39e068e41c1bcc37aba",
+        "honestMs": 13.365,
+        "honestSimulationRpcMs": 5.571,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 20,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 3,
+        "kind": "late",
+        "honestHash": "0xf3f112dc95ed023731dfcf575dad2d878ac2e27aae0135a9eebe475a961ad2b9",
+        "honestMs": 47.877,
+        "honestSimulationRpcMs": 3.049,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 21,
+        "background": [
+          {
+            "hash": "0x72db60bd55610674b09cf30392a9a98a3cdc5daaa3288bbc7563050ce7f40d1f",
+            "rejectionCode": -32500,
+            "admissionMs": 45.257,
+            "simulationRpcMs": 40.28,
+            "traceStartRelativeToHonestMs": -0.044,
+            "traceEndRelativeToHonestMs": 40.236
+          },
+          {
+            "hash": "0xad51e7c72fdf6ab9f7a17189cf389be6afb8caf3e7f3f70322f57da88311b300",
+            "rejectionCode": -32500,
+            "admissionMs": 75.534,
+            "simulationRpcMs": 70.506,
+            "traceStartRelativeToHonestMs": 0.628,
+            "traceEndRelativeToHonestMs": 71.134
+          },
+          {
+            "hash": "0xb7e4c5e97d28cb67e4618364e56741a9a500a74c1b5660fecc728d2b792ab602",
+            "rejectionCode": -32500,
+            "admissionMs": 75.497,
+            "simulationRpcMs": 69.958,
+            "traceStartRelativeToHonestMs": 1.205,
+            "traceEndRelativeToHonestMs": 71.163
+          },
+          {
+            "hash": "0xf8a8304251c6cf0a94ac3b3e3cd40ecbac79a53f105aa5e72ea88697f8007699",
+            "rejectionCode": -32500,
+            "admissionMs": 75.317,
+            "simulationRpcMs": 69.252,
+            "traceStartRelativeToHonestMs": 1.823,
+            "traceEndRelativeToHonestMs": 71.075
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 3,
+        "kind": "early",
+        "honestHash": "0x464290a060f7bf9a385de07623fd07f92251674498f924e34380f9a7d7b2e2fc",
+        "honestMs": 12.176,
+        "honestSimulationRpcMs": 4.084,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 22,
+        "background": [
+          {
+            "hash": "0xbba788cdfb2a9efc5eb400a0d59ab1466d40f23b10408528a851fd3aae9aa85d",
+            "rejectionCode": -32500,
+            "admissionMs": 8.997,
+            "simulationRpcMs": 3.716,
+            "traceStartRelativeToHonestMs": -0.049,
+            "traceEndRelativeToHonestMs": 3.668
+          },
+          {
+            "hash": "0x760242def4ddb080afdba2b14fd7655963176fc1fe5f27823d18c0f0963c0ed7",
+            "rejectionCode": -32500,
+            "admissionMs": 11.651,
+            "simulationRpcMs": 6.159,
+            "traceStartRelativeToHonestMs": 0.604,
+            "traceEndRelativeToHonestMs": 6.763
+          },
+          {
+            "hash": "0xdc8ef3d81bf8d4b9b43798e5215a94122c3ed2a6d981705b18ccef30af461667",
+            "rejectionCode": -32500,
+            "admissionMs": 11.483,
+            "simulationRpcMs": 4.474,
+            "traceStartRelativeToHonestMs": 2.242,
+            "traceEndRelativeToHonestMs": 6.716
+          },
+          {
+            "hash": "0xc1c4a7dbe9741a006e4c78c437874c2fc7720e75e81b3b8bb88d3de4acc14b95",
+            "rejectionCode": -32500,
+            "admissionMs": 11.593,
+            "simulationRpcMs": 5.14,
+            "traceStartRelativeToHonestMs": 1.683,
+            "traceEndRelativeToHonestMs": 6.823
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 4,
+        "kind": "late",
+        "honestHash": "0x744d1f362aafb407518cae10f63a38161f5921df29170cf6da24e3afa30df302",
+        "honestMs": 45.807,
+        "honestSimulationRpcMs": 2.733,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 23,
+        "background": [
+          {
+            "hash": "0xd4bbf9acd98606d7f876eb06d508a521b9bf06efd339659138072576c1f29a48",
+            "rejectionCode": -32500,
+            "admissionMs": 45.297,
+            "simulationRpcMs": 39.407,
+            "traceStartRelativeToHonestMs": -0.083,
+            "traceEndRelativeToHonestMs": 39.323
+          },
+          {
+            "hash": "0x9a9cbfecda90706a774fe4023c5e549897ebc823ad26a4748286264ffaa49923",
+            "rejectionCode": -32500,
+            "admissionMs": 75.307,
+            "simulationRpcMs": 68.693,
+            "traceStartRelativeToHonestMs": 1.12,
+            "traceEndRelativeToHonestMs": 69.812
+          },
+          {
+            "hash": "0x1da6b2e616a463613af21792a7b14524313b1ed1cef80687bffba947bbb1d076",
+            "rejectionCode": -32500,
+            "admissionMs": 75.131,
+            "simulationRpcMs": 68.007,
+            "traceStartRelativeToHonestMs": 1.597,
+            "traceEndRelativeToHonestMs": 69.604
+          },
+          {
+            "hash": "0x363ac46cca73a7dd39cbf9d2591ecf3d1e1a21a4086f904459cc101cf90d5ebb",
+            "rejectionCode": -32500,
+            "admissionMs": 75.153,
+            "simulationRpcMs": 67.441,
+            "traceStartRelativeToHonestMs": 2.222,
+            "traceEndRelativeToHonestMs": 69.663
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 4,
+        "kind": "early",
+        "honestHash": "0x9df81a6c0f825d2794cd2bdb58de66240552bb379da2348294836a6786025670",
+        "honestMs": 12.348,
+        "honestSimulationRpcMs": 4.256,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 24,
+        "background": [
+          {
+            "hash": "0xaf3077f43edaf764656c12280f1c960e5659cc58721e5b7e54d8976f5a81708d",
+            "rejectionCode": -32500,
+            "admissionMs": 7.648,
+            "simulationRpcMs": 3.519,
+            "traceStartRelativeToHonestMs": -0.062,
+            "traceEndRelativeToHonestMs": 3.457
+          },
+          {
+            "hash": "0x338e32afbf7935b871865a7cc62f4ef5875fe0f39cb61501833b97829bb9681e",
+            "rejectionCode": -32500,
+            "admissionMs": 10.805,
+            "simulationRpcMs": 6.061,
+            "traceStartRelativeToHonestMs": 0.863,
+            "traceEndRelativeToHonestMs": 6.924
+          },
+          {
+            "hash": "0x984851f8887dca90a6074ba3c960281b446be9fb8f5106d8f9e1adf9868ec30e",
+            "rejectionCode": -32500,
+            "admissionMs": 10.564,
+            "simulationRpcMs": 5.366,
+            "traceStartRelativeToHonestMs": 1.452,
+            "traceEndRelativeToHonestMs": 6.818
+          },
+          {
+            "hash": "0x6c8d82ac830c58e6628c8fdf1aff2e176a34d669ccff9c5716694917d35292bc",
+            "rejectionCode": -32500,
+            "admissionMs": 10.555,
+            "simulationRpcMs": 4.915,
+            "traceStartRelativeToHonestMs": 1.968,
+            "traceEndRelativeToHonestMs": 6.883
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 4,
+        "kind": "idle",
+        "honestHash": "0xdfb6752b9fdbeab9ef736b0558d3d5d2185650ea98c2f216f9b93679d3da58d9",
+        "honestMs": 13.262,
+        "honestSimulationRpcMs": 5.413,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 25,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 5,
+        "kind": "early",
+        "honestHash": "0xea98554d3a87ae86276ac995c02d2ff80109b1dfb06043f87cb319785a3ac1e5",
+        "honestMs": 11.462,
+        "honestSimulationRpcMs": 3.737,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 26,
+        "background": [
+          {
+            "hash": "0xfc54a3c2fab09fb508537bd4b59a3ccec712431b8fdcec9945e6928cc32ac8ab",
+            "rejectionCode": -32500,
+            "admissionMs": 8.067,
+            "simulationRpcMs": 3.595,
+            "traceStartRelativeToHonestMs": -0.033,
+            "traceEndRelativeToHonestMs": 3.562
+          },
+          {
+            "hash": "0xd253f532c1de057995837ae34e282315f338e48ce78e65e9ac9ff4a0f8ff195f",
+            "rejectionCode": -32500,
+            "admissionMs": 10.793,
+            "simulationRpcMs": 5.899,
+            "traceStartRelativeToHonestMs": 0.66,
+            "traceEndRelativeToHonestMs": 6.558
+          },
+          {
+            "hash": "0xdd94d65ce41e7db0c5ad809afa3eebc0f925101a2ffaff4fd8da34bd6c4f0210",
+            "rejectionCode": -32500,
+            "admissionMs": 10.952,
+            "simulationRpcMs": 5.369,
+            "traceStartRelativeToHonestMs": 1.283,
+            "traceEndRelativeToHonestMs": 6.652
+          },
+          {
+            "hash": "0x54409ac7c03703693fa3e0aac5d815d1a5b9afcde00cddf5c340b73328f03c4a",
+            "rejectionCode": -32500,
+            "admissionMs": 10.728,
+            "simulationRpcMs": 4.758,
+            "traceStartRelativeToHonestMs": 1.856,
+            "traceEndRelativeToHonestMs": 6.614
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 5,
+        "kind": "idle",
+        "honestHash": "0xe9bd06046c7af4e0d488701efe335bc3e218d967504d4b0dbefef796e06c57f6",
+        "honestMs": 9.527,
+        "honestSimulationRpcMs": 3.025,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 27,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 0,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 5,
+        "kind": "late",
+        "honestHash": "0x1263d7cb53a3343fd9bdefdf625c2704063525c2c337fe3cec78d3071b40dfff",
+        "honestMs": 47.577,
+        "honestSimulationRpcMs": 2.937,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 28,
+        "background": [
+          {
+            "hash": "0x3e65e6e5e15ff667d1593bbdcab79eae4bde73180059020650d5a1c3b724573a",
+            "rejectionCode": -32500,
+            "admissionMs": 46.213,
+            "simulationRpcMs": 41.166,
+            "traceStartRelativeToHonestMs": -0.046,
+            "traceEndRelativeToHonestMs": 41.12
+          },
+          {
+            "hash": "0x9971071b3fd025777658a53e94d9c5527b2015b14da77c2cde7bbecfda483c9f",
+            "rejectionCode": -32500,
+            "admissionMs": 76.021,
+            "simulationRpcMs": 69.241,
+            "traceStartRelativeToHonestMs": 2.152,
+            "traceEndRelativeToHonestMs": 71.393
+          },
+          {
+            "hash": "0x3d82eb7643378c55a526d779715fa9e49bfe9c552729c3d942bca3e433df6484",
+            "rejectionCode": -32500,
+            "admissionMs": 76.052,
+            "simulationRpcMs": 70.525,
+            "traceStartRelativeToHonestMs": 0.935,
+            "traceEndRelativeToHonestMs": 71.46
+          },
+          {
+            "hash": "0xf5a04672fddbe6082c62793f95ae8c51a962bd440e92f500dcbd58725fe38855",
+            "rejectionCode": -32500,
+            "admissionMs": 75.938,
+            "simulationRpcMs": 69.876,
+            "traceStartRelativeToHonestMs": 1.559,
+            "traceEndRelativeToHonestMs": 71.435
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 6,
+        "kind": "idle",
+        "honestHash": "0x248cda22830bb8fd2c7b98ab309994ca026be5378226e68429b5b53d863327c8",
+        "honestMs": 13.682,
+        "honestSimulationRpcMs": 5.661,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 29,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 6,
+        "kind": "early",
+        "honestHash": "0xbd53e22d3ff2051aa29f19eca59eb1bdec1beb41e97228c8c4f4379c01a47bf4",
+        "honestMs": 14.694,
+        "honestSimulationRpcMs": 4.079,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 30,
+        "background": [
+          {
+            "hash": "0x6cf25ebb940dbae4bb2ab4cfdad4ff6f444dc82457620ed12db7a8b0ca655a9f",
+            "rejectionCode": -32500,
+            "admissionMs": 8.936,
+            "simulationRpcMs": 3.752,
+            "traceStartRelativeToHonestMs": -0.051,
+            "traceEndRelativeToHonestMs": 3.7
+          },
+          {
+            "hash": "0x8ad585f3b2f06076880cd86a3839f0115389d30b9fd822c907b2fe64a8fef14e",
+            "rejectionCode": -32500,
+            "admissionMs": 11.515,
+            "simulationRpcMs": 5.481,
+            "traceStartRelativeToHonestMs": 1.375,
+            "traceEndRelativeToHonestMs": 6.855
+          },
+          {
+            "hash": "0x3e0ee6b496e655fbdd8061d9181499d5ad360294e193a022110eb3c962dfe035",
+            "rejectionCode": -32500,
+            "admissionMs": 11.516,
+            "simulationRpcMs": 6.215,
+            "traceStartRelativeToHonestMs": 0.709,
+            "traceEndRelativeToHonestMs": 6.924
+          },
+          {
+            "hash": "0x886afb79e567ef29888e9326c225c1c653b7bfe9bf7f4f66db0aab7ad6e59d66",
+            "rejectionCode": -32500,
+            "admissionMs": 12.017,
+            "simulationRpcMs": 3.31,
+            "traceStartRelativeToHonestMs": 4.265,
+            "traceEndRelativeToHonestMs": 7.575
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 6,
+        "kind": "late",
+        "honestHash": "0xee4b5d052315f3b3b04e4315519e09e57836e4878f124eb227fd55bf9beff343",
+        "honestMs": 46.869,
+        "honestSimulationRpcMs": 2.72,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 31,
+        "background": [
+          {
+            "hash": "0x12b6b651341543b8f78637e4d338baecfc878813883145b36d3b3a8349886208",
+            "rejectionCode": -32500,
+            "admissionMs": 44.669,
+            "simulationRpcMs": 40.467,
+            "traceStartRelativeToHonestMs": -0.035,
+            "traceEndRelativeToHonestMs": 40.432
+          },
+          {
+            "hash": "0xe705d2a3431d68c6ea6befd228af588e4eb42dcd3817e90fb013f90211940fc8",
+            "rejectionCode": -32500,
+            "admissionMs": 74.352,
+            "simulationRpcMs": 69.151,
+            "traceStartRelativeToHonestMs": 1.282,
+            "traceEndRelativeToHonestMs": 70.433
+          },
+          {
+            "hash": "0xd8a96a1f1114093d98d76014e32f44c27da403086b9ba39e38082f2df13d355d",
+            "rejectionCode": -32500,
+            "admissionMs": 74.368,
+            "simulationRpcMs": 69.787,
+            "traceStartRelativeToHonestMs": 0.677,
+            "traceEndRelativeToHonestMs": 70.464
+          },
+          {
+            "hash": "0x66d0a1b5268313233cdd24397697c8ebe6e0acbdb05593b310fc320478c842ce",
+            "rejectionCode": -32500,
+            "admissionMs": 74.413,
+            "simulationRpcMs": 68.871,
+            "traceStartRelativeToHonestMs": 1.87,
+            "traceEndRelativeToHonestMs": 70.741
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 7,
+        "kind": "early",
+        "honestHash": "0x2eb292b464e65bbb20a3ef767a86321e1200aa00d0ba2447115c8feecc6cb3e9",
+        "honestMs": 13.158,
+        "honestSimulationRpcMs": 4.558,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 32,
+        "background": [
+          {
+            "hash": "0x83594e260b8ce1c57d40258739a234584e420f9bbadad1eff26a4782bff51212",
+            "rejectionCode": -32500,
+            "admissionMs": 8.177,
+            "simulationRpcMs": 4.077,
+            "traceStartRelativeToHonestMs": -0.043,
+            "traceEndRelativeToHonestMs": 4.034
+          },
+          {
+            "hash": "0xa10b1953b2c6fd995f3819794711e192591a8845cd2d42cd9ceda6cea594ac24",
+            "rejectionCode": -32500,
+            "admissionMs": 10.96,
+            "simulationRpcMs": 6.325,
+            "traceStartRelativeToHonestMs": 0.803,
+            "traceEndRelativeToHonestMs": 7.128
+          },
+          {
+            "hash": "0x728e787bb1219d2af8fdb60afda6ec28d34f2506417024e91e9767281ad8600c",
+            "rejectionCode": -32500,
+            "admissionMs": 10.971,
+            "simulationRpcMs": 4.956,
+            "traceStartRelativeToHonestMs": 2.221,
+            "traceEndRelativeToHonestMs": 7.177
+          },
+          {
+            "hash": "0x5a7b8fae4c86c051fcbfd03c3b4805e31fe52755bdce147fea408c28e3bbe626",
+            "rejectionCode": -32500,
+            "admissionMs": 10.998,
+            "simulationRpcMs": 5.644,
+            "traceStartRelativeToHonestMs": 1.567,
+            "traceEndRelativeToHonestMs": 7.211
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 7,
+        "kind": "late",
+        "honestHash": "0x3e35809461b599d14dc6782089245edf5c95375f6ea55934843581afa99a2159",
+        "honestMs": 49.296,
+        "honestSimulationRpcMs": 2.745,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 33,
+        "background": [
+          {
+            "hash": "0x229d903b693149f724cb9501bf545ea4d82d0297abbd6328286076934595f0bc",
+            "rejectionCode": -32500,
+            "admissionMs": 47.654,
+            "simulationRpcMs": 42.308,
+            "traceStartRelativeToHonestMs": -0.059,
+            "traceEndRelativeToHonestMs": 42.249
+          },
+          {
+            "hash": "0xa414d3b8c5f4c7ae9f55c16c8a1012132100dc8baa8e8711edbd3107cfb54acc",
+            "rejectionCode": -32500,
+            "admissionMs": 77.578,
+            "simulationRpcMs": 71.767,
+            "traceStartRelativeToHonestMs": 1.058,
+            "traceEndRelativeToHonestMs": 72.825
+          },
+          {
+            "hash": "0x4c6fc0143dea53ffb116c88bc4d851e4d0a2189e47fee0189d643b464e995a97",
+            "rejectionCode": -32500,
+            "admissionMs": 77.298,
+            "simulationRpcMs": 69.503,
+            "traceStartRelativeToHonestMs": 2.901,
+            "traceEndRelativeToHonestMs": 72.404
+          },
+          {
+            "hash": "0x1fcc9e079b27459ef4a6ae35bf121482de79f2abdfcd60321515dd52e47d6644",
+            "rejectionCode": -32500,
+            "admissionMs": 77.347,
+            "simulationRpcMs": 70.899,
+            "traceStartRelativeToHonestMs": 1.726,
+            "traceEndRelativeToHonestMs": 72.625
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 7,
+        "kind": "idle",
+        "honestHash": "0x5ac30a8596795e6758a50ba283d4490a0b3d8b658d6fb4b0c7d1fcb9e420e332",
+        "honestMs": 8.342,
+        "honestSimulationRpcMs": 3.45,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 34,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 8,
+        "kind": "late",
+        "honestHash": "0x3ca1f9ede061395b5729bbe21105f1fe101ec3245bceacab349c90c4aff4a11f",
+        "honestMs": 50.328,
+        "honestSimulationRpcMs": 3.067,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 35,
+        "background": [
+          {
+            "hash": "0xcbc6a23157ddbc82022fdf1409531803631e5d42f86e65f5d1dba1e2fa139941",
+            "rejectionCode": -32500,
+            "admissionMs": 47.153,
+            "simulationRpcMs": 41.768,
+            "traceStartRelativeToHonestMs": -0.032,
+            "traceEndRelativeToHonestMs": 41.735
+          },
+          {
+            "hash": "0xe266e7b98b781616863001859d70d3dc44ebe075057396cc2a6de1acfa7d97de",
+            "rejectionCode": -32500,
+            "admissionMs": 77.257,
+            "simulationRpcMs": 70.482,
+            "traceStartRelativeToHonestMs": 1.619,
+            "traceEndRelativeToHonestMs": 72.102
+          },
+          {
+            "hash": "0xdccb9ddbf4711948eb3587c85b1045c30f791870df19eff07e5ebde3691580c9",
+            "rejectionCode": -32500,
+            "admissionMs": 77.157,
+            "simulationRpcMs": 69.779,
+            "traceStartRelativeToHonestMs": 2.285,
+            "traceEndRelativeToHonestMs": 72.064
+          },
+          {
+            "hash": "0x7afc51b9223f5f3b55f6baafe2ab07d43fed274bdf2b3d2186126067d23e0340",
+            "rejectionCode": -32500,
+            "admissionMs": 77.061,
+            "simulationRpcMs": 71.417,
+            "traceStartRelativeToHonestMs": 0.576,
+            "traceEndRelativeToHonestMs": 71.993
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 8,
+        "kind": "idle",
+        "honestHash": "0x30c604d36d30354f7bc4a0e08d124781a81613e592308e3cbf85cd8e6376f82c",
+        "honestMs": 13.971,
+        "honestSimulationRpcMs": 5.767,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 36,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 8,
+        "kind": "early",
+        "honestHash": "0xa9752f7f91dd625a07d6a684cdee70a48561e5ce9468a5985a46699b6c874800",
+        "honestMs": 13.268,
+        "honestSimulationRpcMs": 4.094,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 37,
+        "background": [
+          {
+            "hash": "0x340556fc1f2950e3868d339fb3d81f618fde0da58c83a30782e6a3a1517b3112",
+            "rejectionCode": -32500,
+            "admissionMs": 11.92,
+            "simulationRpcMs": 3.749,
+            "traceStartRelativeToHonestMs": -0.057,
+            "traceEndRelativeToHonestMs": 3.692
+          },
+          {
+            "hash": "0xdbb9eabb9e2c0191130742062ce0be999e8ccc3d1ccd5b0f943c5cf50db7c37d",
+            "rejectionCode": -32500,
+            "admissionMs": 14.738,
+            "simulationRpcMs": 5.833,
+            "traceStartRelativeToHonestMs": 0.845,
+            "traceEndRelativeToHonestMs": 6.679
+          },
+          {
+            "hash": "0x93c2268a3205ff269c9d58c21f97c2032040f0b2f9b98b0f3b87a498260324d4",
+            "rejectionCode": -32500,
+            "admissionMs": 14.616,
+            "simulationRpcMs": 5.031,
+            "traceStartRelativeToHonestMs": 1.535,
+            "traceEndRelativeToHonestMs": 6.566
+          },
+          {
+            "hash": "0xb16d663b54d53c129e7739c83c753d629980c67da285796749f56ed39de697d8",
+            "rejectionCode": -32500,
+            "admissionMs": 14.471,
+            "simulationRpcMs": 3.751,
+            "traceStartRelativeToHonestMs": 2.771,
+            "traceEndRelativeToHonestMs": 6.521
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 9,
+        "kind": "idle",
+        "honestHash": "0xed351d4d7f6686f6c9c30f5f7474f9a46eeec14092335cfa39057ddde7767664",
+        "honestMs": 9.971,
+        "honestSimulationRpcMs": 3.828,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 38,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 9,
+        "kind": "late",
+        "honestHash": "0x426c3d4c39a380f3a5a788043cb1e80d9cffa5b77ea5e57064a1fdce5cc71c9c",
+        "honestMs": 42.687,
+        "honestSimulationRpcMs": 2.828,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 39,
+        "background": [
+          {
+            "hash": "0xc2979ec69f913212074c0ba54bac7544b6c5a9946c20c1539475fb59a9254b8e",
+            "rejectionCode": -32500,
+            "admissionMs": 38.657,
+            "simulationRpcMs": 33.323,
+            "traceStartRelativeToHonestMs": -0.029,
+            "traceEndRelativeToHonestMs": 33.295
+          },
+          {
+            "hash": "0x0c119b1b767796ca7ca88b2d81e45f83c3fa9f7c3b816d5d97e7ffc077e25aba",
+            "rejectionCode": -32500,
+            "admissionMs": 71.285,
+            "simulationRpcMs": 65.883,
+            "traceStartRelativeToHonestMs": 0.468,
+            "traceEndRelativeToHonestMs": 66.351
+          },
+          {
+            "hash": "0x796dbcf278710bba7756cbcc8611046decc12517a625720a7add19acbf1a68cf",
+            "rejectionCode": -32500,
+            "admissionMs": 72.631,
+            "simulationRpcMs": 67.102,
+            "traceStartRelativeToHonestMs": 0.856,
+            "traceEndRelativeToHonestMs": 67.958
+          },
+          {
+            "hash": "0x41f09f30fd28be4cccd22cdc8da9a92857c10a654fca6ab70c268230d888876e",
+            "rejectionCode": -32500,
+            "admissionMs": 71.29,
+            "simulationRpcMs": 65.303,
+            "traceStartRelativeToHonestMs": 1.334,
+            "traceEndRelativeToHonestMs": 66.637
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 9,
+        "kind": "early",
+        "honestHash": "0x7235a6389623918f0003e341749f58aef54a1e8db387c62bb536615175fa50c1",
+        "honestMs": 9.621,
+        "honestSimulationRpcMs": 3.154,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 40,
+        "background": [
+          {
+            "hash": "0xe228919a6cef470e6116a2dc5b4c5dcb561752270b62ccaf7205094b24c44133",
+            "rejectionCode": -32500,
+            "admissionMs": 5.801,
+            "simulationRpcMs": 2.596,
+            "traceStartRelativeToHonestMs": -0.031,
+            "traceEndRelativeToHonestMs": 2.565
+          },
+          {
+            "hash": "0xb58fa28d6f64b317c071eed62e51bb34295ca850108702cf2fcc2eda4bfa1276",
+            "rejectionCode": -32500,
+            "admissionMs": 8.145,
+            "simulationRpcMs": 4.416,
+            "traceStartRelativeToHonestMs": 0.561,
+            "traceEndRelativeToHonestMs": 4.978
+          },
+          {
+            "hash": "0x1508715ad7d176f22d651c38e144708fa6ac97f4577cf2f87778cc1aa75c9fbc",
+            "rejectionCode": -32500,
+            "admissionMs": 7.916,
+            "simulationRpcMs": 3.943,
+            "traceStartRelativeToHonestMs": 0.997,
+            "traceEndRelativeToHonestMs": 4.94
+          },
+          {
+            "hash": "0xd3e23f6511941ad33b39fe793c9c8a76c32ef5c4ab69f2baf6fc14a4ff359ff1",
+            "rejectionCode": -32500,
+            "admissionMs": 8.168,
+            "simulationRpcMs": 3.528,
+            "traceStartRelativeToHonestMs": 1.476,
+            "traceEndRelativeToHonestMs": 5.004
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 10,
+        "kind": "late",
+        "honestHash": "0xc0e3092dad6a50243ce24bfc1a946c8daddbe7e2c9c832b6ec0207c65c4a36a4",
+        "honestMs": 41.12,
+        "honestSimulationRpcMs": 2.682,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 41,
+        "background": [
+          {
+            "hash": "0x3da294700a48435c94609d56d90e71bd2a85651241c6a9f7a9766793e32dcd5c",
+            "rejectionCode": -32500,
+            "admissionMs": 38.032,
+            "simulationRpcMs": 34.775,
+            "traceStartRelativeToHonestMs": -0.029,
+            "traceEndRelativeToHonestMs": 34.746
+          },
+          {
+            "hash": "0x624d0c06db7d856d25980d2c778a3cbe2959083e152f55b3f4fc00dca69c4b0f",
+            "rejectionCode": -32500,
+            "admissionMs": 66.968,
+            "simulationRpcMs": 63.518,
+            "traceStartRelativeToHonestMs": 0.453,
+            "traceEndRelativeToHonestMs": 63.97
+          },
+          {
+            "hash": "0x4efe5c779ec383c91b65a5adf025e5ca77a0bf8ff303cc2fc94b50c3905ef0b8",
+            "rejectionCode": -32500,
+            "admissionMs": 66.99,
+            "simulationRpcMs": 62.796,
+            "traceStartRelativeToHonestMs": 1.231,
+            "traceEndRelativeToHonestMs": 64.027
+          },
+          {
+            "hash": "0xd04fa03f32f099667ec37577e579347b2745dadad1dc170117b0f46ce7f6240c",
+            "rejectionCode": -32500,
+            "admissionMs": 66.995,
+            "simulationRpcMs": 62.485,
+            "traceStartRelativeToHonestMs": 1.709,
+            "traceEndRelativeToHonestMs": 64.195
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 10,
+        "kind": "early",
+        "honestHash": "0x6e9d113dbe8b32d598b44fd0c81d0fc7ce385587272b3d493cdb03bdb9684a08",
+        "honestMs": 11.626,
+        "honestSimulationRpcMs": 3.892,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 42,
+        "background": [
+          {
+            "hash": "0x17a1046cddf7b46efc7ea245db0b2fd7095ed79d29589136ddcd70dab21fed69",
+            "rejectionCode": -32500,
+            "admissionMs": 6.956,
+            "simulationRpcMs": 3.324,
+            "traceStartRelativeToHonestMs": -0.041,
+            "traceEndRelativeToHonestMs": 3.283
+          },
+          {
+            "hash": "0xcc63043698230211217dd09eab12218055191c491e51bb5ca1cbc566b33fd7ca",
+            "rejectionCode": -32500,
+            "admissionMs": 9.816,
+            "simulationRpcMs": 4.507,
+            "traceStartRelativeToHonestMs": 1.799,
+            "traceEndRelativeToHonestMs": 6.306
+          },
+          {
+            "hash": "0xaa5aae47ed51d781f50b83e4fea415f4c5fabf11a6c47100f16994e661e58d82",
+            "rejectionCode": -32500,
+            "admissionMs": 9.654,
+            "simulationRpcMs": 5.346,
+            "traceStartRelativeToHonestMs": 0.85,
+            "traceEndRelativeToHonestMs": 6.196
+          },
+          {
+            "hash": "0x7711a978bbd99ae875dcd2483af557b6d304ee079f428213efe7e2246d2fefd5",
+            "rejectionCode": -32500,
+            "admissionMs": 9.565,
+            "simulationRpcMs": 4.849,
+            "traceStartRelativeToHonestMs": 1.301,
+            "traceEndRelativeToHonestMs": 6.15
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 10,
+        "kind": "idle",
+        "honestHash": "0x0710261a4ef33267a751d1c1d906f92ab0c435df75a342f2141714eab5415583",
+        "honestMs": 13.346,
+        "honestSimulationRpcMs": 5.469,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 43,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 11,
+        "kind": "early",
+        "honestHash": "0xb09d2f58043be9acc25707afcb83c7d41098c58d5e9d14bac5c7e6e295a10468",
+        "honestMs": 12.651,
+        "honestSimulationRpcMs": 4.101,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 44,
+        "background": [
+          {
+            "hash": "0xb5d2c69f5845803760388bb793a58c5513c7f6c36cef0b4e3e7d6b81b6e93917",
+            "rejectionCode": -32500,
+            "admissionMs": 8.056,
+            "simulationRpcMs": 3.737,
+            "traceStartRelativeToHonestMs": -0.029,
+            "traceEndRelativeToHonestMs": 3.708
+          },
+          {
+            "hash": "0xbfa19d7fea3c5ca524d0a0cb2533f2d76917bb22f0f950c6daed0c9b7581d0ff",
+            "rejectionCode": -32500,
+            "admissionMs": 10.831,
+            "simulationRpcMs": 5.048,
+            "traceStartRelativeToHonestMs": 1.863,
+            "traceEndRelativeToHonestMs": 6.911
+          },
+          {
+            "hash": "0xa7f08961d29415326295d0cee1cac8931672ae3cf9ebe8cc2f6d20c97aa4ecad",
+            "rejectionCode": -32500,
+            "admissionMs": 10.718,
+            "simulationRpcMs": 6.119,
+            "traceStartRelativeToHonestMs": 0.692,
+            "traceEndRelativeToHonestMs": 6.811
+          },
+          {
+            "hash": "0x45210e5f583bf6ee245b03b26f3149b06791e78bb0971dca81170186c4d17a7c",
+            "rejectionCode": -32500,
+            "admissionMs": 10.517,
+            "simulationRpcMs": 5.373,
+            "traceStartRelativeToHonestMs": 1.3,
+            "traceEndRelativeToHonestMs": 6.673
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 11,
+        "kind": "idle",
+        "honestHash": "0x732be40c59c230bc4ad0af1f674059c95483cb00de5458ecbe7b56ce06e7e02c",
+        "honestMs": 13.468,
+        "honestSimulationRpcMs": 5.482,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 45,
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 11,
+        "kind": "late",
+        "honestHash": "0xe3862fe8f815a5acd9b2fc93cd75e3a6953854ae2dd61909b5aad13dc64d741f",
+        "honestMs": 47.789,
+        "honestSimulationRpcMs": 2.753,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 46,
+        "background": [
+          {
+            "hash": "0x482aafcb93e0f6096ebc31a0e96009d282af3dae03099eb4aee5fea6e3df9321",
+            "rejectionCode": -32500,
+            "admissionMs": 45.704,
+            "simulationRpcMs": 41.359,
+            "traceStartRelativeToHonestMs": -0.033,
+            "traceEndRelativeToHonestMs": 41.326
+          },
+          {
+            "hash": "0x91a8188a2b66ec957c3d950ebca13850b0f1dd69e20c2596e89e2bb47f64ee2c",
+            "rejectionCode": -32500,
+            "admissionMs": 75.574,
+            "simulationRpcMs": 69.86,
+            "traceStartRelativeToHonestMs": 1.698,
+            "traceEndRelativeToHonestMs": 71.558
+          },
+          {
+            "hash": "0x29773e6e3d9b323bdc84e175cf26862a0881de805e2ee9c74b27e9af61c4b910",
+            "rejectionCode": -32500,
+            "admissionMs": 75.614,
+            "simulationRpcMs": 70.785,
+            "traceStartRelativeToHonestMs": 0.994,
+            "traceEndRelativeToHonestMs": 71.78
+          },
+          {
+            "hash": "0x8e9e3a5db2ddd3e26f14093acec97c53a33b3569776085a9c3e8ab9292e4cb68",
+            "rejectionCode": -32500,
+            "admissionMs": 75.713,
+            "simulationRpcMs": 69.641,
+            "traceStartRelativeToHonestMs": 2.267,
+            "traceEndRelativeToHonestMs": 71.908
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 2,
+            "included": 2,
+            "status": "ok"
+          }
+        }
+      }
+    ],
+    "completedAt": "2026-11-06T06:02:44.724Z",
+    "blockedExternalHttp": [
+      {
+        "method": "CONNECT",
+        "authority": "api.github.com:443"
+      }
+    ]
+  }
+}

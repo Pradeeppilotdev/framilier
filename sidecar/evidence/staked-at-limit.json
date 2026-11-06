@@ -1,0 +1,135 @@
+{
+  "probe": "declared-VERIFY-budget",
+  "timestamp": "2026-11-06T00:32:42.705Z",
+  "limitation": "Increasing the declared VERIFY limit does not increase the wallet's validation work. Estimates do not prove admission; admission does not prove inclusion. This single-entity probe does not establish per-entity isolation.",
+  "gateway": "http://127.0.0.1:14337/rpc/",
+  "chainId": 1337,
+  "sidecarVersion": "skandha/v4.1.1-7c9594f63e1a83a14d6bc59d58cda30366d99857",
+  "noteOnVersion": "web3_clientVersion at the gateway identifies the sidecar, not necessarily the underlying execution client revision.",
+  "workshopCommit": "bcfe02a196ca97b6fb0d1044db9d0b4c673831fc",
+  "blockBefore": "0x63ac6",
+  "wallet": "0x259bb3f281da40f23a54d0e1d76883caff89b568",
+  "stakeRegistry": "0xd51c04d7a0b01124e84de152f4e56d9eecb22d2f",
+  "stake": {
+    "amountWei": "12000000000000000",
+    "unstakeDelaySec": 86400,
+    "withdrawTime": "0",
+    "note": "Registry evidence only: effective staked eligibility also depends on this node's configured minimums and reputation."
+  },
+  "verifyFrameDeclaredGas": "997200",
+  "signatureGas": 2800,
+  "totalDeclaredValidationGas": "1000000",
+  "actualValidationWork": "Unchanged: the workshop wallet's clean signature-check-and-approve path. No loops, cryptographic workload amplification, or storage violation.",
+  "nonce": "12",
+  "balanceWei": "17280611000000000",
+  "candidateHash": "0x1c11346f3ffa636ebd27f90f62ccb5dd1004a6964acb999185030c878aa8f8cd",
+  "submissionRequested": true,
+  "estimate": {
+    "ok": false,
+    "error": {
+      "code": -32507,
+      "message": "Invalid frame transaction signature"
+    }
+  },
+  "admission": {
+    "accepted": true,
+    "hash": "0x1c11346f3ffa636ebd27f90f62ccb5dd1004a6964acb999185030c878aa8f8cd"
+  },
+  "admissionChecks": [
+    {
+      "rule": "gas-limit",
+      "verdict": "pass"
+    },
+    {
+      "rule": "recent-root",
+      "verdict": "pass"
+    },
+    {
+      "rule": "prefix",
+      "verdict": "pass"
+    },
+    {
+      "rule": "structure",
+      "verdict": "pass"
+    },
+    {
+      "rule": "BUDGET-010",
+      "verdict": "pass",
+      "detail": "entity 0x259bb3f281da40f23a54d0e1d76883caff89b568 (sender+payer), frames [0]: 997200 execution + 2800 signature = 1000000; limit 1000000"
+    },
+    {
+      "rule": "signature",
+      "verdict": "pass"
+    },
+    {
+      "rule": "simulation",
+      "verdict": "pass"
+    },
+    {
+      "rule": "trace-alignment",
+      "verdict": "pass"
+    },
+    {
+      "rule": "OP-061",
+      "verdict": "pass"
+    },
+    {
+      "rule": "execution",
+      "verdict": "pass"
+    },
+    {
+      "rule": "trace-alignment",
+      "frameIndex": 0,
+      "entity": "payer",
+      "verdict": "pass"
+    },
+    {
+      "rule": "out-of-gas",
+      "frameIndex": 0,
+      "entity": "payer",
+      "verdict": "pass"
+    },
+    {
+      "rule": "OP-011",
+      "frameIndex": 0,
+      "entity": "payer",
+      "verdict": "pass"
+    },
+    {
+      "rule": "create",
+      "frameIndex": 0,
+      "entity": "payer",
+      "verdict": "pass"
+    },
+    {
+      "rule": "storage",
+      "frameIndex": 0,
+      "entity": "payer",
+      "verdict": "pass"
+    },
+    {
+      "rule": "COD-010",
+      "frameIndex": 0,
+      "entity": "payer",
+      "verdict": "pass"
+    },
+    {
+      "rule": "entrypoint-access",
+      "frameIndex": 0,
+      "entity": "payer",
+      "verdict": "pass"
+    },
+    {
+      "rule": "mempool",
+      "verdict": "pass"
+    }
+  ],
+  "canonicalRelay": {
+    "accepted": false,
+    "error": {
+      "code": -32000,
+      "message": "Invalid params: Frame transaction prefix gas budget (frames + sig cost) exceeds MAX_VERIFY_GAS"
+    }
+  },
+  "outcome": "LOCAL_ADMISSION_CANONICAL_RELAY_REJECTED"
+}

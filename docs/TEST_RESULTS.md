@@ -2,7 +2,17 @@
 
 Recorded on **6 November 2026, India time**. Evidence timestamps use UTC and therefore show 5 November for this run. This is a historical observation of a resettable devnet.
 
+For the subsequent StakeLane fork and its mined high-work transaction, see [the sidecar test record](SIDECAR.md).
+
+## Restart check on 6 November, 13:11–13:14 IST
+
+The organizer announced a restart to lift the workshop's verification cap and asked teams to keep individual verifications below 10 million gas. During a read-only check, the public execution head advanced from block 728 to 735 on the replacement network. The primary sidecar reported chain ID 1337 and automatic relaying. The separate workshop gateway reported manual relaying.
+
+At 13:11:14 IST the workshop gateway recorded a rejection of 1,050,100 declared verification gas against its 100,000 combined cap. The primary sidecar's retained history also showed a 102,800-gas rejection at 13:06:42 IST. These records came from existing traffic. Later execution RPC reads timed out, leaving the rollout and the previous wallet's deployment and funding unconfirmed at 13:14 IST. [Gateway rejection](https://explorer.altmempool.wtf/tx/0x18bde9fdb212daad6c5f197d13e0e84d67766b92d56e5d4b4e399832b8ad9c3b?node=https%3A%2F%2Faltmempoolgateway.forshtat.com%2Frpc) · [Primary rejection](https://explorer.altmempool.wtf/tx/0x3dc52a8b6cc5d6f5fcd5527c017d8fa51fef9a01cb3032ec858b1bb3045d9120?node=https%3A%2F%2Faltmempool.forshtat.com%2Frpc)
+
 ## Finding
+
+The later test on the replacement chain reached public admission at 1M declared gas. The new wallet and stake mined, and the public sidecar dropped the hash-chain transaction after four relay attempts. The following finding describes the original deployment. [Updated public devnet evidence](SIDECAR.md#updated-public-devnet-on-6-november-2026)
 
 The tested primary sidecar enforced:
 
@@ -100,6 +110,6 @@ For a fresh reproduction, obtain test funds using the currently supported devnet
 | `stakelane-probe/final-checks.json` | Final stake/reputation context, balances, nonce and client version |
 | `stakelane-probe/runtime-adapter-notes.json` | Runtime adapter and endpoint changes |
 
-## Outstanding work
+## Follow-up to the original baseline
 
-Per-entity accounting, repeated-entity attribution, cross-entity isolation, genuine expensive verification and a compatible inclusion route for a modified sidecar are future work. This initial version proves the observed combined cap and provides a baseline for that implementation.
+This baseline motivated the later per-entity budget implementation, repeated-role and cross-entity tests, and mined private hash-chain workload. The independent-wallet timing study and public relay observations are available separately. [Sidecar implementation](SIDECAR.md) · [Benchmark](BUILDER_BENCHMARK.md) · [Public relay report](PUBLIC_RELAY_REPORT.md)

@@ -1,0 +1,102 @@
+{
+  "timestamp": "2026-11-06T03:16:02.730Z",
+  "network": "isolated single-node Hegota execution chain",
+  "chainId": 8141337,
+  "genesisHash": "0xd6aa46c81c1df3114f9788d82475a86b5a114eb1dff13c6bdcccdc0df2b2aca4",
+  "ethrexSource": "9aa3645d795945c64400f41a70aace0edfa7f383",
+  "clientVersion": "ethrex/v23.0.0-VERGEN_IDEMPOTENT_OUTPUT-VERGEN_IDEMPOTENT_OUTPUT/aarch64-apple-darwin/rustc-v1.93.1",
+  "compiler": "0.8.28+commit.7893614a.Emscripten.clang",
+  "owner": "0x2748A4B20548aa4858eE4d1e7e7F187DcDF89442",
+  "wallet": "0xf7d13821bb4c991561448fb989a32f3b7f8eec39",
+  "registry": "0x1d2932eb457e40b0d3713598c881720283b152cb",
+  "walletCodeHash": "0x368bfe7c13ca1570921e2ff2edc821c92ebc1be7a867ec270ed1aae8cb0cdb21",
+  "workload": {
+    "algorithm": "Keccak-256 hash chain",
+    "rounds": 9664,
+    "witness": "0x0561fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289",
+    "commitment": "0x369b0408dd1c7a153b0a7a0cc34b4c8b41bf9c36476bddad2af01cd8e8f5238a"
+  },
+  "stake": {
+    "before": {
+      "amountWei": "0",
+      "delay": 0,
+      "withdrawal": "0"
+    },
+    "after": {
+      "amountWei": "12000000000000000",
+      "delay": 86400,
+      "withdrawal": "0"
+    },
+    "transactionHash": "0xec7bd5dfe500271f5569005a35d42427951c9ec6d8d575316874db3caab15014"
+  },
+  "controls": {
+    "unstaked": {
+      "hash": "0x24fa2a21013c8b12bdaf1c9acf74b9d1cb774c2e6dd98446d362c04c3097d455",
+      "code": -32602,
+      "reason": "BUDGET-010 exceeded: entity 0xf7d13821bb4c991561448fb989a32f3b7f8eec39 (sender+payer), frames [0]: 997200 execution + 2800 signature = 1000000; limit 100000"
+    },
+    "stakedOneOver": {
+      "hash": "0x6eaad210265043ab3153586a8c104f1c6cc71acfb413b19d76acf6e6c5e58db5",
+      "code": -32602,
+      "reason": "BUDGET-010 exceeded: entity 0xf7d13821bb4c991561448fb989a32f3b7f8eec39 (sender+payer), frames [0]: 997201 execution + 2800 signature = 1000001; limit 1000000"
+    },
+    "incorrectWitness": {
+      "hash": "0x3e6a2a33292c138f0d042e88a66a5cb072ce17dd7c3d05921ab99ff6e22406b8",
+      "code": -32500,
+      "reason": "validation frame 0: reverted with data 0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000d77726f6e67207769746e65737300000000000000000000000000000000000000"
+    }
+  },
+  "accepted": {
+    "declaredVerifyGas": 997200,
+    "signatureGas": 2800,
+    "totalDeclaredGas": 1000000,
+    "actualVerifyGas": 993512,
+    "signedTransaction": "0x06f8d6837c3a19c1800994f7d13821bb4c991561448fb989a32f3b7f8eec39f84ceb010380c5830f37508080a00561fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289df0280942748a4b20548aa4858ee4d1e7e7f187dcdf89442c5830249f0808080f85cf85a01942748a4b20548aa4858ee4d1e7e7f187dcdf8944280b84100a1903c556a7e62217959def78e617dd0e98ad273166a4e9b0bb40d0d2f434d276d4cb24a8f2cd3792cd4b64a8d1a1b3a7031bf46f26c72f541da2faa7c80bc19cb843b9aca00847735940080c0c0",
+    "receipt": {
+      "blockHash": "0x8509ea3a5e75e96131082730be0727422419e976289ae9355f886a4144466026",
+      "blockNumber": "0x5",
+      "contractAddress": null,
+      "cumulativeGasUsed": "0xf6e46",
+      "effectiveGasPrice": "0x5c592522",
+      "frameReceipts": [
+        {
+          "gasUsed": "0xf28e8",
+          "logs": [],
+          "stateGasUsed": "0x0",
+          "status": "0x1"
+        },
+        {
+          "gasUsed": "0x64",
+          "logs": [],
+          "stateGasUsed": "0x0",
+          "status": "0x1"
+        }
+      ],
+      "from": "0xf7d13821bb4c991561448fb989a32f3b7f8eec39",
+      "gasUsed": "0xf6e46",
+      "logs": [],
+      "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "payer": "0xf7d13821bb4c991561448fb989a32f3b7f8eec39",
+      "status": "0x1",
+      "to": "0xf7d13821bb4c991561448fb989a32f3b7f8eec39",
+      "transactionHash": "0x34025a42ef19e2ae5424ac6e35badb05a775faf3b9b557c4bd7ed8ccdc0409ce",
+      "transactionIndex": "0x0",
+      "type": "0x6"
+    },
+    "block": {
+      "number": "0x5",
+      "hash": "0x8509ea3a5e75e96131082730be0727422419e976289ae9355f886a4144466026",
+      "transactions": [
+        "0x34025a42ef19e2ae5424ac6e35badb05a775faf3b9b557c4bd7ed8ccdc0409ce"
+      ]
+    }
+  },
+  "producer": {
+    "forkchoice": "engine_forkchoiceUpdatedV5",
+    "build": "engine_getPayloadV6",
+    "import": "engine_newPayloadV6",
+    "importStatus": "VALID"
+  },
+  "ethrexBinarySha256": "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692",
+  "fixtureArtifactSha256": "3c3fbbe8c23ba0402e8f8e5bbb15bb69a513715b6b9d32fb98bafd88942c5bc1"
+}

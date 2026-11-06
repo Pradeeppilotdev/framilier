@@ -1,0 +1,287 @@
+{
+  "chainId": 8141337,
+  "ethrexSource": "9aa3645d795945c64400f41a70aace0edfa7f383",
+  "ethrexBinarySha256": "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692",
+  "scope": "Private loopback on one Mac, unoptimized binary. No public traffic. Raw RPC batches used a fixed block and four distinct 993512-VERIFY-gas valid signed payloads. Each cell is the median of eight warmed, counterbalanced four-request batches. CPU is process user plus system time.",
+  "directSimulationByTokioWorkerCount": {
+    "1": {
+      "seq-plain": {
+        "wallMs": 109.204,
+        "ethrexCpuMs": 108.268,
+        "cpuPerWall": 0.992
+      },
+      "par-plain": {
+        "wallMs": 108.552,
+        "ethrexCpuMs": 108.037,
+        "cpuPerWall": 0.996
+      },
+      "seq-traced": {
+        "wallMs": 369.695,
+        "ethrexCpuMs": 367.524,
+        "cpuPerWall": 0.994
+      },
+      "par-traced": {
+        "wallMs": 367.625,
+        "ethrexCpuMs": 366.642,
+        "cpuPerWall": 0.996
+      }
+    },
+    "4": {
+      "seq-plain": {
+        "wallMs": 114.043,
+        "ethrexCpuMs": 113.308,
+        "cpuPerWall": 0.993
+      },
+      "par-plain": {
+        "wallMs": 31.849,
+        "ethrexCpuMs": 122.506,
+        "cpuPerWall": 3.908
+      },
+      "seq-traced": {
+        "wallMs": 381.7,
+        "ethrexCpuMs": 379.213,
+        "cpuPerWall": 0.994
+      },
+      "par-traced": {
+        "wallMs": 103.218,
+        "ethrexCpuMs": 406.722,
+        "cpuPerWall": 3.944
+      }
+    }
+  },
+  "walletBAdmissionWithFourExecutionWorkers": {
+    "idle": {
+      "n": 12,
+      "mediansMs": {
+        "honestMs": 12.803,
+        "beforeHonestTraceMs": 3.902,
+        "honestSimulationRpcMs": 4.508,
+        "afterHonestTraceMs": 3.692
+      },
+      "rpcTaggedWithProbeAddress": {
+        "eth_call": {
+          "count": 12,
+          "medianMs": 0.593
+        },
+        "eth_getCode": {
+          "count": 12,
+          "medianMs": 0.434
+        },
+        "eth_getBalance": {
+          "count": 12,
+          "medianMs": 0.305
+        }
+      },
+      "slowestTaggedReadBeforeTrace": {
+        "byMethod": {
+          "eth_call": 12
+        },
+        "medianMs": 0.593
+      }
+    },
+    "valid": {
+      "n": 12,
+      "mediansMs": {
+        "honestMs": 129.229,
+        "beforeHonestTraceMs": 121.501,
+        "honestSimulationRpcMs": 2.931,
+        "afterHonestTraceMs": 4.459
+      },
+      "rpcTaggedWithProbeAddress": {
+        "eth_call": {
+          "count": 12,
+          "medianMs": 107.419
+        },
+        "eth_getCode": {
+          "count": 12,
+          "medianMs": 0.617
+        },
+        "eth_getBalance": {
+          "count": 12,
+          "medianMs": 0.213
+        }
+      },
+      "slowestTaggedReadBeforeTrace": {
+        "byMethod": {
+          "eth_call": 12
+        },
+        "medianMs": 107.419
+      }
+    },
+    "late": {
+      "n": 12,
+      "mediansMs": {
+        "honestMs": 46.702,
+        "beforeHonestTraceMs": 37.575,
+        "honestSimulationRpcMs": 2.8,
+        "afterHonestTraceMs": 2.802
+      },
+      "rpcTaggedWithProbeAddress": {
+        "eth_call": {
+          "count": 12,
+          "medianMs": 34.643
+        },
+        "eth_getCode": {
+          "count": 12,
+          "medianMs": 0.25
+        },
+        "eth_getBalance": {
+          "count": 12,
+          "medianMs": 0.183
+        }
+      },
+      "slowestTaggedReadBeforeTrace": {
+        "byMethod": {
+          "eth_call": 12
+        },
+        "medianMs": 34.643
+      }
+    }
+  },
+  "admissionScope": "Each condition has 12 measured admissions and an excluded warm-up. All successful submissions have canonical receipts. Independent per-column medians do not necessarily add to the total median. The RPC observer clocked from arrival of the full request to receipt of the upstream response body, including local transport.",
+  "timestampsUTC": {
+    "oneWorker": "2026-11-06T11:00:24.547Z",
+    "fourWorkers": "2026-11-06T11:02:28.832Z"
+  },
+  "clientVersion": "ethrex/v23.0.0-VERGEN_IDEMPOTENT_OUTPUT-VERGEN_IDEMPOTENT_OUTPUT/aarch64-apple-darwin/rustc-v1.93.1",
+  "method": {
+    "directRpc": "Read-only ethrex_simulateFrameTransaction on an unchanged block, using four distinct signed frames. Each response had two successful frames and the measured 993512 VERIFY gas. Trace was enabled or disabled as indicated. Serial and concurrent batches used the same per-run inputs and separate HTTP connections.",
+    "clock": "Batch wall time ends on receipt of the last response body and excludes client JSON parsing. Process user plus system CPU for this ethrex PID came from macOS proc_pidinfo(PROC_PIDTASKINFO), converted with mach_timebase_info. CPU includes tracing, serialization and other ethrex work.",
+    "admission": "The four-worker matched fixture sent B when the first competing A trace reached the loopback RPC observer. It clocked B before, during and after its own trace and logged RPCs carrying its address. Admission timing ended when the sidecar returned the hash. Receipts were verified after timing.",
+    "scope": "Single test Mac running the unoptimized pinned binary. No public node or funds used. An initial four-worker attempt completed direct RPC tests but missed a setup receipt before admission sampling. All four-worker data here use the full repeat. The repeat waited for setup receipts to reach OnChain before starting the next setup transaction."
+  },
+  "idleCpuBaselineMs": {
+    "1": {
+      "wallMs": 255.052292,
+      "ethrexCpuMs": 0.5459166666666988
+    },
+    "4": {
+      "wallMs": 255.047792,
+      "ethrexCpuMs": 0.8431666666667752
+    }
+  },
+  "directBatchColumns": [
+    "tokioWorkers",
+    "round",
+    "dispatch",
+    "trace",
+    "wallMs",
+    "ethrexCpuMs",
+    "cpuPerWall"
+  ],
+  "walletBColumns": [
+    "round",
+    "condition",
+    "hash",
+    "blockHash",
+    "admissionMs",
+    "beforeTraceMs",
+    "tracedRpcMs",
+    "afterTraceMs",
+    "stakeReadMs"
+  ],
+  "directBatches": [
+    [1, 0, "seq", false, 108.02825, 107.246208, 0.992761],
+    [1, 0, "par", false, 107.259042, 106.901333, 0.996665],
+    [1, 0, "seq", true, 399.970875, 389.861667, 0.974725],
+    [1, 0, "par", true, 370.723917, 369.552792, 0.996841],
+    [1, 1, "par", false, 109.960834, 109.456667, 0.995415],
+    [1, 1, "seq", true, 367.398042, 365.899083, 0.99592],
+    [1, 1, "par", true, 366.661375, 365.080708, 0.995689],
+    [1, 1, "seq", false, 113.512, 111.914333, 0.985925],
+    [1, 2, "seq", true, 372.253958, 370.233958, 0.994574],
+    [1, 2, "par", true, 368.975958, 368.27075, 0.998089],
+    [1, 2, "seq", false, 109.393125, 108.355292, 0.990513],
+    [1, 2, "par", false, 108.375875, 107.790542, 0.994599],
+    [1, 3, "par", true, 365.743916, 364.25725, 0.995935],
+    [1, 3, "seq", false, 109.015167, 108.059208, 0.991231],
+    [1, 3, "par", false, 108.223333, 107.832375, 0.996387],
+    [1, 3, "seq", true, 367.379209, 365.64225, 0.995272],
+    [1, 4, "par", true, 366.027583, 364.533625, 0.995918],
+    [1, 4, "seq", true, 368.024416, 365.856167, 0.994108],
+    [1, 4, "par", false, 108.342333, 107.798625, 0.994982],
+    [1, 4, "seq", false, 109.008334, 108.1815, 0.992415],
+    [1, 5, "seq", false, 108.961958, 108.161875, 0.992657],
+    [1, 5, "par", true, 366.952708, 365.787375, 0.996824],
+    [1, 5, "seq", true, 368.408167, 366.287167, 0.994243],
+    [1, 5, "par", false, 108.728375, 108.309375, 0.996146],
+    [1, 6, "par", false, 108.774208, 108.241833, 0.995106],
+    [1, 6, "seq", false, 109.661417, 108.760083, 0.991781],
+    [1, 6, "par", true, 368.296667, 367.497375, 0.99783],
+    [1, 6, "seq", true, 370.982042, 368.761417, 0.994014],
+    [1, 7, "seq", true, 373.492083, 371.19575, 0.993852],
+    [1, 7, "par", false, 110.115208, 109.632875, 0.99562],
+    [1, 7, "seq", false, 109.8335, 108.993542, 0.992352],
+    [1, 7, "par", true, 402.912375, 397.127, 0.985641],
+    [4, 0, "seq", false, 118.923, 118.030375, 0.992494],
+    [4, 0, "par", false, 30.500625, 119.679208, 3.923828],
+    [4, 0, "seq", true, 384.430166, 381.575042, 0.992573],
+    [4, 0, "par", true, 186.544916, 376.650083, 2.019085],
+    [4, 1, "par", false, 32.279833, 126.226917, 3.910396],
+    [4, 1, "seq", true, 378.311542, 376.489875, 0.995185],
+    [4, 1, "par", true, 103.37575, 407.536833, 3.942287],
+    [4, 1, "seq", false, 114.329041, 113.505167, 0.992794],
+    [4, 2, "seq", true, 367.233, 365.177792, 0.994404],
+    [4, 2, "par", true, 103.061125, 406.70625, 3.946262],
+    [4, 2, "seq", false, 113.756792, 113.110125, 0.994315],
+    [4, 2, "par", false, 30.830209, 121.17325, 3.930342],
+    [4, 3, "par", true, 101.780167, 403.066333, 3.960166],
+    [4, 3, "seq", false, 118.383917, 117.639083, 0.993708],
+    [4, 3, "par", false, 30.367084, 119.163792, 3.92411],
+    [4, 3, "seq", true, 373.246583, 371.224583, 0.994583],
+    [4, 4, "par", true, 102.57475, 406.738583, 3.96529],
+    [4, 4, "seq", true, 390.120792, 387.247583, 0.992635],
+    [4, 4, "par", false, 31.705542, 123.838333, 3.905889],
+    [4, 4, "seq", false, 113.408875, 112.653458, 0.993339],
+    [4, 5, "seq", false, 110.012791, 109.152875, 0.992183],
+    [4, 5, "par", true, 101.865542, 403.907083, 3.9651],
+    [4, 5, "seq", true, 387.926792, 384.540917, 0.991272],
+    [4, 5, "par", false, 32.832084, 126.88425, 3.864642],
+    [4, 6, "par", false, 60.435292, 120.322125, 1.990925],
+    [4, 6, "seq", false, 120.236125, 118.427708, 0.984959],
+    [4, 6, "par", true, 105.241542, 414.321667, 3.936864],
+    [4, 6, "seq", true, 378.969167, 376.851, 0.994411],
+    [4, 7, "seq", true, 394.372334, 388.714583, 0.985654],
+    [4, 7, "par", false, 31.992917, 124.066583, 3.877939],
+    [4, 7, "seq", false, 112.74475, 111.990292, 0.993308],
+    [4, 7, "par", true, 103.691042, 406.771542, 3.922919]
+  ],
+  "walletBTrials": [
+    [0, "idle", "0x7ff82de3e07640a3f8e67bb56bf430020578bc2c8d387ff2b54094a76da19c14", "0xb9c84816d0ad60060e46a840102f44ca2bf00664ead0ebe06a89953c695d0bd5", 12.6, 4.067, 5.291, 3.242, 0.594],
+    [0, "valid", "0x6531c8c193e70ea74b5b6c768fe9872d0d53e8c618d60621839e961e12765ede", "0x88359d81b9d5f25ae7c61aeb1df598903140356cdf2c248a52f75849f0aefcb0", 127.056, 121.752, 2.817, 2.487, 106.888],
+    [0, "late", "0x94715ab561fb2b725cff2194372a8de68d7e0c5ac4e894d98bf0e102f33b9aee", "0x5cae74a559dd81e51a7ff00b8eb13ef01eee3d055318b88711a025a5e17c27aa", 67.23, 35.927, 29.435, 1.867, 33.2],
+    [1, "valid", "0x024a7db02a0d6cfcc16aeeddd017b81138445e658c2bce4b5f1404eb09810f3d", "0x7cd1dd461a9c3b7d352ecdb5e3647b5994f6d12c460e93dd6acb5d47123a00f7", 129.72, 123.853, 2.872, 2.995, 107.743],
+    [1, "late", "0xb0c395d1b0e40a69d0154c0afcbdac194f9565a9f58ec43ea734dc77aef92c58", "0xf8a4f0840f2d6e759ded50b83fd649149ea0500d49796747592df3782ef9bec4", 40.056, 35.378, 2.585, 2.093, 32.731],
+    [1, "idle", "0xa7edcb0024360187a384f2b6607f1229752b3ff996a83f0b1b97a5704cf71c5b", "0x38c34e9312c3da1686a3877e3aabe5f2fdab98204b15f981bf8337dc0cc36931", 13.884, 4.675, 5.461, 3.749, 1.053],
+    [2, "late", "0x0c500f1bc6922ebe2c4ab62cd69ab98bf8ccab797f06ee7e425e87ebdf88e3f9", "0xdfeba1a07f339e62f99c0eba8e47de6697f3a05e51dab203d32702729e138ca5", 48.707, 43.792, 2.793, 2.121, 39.708],
+    [2, "idle", "0xbe23ae9795627fc5f804ef727447605ca606d23417ef22a81089fce5bb4d1c69", "0x543ef90e66f3354b4150c935cdbb311f566c0a211561f2e1e501426352af6327", 13.04, 4.058, 5.411, 3.572, 0.768],
+    [2, "valid", "0x838f4838e5adbeb1fec311faac2315e15ba7cd5c7dd5e859657ac6b2a4cb1904", "0x2127d912c94e1b244c81f5223cc0d3bc28b339cedaabf49e3bf51a98626ccbdf", 116.712, 111.911, 2.905, 1.897, 96.461],
+    [3, "idle", "0xc32aff7bcc1492e9c628eb8cb5c8f4f764518a4f642e6bbff80e4d5f61e0603a", "0xba7a3ab4c999e3a1d05c0083223413bf813993f165492540b49cc12043b8dd73", 10.337, 3.155, 3.891, 3.291, 0.511],
+    [3, "late", "0x9efa33b5a1894e5aa910d87207a3499c42cbe81650f22775b293b6cc3c3493ce", "0x9bb677cffd4f6cbeabf03281a7087ebf3933b48dca51f695cbc4e18edb8d48d2", 49.194, 43.953, 2.851, 2.389, 39.118],
+    [3, "valid", "0xaedf322ca3f6d09f37992a66a9fc9360fc01b94db365c6ea23346fbb4441b19a", "0xe2568ebf667fc3d3f42dcf9b77a447c44775e0c3abeaaf659f248861be59f05e", 127.314, 121.219, 2.997, 3.099, 107.288],
+    [4, "late", "0x58dea7cef64d15648ab946f132e6f22d8bb7ab6cffc2879882674b91a5764d6e", "0x524a179b9c45da66b8969e4749b7e94249195d790ff647fd4b02dcb452b34192", 40.561, 35.639, 2.663, 2.259, 32.862],
+    [4, "valid", "0xd8e6febc1c9e49abec9cab9c374f1558b759993c81f3ec975552ad66244dc8e3", "0x7e9456cf1e9ee58a7fc2229d919d88f28fa99e8665cfbc97474eaa16799163ca", 127.778, 121.251, 2.872, 3.654, 107.55],
+    [4, "idle", "0x94738debeb75f6b6c747dfe50a90580dd7ef388a9d8b0f3c49d900a01c63336d", "0xa059fd5f64d31049f8e285e7ad70efb1ecb03b4205f593cc7aaddc08fe34c13a", 11.292, 2.746, 3.525, 5.021, 0.48],
+    [5, "valid", "0x742051600b1183c7040b06a600496c7b087039fc76517b194d361ab085736c15", "0x787cf5d7bd275761be49c3db7ad67143273a12f83bd14f7370206152669e2fe1", 227.031, 113.561, 88.348, 25.121, 102.623],
+    [5, "idle", "0xc9f795e85cd72dc8a3f255547ddacbcdf76dd0e6a9955f480d0e736a60002f66", "0xbfb9ca12416d179cbfdd5a3401e98fc07113fe952f50a3cc90a0f0e32c5689f1", 13.007, 5.859, 3.746, 3.401, 0.53],
+    [5, "late", "0xe8947e37848d53696bd57e27f9014cd303efa52e29bfd801eea4cce81b592a5b", "0xdbd13dc5c244b96e4559dde3d40bf5db1c814d7cd67656603702a66b4dd980f7", 44.803, 39.223, 2.731, 2.849, 36.086],
+    [6, "idle", "0xa68f115ede35ca31bba2a19ae1c3001725bb810c77a7bea35d9c1e4a6533ef08", "0x791f6e4b3e709c99ca51572a051cfcb497b75480d7349cae119f0a010d01bc86", 14.496, 4.5, 5.333, 4.663, 0.835],
+    [6, "valid", "0xf8bd46b35c33aa7f5961b11a9034b481326e74eb8ea7da4a0aaae936f7eb52dc", "0xcfb9c588f0b837216faf41a342a546e80ed46bdb985b1b6a042b0121c9edc300", 128.246, 120.838, 2.957, 4.451, 106.949],
+    [6, "late", "0x885caab91cb7c1d9b766f0f03160c8b7051530aad4269489d0630baf29a2c349", "0x799b1adc41f4c3d16367ed55b38436fe1c957465da4b6efbd3a0c70cdbab9be5", 41.379, 35.697, 2.806, 2.876, 31.919],
+    [7, "valid", "0x2f4d6327de33e05ee074088d2a262ea2e44f8e23dfb7c06101280484ea4c9bc7", "0x40f0d3bac2c95ae479f254ff5629a4d8a520db4bb8f2440a836c02fb995978d1", 130.075, 122.743, 2.865, 4.467, 108.769],
+    [7, "late", "0xc5601efba01fa0325dde78446d90c356eebf3d552b9764b53ad6cbb83ce37f8f", "0xf40356a44fddec18248832248df8c8cf62b9e5c64de960aeedf18e024d71e8e2", 41.644, 35.859, 2.737, 3.048, 32.314],
+    [7, "idle", "0xddb63475d613c2f54d35634046be7fa8ff91706453ad0a7e74b08445784e14f8", "0x4b8ad67f32fe4124c3e113deb2d91841842f2d9d54b0e6fe808ede9b5a8620e7", 15.276, 4.497, 5.653, 5.126, 1.04],
+    [8, "late", "0x7d37fe0f90c185d9642f6a02d8f7c8739af5e79fcbad90bac2b2cdff011c281b", "0xa06d9022bd69d338a5bfefcfbfa4cfa65f8698df4adedf1007875d2ad589d7c8", 48.991, 43.295, 2.941, 2.755, 39.78],
+    [8, "idle", "0x11c37353640938f485546e1f2640ffec625a2b64397c983c9facb61752ec1f0d", "0x3fd35761a6362ca17f07436f2e588c48290990629b239a8b155f3b5696f38734", 13.599, 3.747, 5.124, 4.728, 0.697],
+    [8, "valid", "0x896b1fd7aa54da7b01e7ea6a56dacdacd8396ee5f0534db485a6e05c1f3240d3", "0xd8d2286eb2404e7dbe3a37145389d98e6a9ef879c15e41b9e305cc8b934b08b2", 169.636, 153.267, 10.364, 6.006, 110.02],
+    [9, "idle", "0x7f1b66cdebcf969c0b054495627892f6dc41dbc80ebb5f8cadb877d8a970b659", "0x8ac6a3e222079d02138546d21072bce4e423779de87051f835ece6bdb29d7a46", 10.696, 3.373, 3.687, 3.636, 0.593],
+    [9, "late", "0xdbfcef7a4ec4f2a38e6dc068e9778d54c8740f439f9920038d2398cbb8a8e5b0", "0xc153d96cad1fa1a2d2a044cb19d7aeb8b9096d47d3efeb032b685231af8574f9", 48.601, 42.645, 2.86, 3.096, 39.226],
+    [9, "valid", "0x8f66db6ad1cb6935c5c73304cd7b24c3f9ed53b8dbc7370c0af63da2d924b221", "0xf760eeb5553165bcba94cb09a2498799f82f7ba6bf8f63cf977631b9c0ba430a", 128.738, 120.462, 2.905, 5.372, 106.772],
+    [10, "late", "0x3effbfc7bed27ce8dbf05f98cb3adda9907271d05c8735d2109ee7e6fa255fb5", "0x0383ea9afe1f30f638ac49f64ef0f9ecd6f791767948035e3c471f7cd16010b7", 41.385, 35.204, 2.684, 3.497, 32.149],
+    [10, "valid", "0xf787b023f81dd00a9ea4a9bdedee8f30d0df14b04d9bd926cdef26d56108e1fd", "0xaff748827f8f661bfb2794986dd79a1f0ca0eb945fc5ca0476c051c43c541f17", 130.849, 122.469, 3.01, 5.37, 108.162],
+    [10, "idle", "0xaae2965aa4c99ff960af674bc5e0c50bc1f51f1c3a9e339d39b5dd2d07a80415", "0xce671da3b9fe81b983fe632e2b6b4121149eea97243b29b1bd0bd0fb525184e4", 11.242, 3.11, 3.667, 4.465, 0.587],
+    [11, "valid", "0xdefe8234b5b3099ffa695ac83953322e340d46d0c3abe927d429e93acbe2028b", "0x01216f91977d7df700048cf19e3c26b29fbfe28e9561f5059586cc8ca1ff67f0", 130.038, 121.916, 3.08, 5.042, 107.798],
+    [11, "idle", "0x0737f6b7dee2d02ce9d8ae3d8cd6610183ce38ca8e92386da6e728fa6e9fd356", "0xbf49bcedf9a67a529bda202b7e06baba22f5ac75aa3a873a3b99e61ebc67b214", 8.684, 2.02, 3.223, 3.441, 0.407],
+    [11, "late", "0xbd6b1f2d042ac3fe1beb895f53482d8f6354c490323cc713f3c1b82872fed5bf", "0xbc35b52d19fac1cf326ab2433b3d55ef3057a20e736c9e970c3e8703a4a7e024", 51.556, 44.681, 2.967, 3.908, 40.483]
+  ]
+}

@@ -1,8 +1,27 @@
 # StakeLane
 
-StakeLane is a research prototype for verification-budget accounting in EIP-8141 alternative mempools. This initial version contains a bounded budget probe and evidence from the public devnet. **Per-entity budget accounting has not been implemented yet.**
+StakeLane measures how expensive VERIFY frames affect other wallets during admission to an EIP-8141 alternative mempool. Its sidecar implements draft rule `BUDGET-010` at revision `493ba8a` with 100,000 gas per unstaked entity and 1,000,000 per eligible staked entity, including the sender's signature charge. [Pinned ERC-8421 draft](https://github.com/forshtat/ERCs/blob/493ba8ac3be97dc5cf6335eb97d2e8e9f95983c5/ERCS/erc-8421.md)
 
-## Current result
+## Inherited code and team additions
+
+| Inherited | Added or changed for StakeLane |
+| --- | --- |
+| Workshop sidecar, codec, staking and reputation services, relay and explorer | Per-entity budget accounting, preflight checks, rule reporting and boundary tests |
+| Workshop wallet tooling, staking registry and unmodified Hegota ethrex | Keccak hash-chain wallet workload, private block producer, public submission runner, simulation timing and two-wallet comparisons |
+
+The initial public workshop checkpoint was `7c9594f`. The fork inventory separates the imported files from the project changes. The scheduler, broader load sweep and operator CLI are proposed next steps. [Upstream provenance](docs/UPSTREAM.md)
+
+## StakeLane sidecar
+
+On the organizers' replacement devnet (chain `1337`), the public sidecar admitted one **1,000,000-gas** hash-chain transaction. The stake mined in block 966. The sidecar later cancelled the workload transaction after four relay attempts. Its public execution simulation used 993,512 VERIFY gas. [Public admission](https://explorer.altmempool.wtf/tx/0x89d35f0f123f0ae0bca2f6775ecb6b0e46a168cc351aa8095be12a319b109e2a?node=https%3A%2F%2Faltmempool.forshtat.com%2Frpc) · [Relay history and operator question](docs/PUBLIC_RELAY_REPORT.md)
+
+In two exploratory private-chain runs, a second wallet's median admission time was about **11 ms idle, 44–48 ms alongside four incorrect witnesses, and 129 ms alongside four correct witnesses**. Both busy conditions ran 9,664 hashes per candidate. All 72 measured probes and 96 expensive valid transactions mined. The measurements cover admission wall time on one Mac. [Method, raw trials and reproduction](docs/BUILDER_BENCHMARK.md)
+
+On an isolated ethrex chain, a staked wallet verified a 9,664-step Keccak witness and mined in block 5. Its VERIFY frame consumed **993,512 of 997,200 declared execution gas**. One secp256k1 signature accounted for the remaining 2,800 of the 1,000,000-gas allowance. [Receipt and negative controls](sidecar/evidence/private-inclusion.json)
+
+The local sidecar admitted a signed transaction from a staked wallet at exactly 1,000,000 declared validation gas. It rejected the same wallet at 1,000,001. The public execution node rejected the admitted bytes under its canonical mempool cap. See the [test record and run instructions](docs/SIDECAR.md).
+
+## Public workshop baseline
 
 On 6 November 2026 (India time), the tested public sidecar enforced a **100,000-gas combined validation-prefix cap**, including signature-verification costs.
 
@@ -22,7 +41,7 @@ See [the full test record](docs/TEST_RESULTS.md), [machine-readable results](sta
 - `docs/TEST_RESULTS.md`: methodology, transaction hashes, findings and outstanding work.
 - `docs/UPSTREAM.md`: the pinned upstream source and the boundary between upstream work and StakeLane changes.
 
-The upstream workshop is a local dependency in `mempool-workshop/`; it is excluded from Git. Dependencies, compiled adapters, private participant state and ZIP checkpoints are also excluded. The initial commit contains the probe and evidence, not a sidecar implementation.
+The upstream workshop is a local dependency in `mempool-workshop/`; it is excluded from Git. Dependencies, compiled adapters, private participant state and ZIP checkpoints are also excluded. The forked sidecar, its tests and its boundary evidence live in `sidecar/`.
 
 ## Set up a fresh checkout
 
@@ -87,6 +106,6 @@ yarn test
 
 TypeScript checking passed with the probe included. **57 upstream tests across 14 files passed.** These are the workshop's tests, not a new StakeLane conformance suite. The live cases are recorded separately in the evidence files.
 
-## Next implementation milestone
+## Run the inclusion test
 
-Pin the intended specification and budget constants, implement per-entity attribution in a sidecar, and demonstrate correct admission and inclusion. Add cases for distinct entities, repeated roles held by one entity, signature costs, and an unstaked entity alongside a staked one. Actual expensive validation and isolation between entity budgets remain untested.
+The [private block test](docs/SIDECAR.md#private-block-inclusion) starts a fresh Hegota execution node and StakeLane sidecar, deploys the wallet, stakes it, and checks the mined receipt against the canonical block.

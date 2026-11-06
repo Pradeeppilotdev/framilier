@@ -1,4 +1,7 @@
 <div align="center">
+
+The StakeLane fork implements per-entity verification budgets. See the [StakeLane runbook and mined test](../docs/SIDECAR.md) for the active policy and experimental results.
+
   <h1>ERC-8421 Mempool Sidecar</h1>
   <p><b>A TypeScript bundler and P2P sidecar for EIP-8141 frame transactions</b></p>
 </div>
