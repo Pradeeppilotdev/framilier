@@ -1,3 +1,5 @@
+import RpcError from "@skandha/types/lib/api/errors/rpc-error.js";
+import { INVALID_USEROP } from "@skandha/types/lib/api/errors/rpc-error-codes.js";
 import logger from "@skandha/api/lib/logger";
 import { PeerId } from "@libp2p/interface";
 import { ts } from "@skandha/types/lib/index.js";
@@ -190,39 +192,26 @@ export class SyncService implements ISyncService {
             hashes: missingHashes,
           });
 
-          // Same admission path gossip-received transactions go through
-          // (`handleValidVerifiedFrameTx`, gossipHandlers.ts): deserialize
-          // the SSZ wire shape back into a real FrameTransaction, drop it
-          // (log, don't throw - this is untrusted peer data) if it's not
-          // new/replacing, otherwise hand it to the same
-          // `eth.sendFrameTransaction` every other ingestion path uses.
-          // Each entry is handled independently so one bad transaction from
-          // a peer doesn't abort the rest of the batch.
+          // Apply the same bounded admission checks as RPC and gossip. A bad
+          // entry does not abort the remaining transactions from this peer.
           for (const frameTx of frameTxs) {
-            const tx = deserializeFrameTx(frameTx);
-
             try {
-              await this.executor.mempoolService.validateFrameTxReplaceability(
-                tx
-              );
-            } catch (err) {
-              logger.debug(
-                `[${tx.sender}, [${tx.nonceKeys}]:${tx.nonceSeq}] not new/replacing, skipping: ${err}`
-              );
-              continue;
-            }
-
-            try {
-              const txHash = await this.executor.eth.sendFrameTransaction(
+              const tx = deserializeFrameTx(frameTx);
+              const { txHash, added } = await this.executor.eth.submitFrameTransaction(
                 tx,
                 `sync:${peerId.toString()}`
               );
+              if (!added) continue;
               logger.debug(`Synced frame tx: ${txHash}`);
               if (this.metrics) {
                 this.metrics[this.executor.chainId].useropsReceived?.inc();
               }
             } catch (err) {
-              logger.error(`Could not process synced frame tx: ${err}`);
+              if (err instanceof RpcError && err.code === INVALID_USEROP) {
+                logger.debug(`Ignoring rejected peer transaction: ${err.message}`);
+              } else {
+                logger.error(`Could not process synced frame tx: ${err}`);
+              }
             }
           }
         }

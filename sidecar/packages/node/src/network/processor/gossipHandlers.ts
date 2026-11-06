@@ -1,3 +1,5 @@
+import RpcError from "@skandha/types/lib/api/errors/rpc-error.js";
+import { INVALID_USEROP } from "@skandha/types/lib/api/errors/rpc-error-codes.js";
 import { ts } from "@skandha/types/lib/index.js";
 import logger from "@skandha/api/lib/logger";
 import { Config } from "@skandha/executor/lib/config";
@@ -57,34 +59,21 @@ export function getGossipHandlers(
     try {
       const { tx } = deserializeVerifiedFrameTx(verifiedFrameTx);
 
-      try {
-        // `validateFrameTxReplaceability` (`MempoolService`, the direct
-        // frame-tx equivalent of the old, now-deleted `P2PService`'s
-        // `isNewOrReplacingUserOp`) returns `true` when the tx is new or a
-        // valid replacement, and *throws* (an `RpcError`) rather than
-        // returning `false` otherwise - see `eth.ts`'s own
-        // `sendFrameTransaction`, the only other current caller. A gossip
-        // handler is fed untrusted peer data, so a rejection here (stale
-        // duplicate, fee too low, ...) is an expected outcome to log and
-        // drop, not an error to propagate.
-        await executor.mempoolService.validateFrameTxReplaceability(tx);
-      } catch (err) {
-        logger.debug(
-          `[${tx.sender}, [${tx.nonceKeys}]:${tx.nonceSeq}] not new/replacing, skipping: ${err}`
-        );
-        return;
-      }
-
-      const txHash = await executor.eth.sendFrameTransaction(
+      const { txHash, added } = await executor.eth.submitFrameTransaction(
         tx,
         `gossip:${peerIdStr}`
       );
+      if (!added) return;
       logger.debug(`Processed frame tx: ${txHash}`);
       if (modules.metrics) {
         modules.metrics[executor.chainId].useropsReceived?.inc();
       }
     } catch (err) {
-      logger.error(`Could not process frame tx: ${err}`);
+      if (err instanceof RpcError && err.code === INVALID_USEROP) {
+        logger.debug(`Ignoring rejected peer transaction: ${err.message}`);
+      } else {
+        logger.error(`Could not process frame tx: ${err}`);
+      }
     }
   }
 

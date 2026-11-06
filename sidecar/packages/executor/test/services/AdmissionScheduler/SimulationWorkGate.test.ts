@@ -10,20 +10,34 @@ function held() {
 const tick = () => new Promise(r => setTimeout(r, 0));
 
 describe("shared simulation budget", () => {
-  it("reserves execution capacity for admission and rotates auxiliary lanes", async () => {
+  it("does not let later estimates overtake maintenance when admission uses the reserved slot", async () => {
     const gate = new SimulationWorkGate(2, 8);
-    const estimate = held(), queuedEstimate = held(), maintenance = held(), admission = held();
-    const jobs = [gate.submit("estimate", estimate.run), gate.submit("estimate", queuedEstimate.run),
-      gate.submit("maintenance", maintenance.run), gate.submit("admission", admission.run)];
-    expect(estimate.started()).toBe(true);
-    expect(admission.started()).toBe(true);
-    expect(queuedEstimate.started()).toBe(false);
+    const firstEstimate = held(), nextEstimate = held(), maintenance = held();
+    const firstAdmission = held(), nextAdmission = held();
+    const jobs = [
+      gate.submit("estimate", firstEstimate.run),
+      gate.submit("maintenance", maintenance.run),
+      gate.submit("estimate", nextEstimate.run),
+      gate.submit("admission", firstAdmission.run),
+      gate.submit("admission", nextAdmission.run),
+    ];
+    expect(firstEstimate.started()).toBe(true);
+    expect(firstAdmission.started()).toBe(true);
+    firstAdmission.release();
+    await tick();
+    expect(nextAdmission.started()).toBe(true);
     expect(maintenance.started()).toBe(false);
-    estimate.release(); await tick();
-    expect(queuedEstimate.started()).toBe(true);
-    queuedEstimate.release(); await tick();
+
+    firstEstimate.release();
+    await tick();
     expect(maintenance.started()).toBe(true);
-    admission.release(); maintenance.release(); await Promise.all(jobs);
+    expect(nextEstimate.started()).toBe(false);
+    maintenance.release();
+    await tick();
+    expect(nextEstimate.started()).toBe(true);
+    nextEstimate.release();
+    nextAdmission.release();
+    await Promise.all(jobs);
   });
 
   it("bounds queued work per lane and releases a slot after failure", async () => {

@@ -13,7 +13,6 @@ type Job = { lane: SimulationLane; run: () => Promise<unknown>; resolve: (v: any
 export class SimulationWorkGate {
   private running = 0;
   private auxiliary = 0;
-  private cursor = 0;
   private queues: Record<SimulationLane, Job[]> = { admission: [], estimate: [], maintenance: [] };
   private readonly lanes: SimulationLane[] = ["admission", "estimate", "maintenance"];
 
@@ -40,12 +39,16 @@ export class SimulationWorkGate {
   private dispatch(): void {
     while (this.running < this.slots) {
       let job: Job | undefined;
-      for (let i = 0; i < this.lanes.length; i++) {
-        const index = (this.cursor + i) % this.lanes.length;
-        const lane = this.lanes[index];
+      for (const [index, lane] of this.lanes.entries()) {
         if (lane !== "admission" && this.auxiliary >= Math.max(1, this.slots - 1)) continue;
         job = this.queues[lane].shift();
-        if (job) { this.cursor = (index + 1) % this.lanes.length; break; }
+        if (job) {
+          // Rotate only the lane that ran. A lane skipped because auxiliary
+          // capacity is full keeps its turn when an auxiliary slot opens.
+          this.lanes.splice(index, 1);
+          this.lanes.push(lane);
+          break;
+        }
       }
       if (!job) break;
       this.running++;

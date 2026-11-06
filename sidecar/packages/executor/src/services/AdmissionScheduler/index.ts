@@ -108,23 +108,19 @@ export class AdmissionScheduler {
 
     // A capped sender can fill the waiting queue while other senders can still
     // use free slots. Apply the backlog limit only to work that must wait.
-    if (this.waitingCount >= this.maxWaiting) {
-      const owner = this.senderQueues.get(normalizedSender);
-      const needsToWait = this.runningCount >= this.slots || (owner?.queue.length ?? 0) > 0 ||
-        (isHeavy && (owner?.activeHeavy ?? 0) >= this.maxHeavyPerSender);
-      if (needsToWait) {
+    const owner = this.senderQueues.get(normalizedSender);
+    const needsToWait = this.runningCount >= this.slots || (owner?.queue.length ?? 0) > 0 ||
+      (this.mode === "fair" && isHeavy && (owner?.activeHeavy ?? 0) >= this.maxHeavyPerSender);
+    if (needsToWait) {
+      if (this.waitingCount >= this.maxWaiting) {
         throw new RpcError(
           `Admission queue is full (${this.waitingCount}/${this.maxWaiting} waiting), retry later`,
           RpcErrorCodes.SERVER_ERROR
         );
       }
-    }
-
-    const owner = this.senderQueues.get(normalizedSender);
-    const needsToWait = this.runningCount >= this.slots || (owner?.queue.length ?? 0) > 0 ||
-      (this.mode === "fair" && isHeavy && (owner?.activeHeavy ?? 0) >= this.maxHeavyPerSender);
-    if (needsToWait && (this.waitingPerSender.get(normalizedSender) ?? 0) >= this.maxWaitingPerSender) {
-      throw new RpcError("Sender admission queue is full; retry later", RpcErrorCodes.SERVER_ERROR);
+      if ((this.waitingPerSender.get(normalizedSender) ?? 0) >= this.maxWaitingPerSender) {
+        throw new RpcError("Sender admission queue is full; retry later", RpcErrorCodes.SERVER_ERROR);
+      }
     }
 
     return new Promise<T>((resolve, reject) => {

@@ -47,7 +47,7 @@ import { Skandha } from "./skandha.js";
  * `eip7702Auth` field.
  */
 export class Eth {
-  private readonly inFlight = new Map<string, Promise<Hex>>();
+  private readonly inFlight = new Map<Hex, Promise<boolean>>();
   constructor(
     private chainId: number,
     private publicClient: PublicClient,
@@ -90,34 +90,38 @@ export class Eth {
     tx: FrameTransaction,
     source: AdmissionSource = "rpc"
   ): Promise<Hex> {
+    return (await this.submitFrameTransaction(tx, source)).txHash;
+  }
+
+  /** Peer ingestion counts and republishes newly admitted work only. */
+  async submitFrameTransaction(
+    tx: FrameTransaction,
+    source: AdmissionSource
+  ): Promise<{ txHash: Hex; added: boolean }> {
     const txHash = keccak256(encodeRawFrameTx(tx));
     const pending = this.inFlight.get(txHash);
-    if (pending) return pending;
-    // Register synchronously before the first lookup to coalesce concurrent
-    // RPC/gossip copies, including identical requests still waiting in a queue.
-    const task = Promise.resolve().then(async () => {
-      const known = await this.mempoolService.getEntryByHash(txHash);
-      if (known && known.status !== MempoolEntryStatus.Cancelled) return txHash;
-      const receivedAt = now();
-      const collector = new CheckCollector();
-      try {
-        // Cheap read-only rejection before execution; addFrameTx rechecks under
-        // its insertion lock because another request can change the nonce slot.
-        try { await this.mempoolService.validateFrameTxReplaceability(tx); }
-        catch (error) { throw collector.failed(EXPLORER_RULES.MEMPOOL, error instanceof Error ? error : new Error(String(error))); }
-        return await this.admitFrameTransaction(tx, source, collector, receivedAt);
-      } catch (err) {
-        this.recordRejection(tx, source, collector, err, receivedAt);
-        throw err;
-      }
-    });
+    if (pending) {
+      await pending;
+      return { txHash, added: false };
+    }
+
+    const receivedAt = now();
+    const collector = new CheckCollector();
+    const task = this.admitFrameTransaction(tx, txHash, source, collector, receivedAt);
     this.inFlight.set(txHash, task);
-    try { return await task; }
-    finally { if (this.inFlight.get(txHash) === task) this.inFlight.delete(txHash); }
+    try {
+      return { txHash, added: await task };
+    } catch (error) {
+      this.recordRejection(tx, txHash, source, collector, error, receivedAt);
+      throw error;
+    } finally {
+      this.inFlight.delete(txHash);
+    }
   }
 
   private recordRejection(
     tx: FrameTransaction,
+    txHash: Hex,
     source: AdmissionSource,
     collector: CheckCollector,
     err: unknown,
@@ -127,12 +131,6 @@ export class Eth {
     // Bookkeeping must never mask the original error: the caller rethrows
     // `err` itself, so nothing in here may throw.
     try {
-      let txHash: string;
-      try {
-        txHash = keccak256(encodeRawFrameTx(tx));
-      } catch {
-        return; // malformed transaction: nothing to key a record on
-      }
       const message = err instanceof Error ? err.message : String(err);
       if (!collector.hasFailure()) {
         collector.fail(EXPLORER_RULES.ADMISSION, message);
@@ -163,10 +161,11 @@ export class Eth {
 
   private async admitFrameTransaction(
     tx: FrameTransaction,
+    txHash: Hex,
     source: AdmissionSource,
     collector: CheckCollector,
     receivedAt: number
-  ): Promise<Hex> {
+  ): Promise<boolean> {
     if (tx.chainId !== BigInt(this.chainId)) {
       throw collector.failed(
         EXPLORER_RULES.STRUCTURE,
@@ -198,14 +197,26 @@ export class Eth {
       tx.sender,
       isHeavy,
       async () => {
+        // Keyed replacement checks can scan the pending pool. Bound the reads
+        // alongside simulation; the insertion lock still rechecks the nonce slot.
+        const known = await this.mempoolService.getEntryByHash(txHash);
+        if (known && known.status !== MempoolEntryStatus.Cancelled) {
+          return false;
+        }
+        try {
+          await this.mempoolService.validateFrameTxReplaceability(tx);
+        } catch (error) {
+          throw collector.failed(
+            EXPLORER_RULES.MEMPOOL,
+            error instanceof Error ? error : new Error(String(error))
+          );
+        }
         await this.checkRecentRootWindow(tx, collector);
 
         const { validation } = await this.frameTxSimulationService.simulate(
           tx,
           collector
         );
-
-        const txHash = keccak256(encodeRawFrameTx(tx));
 
         this.logger.debug("Validating frame transaction before sending to mempool...");
         let replacedTxHash: string | undefined;
@@ -340,7 +351,7 @@ export class Eth {
           this.logger.debug(`Could not send frame transaction over gossipsub: ${err}`);
         }
 
-        return txHash;
+        return true;
       }
     );
   }

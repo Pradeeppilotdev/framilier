@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { Eth } from "../../src/modules/eth.js";
+import { AdmissionScheduler } from "../../src/services/AdmissionScheduler/index.js";
 import { FrameTxSimulationService } from "../../src/services/FrameTxSimulationService/index.js";
 import { ReceiptService } from "../../src/services/ReceiptService/index.js";
 import { MempoolService } from "../../src/services/MempoolService/service.js";
@@ -35,6 +36,7 @@ function buildEth(overrides: Partial<{
   skandhaModule: Partial<Skandha>;
   explorer: ExplorerService;
   publicClient: unknown;
+  admissionScheduler: AdmissionScheduler;
 }> = {}): Eth {
   const frameTxSimulationService = {
     simulate: vi.fn().mockResolvedValue({
@@ -96,7 +98,8 @@ function buildEth(overrides: Partial<{
     logger,
     null,
     undefined, // getNodeAPI: use the default
-    overrides.explorer
+    overrides.explorer,
+    overrides.admissionScheduler
   );
 }
 
@@ -148,15 +151,35 @@ describe("Eth.sendFrameTransaction", () => {
       mempoolService: { getEntryByHash: known, addFrameTx } });
     const tx = validTx();
     const first = eth.sendFrameTransaction(tx, "rpc");
-    const second = eth.sendFrameTransaction(tx, "gossip");
+    const second = eth.submitFrameTransaction(tx, "gossip:peer");
     await new Promise(r => setTimeout(r, 0));
     expect(simulate).toHaveBeenCalledTimes(1);
     release({ validation: { roleStakes: {}, mempoolMembership: {} }, simulation: {} });
-    expect(await first).toBe(await second);
+    const txHash = await first;
+    expect(await second).toEqual({ txHash, added: false });
     expect(addFrameTx).toHaveBeenCalledTimes(1);
-    known.mockResolvedValue({ status: 0 });
-    await eth.sendFrameTransaction(tx);
+    known.mockResolvedValue({ txHash, status: 0 });
+    await expect(eth.sendFrameTransaction(tx)).resolves.toBe(txHash);
+    await expect(eth.submitFrameTransaction(tx, "sync:peer")).resolves.toEqual({ txHash, added: false });
     expect(simulate).toHaveBeenCalledTimes(1);
+  });
+
+  it("bounds pending database lookups before a keyed replacement scan or simulation", async () => {
+    let release!: (value: null) => void;
+    const lookup = vi.fn(() => new Promise<null>(resolve => { release = resolve; }));
+    const validateFrameTxReplaceability = vi.fn().mockResolvedValue(true);
+    const eth = buildEth({
+      admissionScheduler: new AdmissionScheduler({ mode: "fifo", slots: 1, maxWaiting: 0 }),
+      mempoolService: { getEntryByHash: lookup, validateFrameTxReplaceability },
+    });
+    const first = eth.sendFrameTransaction(validTx());
+    const other = { ...validTx(), nonceKeys: [2n] };
+    await expect(eth.submitFrameTransaction(other, "gossip:peer")).rejects.toThrow("queue is full");
+    expect(lookup).toHaveBeenCalledTimes(1);
+    expect(validateFrameTxReplaceability).not.toHaveBeenCalled();
+    release(null);
+    await first;
+    expect(validateFrameTxReplaceability).toHaveBeenCalledOnce();
   });
 
   it("rejects a known underpriced replacement without simulation", async () => {

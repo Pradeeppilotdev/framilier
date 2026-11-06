@@ -69,6 +69,20 @@ describe("MempoolService.addFrameTx return value", () => {
     expect(res.replacedTxHash).toBeUndefined();
   });
 
+  it("never returns the new occupant for the hash of a purged nonce slot", async () => {
+    const pool = build();
+    await pool.addFrameTx(txWithFee(2n), "0xaaa");
+    const archived = await pool.getEntryByHash("0xaaa");
+    await pool.updateStatus([archived!], MempoolEntryStatus.Finalized);
+    vi.advanceTimersByTime(2_000);
+    await pool.deleteOldUserOps();
+    expect(await pool.getEntryByHash("0xaaa")).toBeNull();
+
+    await pool.addFrameTx(txWithFee(100n), "0xbbb");
+    expect((await pool.getEntryByHash("0xbbb"))?.txHash).toBe("0xbbb");
+    expect(await pool.getEntryByHash("0xaaa")).toBeNull();
+  });
+
   it("returns the old transaction's hash when a newer one takes its sender:nonce slot", async () => {
     const pool = build();
     await pool.addFrameTx(txWithFee(2n), "0xaaa");
