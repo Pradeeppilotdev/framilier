@@ -632,12 +632,21 @@ describe("revalidation infrastructure failures", () => {
   it.each([new Error("RPC timeout"), new RpcError("busy", RpcErrorCodes.SERVER_ERROR),
     new RpcError("trace unavailable", RpcErrorCodes.INTERNAL_ERROR)])("keeps pending on %s", async error => {
     const entry = buildEntry(buildTx(), MempoolEntryStatus.New);
-    const { reconciler, mempoolService, frameTxSimulationService } = buildReconciler({
-      getReceipt: noReceipt(), simulate: vi.fn().mockRejectedValue(error),
+    const simulate = vi.fn().mockRejectedValueOnce(error)
+      .mockRejectedValueOnce(new RpcError("now invalid", RpcErrorCodes.VALIDATION_FAILED));
+    const { reconciler, mempoolService, publicClient } = buildReconciler({
+      getReceipt: noReceipt(), simulate,
     });
     mempoolService.fetchPendingUserOps.mockResolvedValue([entry]);
     await reconciler.reconcile();
     expect(mempoolService.updateStatus).not.toHaveBeenCalled();
-    expect(frameTxSimulationService.simulate).toHaveBeenCalledWith(entry.tx, undefined, "maintenance");
+    expect(simulate).toHaveBeenCalledWith(entry.tx, undefined, "maintenance");
+
+    publicClient.getBlockNumber.mockResolvedValue(2n);
+    await reconciler.reconcile();
+    expect(simulate).toHaveBeenCalledTimes(2);
+    expect(mempoolService.updateStatus).toHaveBeenCalledWith([entry], MempoolEntryStatus.Cancelled, {
+      revertReason: expect.stringContaining("now invalid"),
+    });
   });
 });

@@ -602,7 +602,7 @@ describe("FrameTxValidationService", () => {
 
       await expect(service.validate(tx, simResult)).rejects.toThrow(RpcError);
       await expect(service.validate(tx, simResult)).rejects.toMatchObject({
-        code: RpcErrorCodes.VALIDATION_FAILED,
+        code: RpcErrorCodes.INTERNAL_ERROR,
         message: expect.stringContaining("trace pass exceeded step limit"),
       });
     });
@@ -679,6 +679,36 @@ describe("FrameTxValidationService", () => {
         await expect(service.validate(tx, simResult)).resolves.toMatchObject({
           mempoolMembership: { [STANDARD_MEMPOOL_ID]: true },
         });
+      });
+    });
+
+    it("keeps a trace outage distinct from the canonical mempool verdict after the gas pass succeeds", async () => {
+      const sim = {
+        ...fakeEthrexResult([]),
+        canonicalMempoolValid: false,
+        canonicalMempoolViolation: "prefix gas budget exceeded",
+        erc7562Trace: null,
+        erc7562TraceError: "trace provider timed out",
+      };
+      const service = new FrameTxValidationService(
+        fakeStakingRegistry(), fakeReputationService(), fakeNetworkConfig(), fakeLogger()
+      );
+      await expect(service.validate(baseTx([selfVerifyFrame()]), sim)).rejects.toMatchObject({
+        code: RpcErrorCodes.INTERNAL_ERROR, message: "trace provider timed out",
+      });
+    });
+
+    it("reports a gas-pass storage error as unavailable despite a separate canonical cap violation", async () => {
+      const sim = {
+        ...fakeEthrexResult([]), frames: null, gasUsed: null, executionStatus: null, erc7562Trace: null,
+        canonicalMempoolValid: false, canonicalMempoolViolation: "prefix gas budget exceeded",
+        executionError: "state database unavailable",
+      };
+      const service = new FrameTxValidationService(
+        fakeStakingRegistry(), fakeReputationService(), fakeNetworkConfig(), fakeLogger()
+      );
+      await expect(service.validate(baseTx([selfVerifyFrame()]), sim)).rejects.toMatchObject({
+        code: RpcErrorCodes.INTERNAL_ERROR, message: "state database unavailable",
       });
     });
 

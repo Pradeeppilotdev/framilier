@@ -21,7 +21,7 @@
 import { Logger } from "@skandha/types/lib/index.js";
 import RpcError from "@skandha/types/lib/api/errors/rpc-error.js";
 import * as RpcErrorCodes from "@skandha/types/lib/api/errors/rpc-error-codes.js";
-import { PublicClient } from "viem";
+import { ExecutionRevertedError, PublicClient, TransactionRejectedRpcError } from "viem";
 import { FrameTransaction } from "@skandha/types/lib/contracts/FrameTx.js";
 import {
   FrameSimulationReceipt,
@@ -35,6 +35,7 @@ import { GethTracer } from "../UserOpValidation/GethTracer.js";
 import {
   FrameTxValidationResult,
   FrameTxValidationService,
+  isEthrexTransactionRejection,
 } from "../UserOpValidation/validators/frameTx.js";
 
 import { SimulationWorkGate, SimulationLane } from "../AdmissionScheduler/SimulationWorkGate.js";
@@ -74,17 +75,16 @@ export class FrameTxSimulationService {
       .simulateFrameTransaction(rawTx, true)
       .catch(async (error) => {
         this.logger.error(error, "ethrex_simulateFrameTransaction failed");
-        // ethrex answered with a JSON-RPC error (viem's RpcRequestError
-        // keeps its text in `details`), e.g. "Vm execution error: Invalid
-        // Transaction: Insufficient max fee per gas". That is a verdict on
-        // the transaction, so it goes back to the sender as one. Anything
-        // else (connection refused, timeout) is this node's problem and
-        // stays an Error the API reports as an internal error.
-        const detail =
-          typeof error?.details === "string" && error.details.length > 0
-            ? error.details
-            : undefined;
-        if (detail) {
+        // viem supplies details for HTTP failures as well as RPC verdicts.
+        // A generic server error is only a verdict when ethrex identifies
+        // the transaction or its validation prefix as the cause.
+        const detail = typeof error?.details === "string" ? error.details : undefined;
+        const explicitRejection = error?.code === ExecutionRevertedError.code ||
+          error?.code === TransactionRejectedRpcError.code;
+        // The pinned ethrex uses -32015 for VM errors; older nodes also use
+        // the generic -32000. Both may carry infrastructure failures.
+        const executionError = error?.code === -32015 || error?.code === RpcErrorCodes.SERVER_ERROR;
+        if (detail && (explicitRejection || (executionError && isEthrexTransactionRejection(detail)))) {
           const explained = await this.frameTxValidationService.explainFailure(
             tx,
             detail
@@ -93,7 +93,7 @@ export class FrameTxSimulationService {
           throw new RpcError(explained, RpcErrorCodes.VALIDATION_FAILED);
         }
         const message = `ethrex_simulateFrameTransaction call failed: ${
-          error?.message ?? String(error)
+          detail ?? error?.message ?? String(error)
         }`;
         collector?.fail(EXPLORER_RULES.SIMULATION, message);
         throw new Error(message);
@@ -151,12 +151,7 @@ export class FrameTxSimulationService {
     // admission check against this same trace - that, not ethrex's opinion,
     // is the real gate.
     if (result.gasUsed == null || result.frames == null || !frameReceipts) {
-      throw new RpcError(
-        result.canonicalMempoolViolation ??
-          result.executionError ??
-          "frame transaction simulation failed",
-        RpcErrorCodes.VALIDATION_FAILED
-      );
+      throw new RpcError("ethrex omitted frame gas or receipt data after validation", RpcErrorCodes.INTERNAL_ERROR);
     }
 
     const simulation: FrameTxSimulationResult = {
