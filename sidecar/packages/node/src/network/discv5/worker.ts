@@ -1,0 +1,124 @@
+import worker from "worker_threads";
+import { multiaddr } from "@multiformats/multiaddr";
+import { privateKeyFromRaw } from "@libp2p/crypto/keys";
+import { expose } from "@chainsafe/threads/worker";
+import { Observable, Subject } from "@chainsafe/threads/observable";
+import { Discv5, BindAddrs } from "@chainsafe/discv5";
+import { ENR, ENRData, SignableENR, SignableENRData } from "@chainsafe/enr";
+import { ENRKey } from "../metadata.js";
+import { Discv5WorkerApi, Discv5WorkerData } from "./types.js";
+
+enum ENRRelevance {
+  no_tcp = "no_tcp",
+
+  relevant = "relevant",
+}
+
+function enrRelevance(enr: ENR): ENRRelevance {
+  // We are not interested in peers that don't advertise their tcp addr
+  const multiaddrTCP = enr.getLocationMultiaddr(ENRKey.tcp);
+  if (!multiaddrTCP) {
+    return ENRRelevance.no_tcp;
+  }
+  return ENRRelevance.relevant;
+}
+
+// This discv5 worker will start discv5 on initialization (there is no `start` function to call)
+// A consumer _should_ call `close` before terminating the worker to cleanly exit discv5 before destroying the thread
+// A `setEnrValue` function is also provided to update the host ENR key-values shared in the discv5 network.
+
+async function initializeWorker() {
+  // Cloned data from instatiation
+  const workerData = worker.workerData as Discv5WorkerData;
+  // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+  if (!workerData) throw Error("workerData must be defined");
+
+  // SignableENRData already carries the raw private key bytes, so the
+  // SignableENR (and the discv5 service's PrivateKey) can be reconstructed
+  // directly, without the old PeerId/keypair round-trip.
+  const privateKey = privateKeyFromRaw(workerData.enr.privateKey);
+
+  const bindAddrs: BindAddrs = workerData.bindAddrs.ip4
+    ? { ip4: multiaddr(workerData.bindAddrs.ip4) }
+    : { ip6: multiaddr(workerData.bindAddrs.ip6 as string) };
+
+  // Initialize discv5
+  const discv5 = Discv5.create({
+    enr: SignableENR.fromObject(workerData.enr),
+    privateKey,
+    bindAddrs,
+    config: workerData.config,
+  });
+
+  // Load boot enrs
+  let bootEnrs: string[] = [];
+  if (workerData.bootEnrs) {
+    if (typeof workerData.bootEnrs === 'string') {
+      try {
+        bootEnrs = JSON.parse(workerData.bootEnrs);
+      } catch (e) {
+        console.error("Failed to parse bootEnrs JSON string:", e);
+      }
+    } else if (Array.isArray(workerData.bootEnrs)) {
+      bootEnrs = workerData.bootEnrs;
+    }
+  }
+  // Load boot ENRs into discv5
+  for (const bootEnr of bootEnrs) {
+    try {
+      if (bootEnr && bootEnr.trim()) {
+        discv5.addEnr(bootEnr);
+      }
+    } catch (error) {
+      console.error(`Failed to add boot ENR: ${bootEnr}`, error);
+    }
+  }
+
+  /** Used to push discovered ENRs */
+  const subject = new Subject<ENRData>();
+
+  const onDiscovered = (enr: ENR): void => {
+    const status = enrRelevance(enr);
+    if (status === ENRRelevance.relevant) {
+      subject.next(enr.toObject());
+    }
+  };
+  discv5.addListener("discovered", onDiscovered);
+
+  // Discv5 will now begin accepting request/responses
+  await discv5.start();
+
+  const module: Discv5WorkerApi = {
+    async enr(): Promise<SignableENRData> {
+      return discv5.enr.toObject();
+    },
+    async setEnrValue(key: string, value: Uint8Array): Promise<void> {
+      discv5.enr.set(key, value);
+    },
+    async kadValues(): Promise<ENRData[]> {
+      return discv5.kadValues().map((enr) => enr.toObject());
+    },
+    async discoverKadValues(): Promise<void> {
+      discv5.kadValues().map(onDiscovered);
+    },
+    async findRandomNode(): Promise<ENRData[]> {
+      return (await discv5.findRandomNode()).map((enr) => enr.toObject());
+    },
+    discovered() {
+      return Observable.from(subject);
+    },
+    async close() {
+      discv5.removeListener("discovered", onDiscovered);
+      subject.complete();
+      await discv5.stop();
+    },
+  };
+
+  expose(module);
+}
+
+// Initialize the worker
+initializeWorker().catch((error) => {
+  console.error("Worker initialization failed:", error);
+  throw error;
+});

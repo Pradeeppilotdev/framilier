@@ -1,0 +1,375 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { Connection } from "@libp2p/interface";
+import { Multiaddr } from "@multiformats/multiaddr";
+import { PeerId } from "@libp2p/interface";
+import { ValueOf } from "@chainsafe/ssz";
+import { ssz, ts } from "@skandha/types/lib/index.js";
+import {
+  PooledFrameTxHashesRequest as PooledFrameTxHashesRequestSsz,
+  PooledFrameTxHashes as PooledFrameTxHashesSsz,
+  PooledFrameTxsByHashRequest as PooledFrameTxsByHashRequestSsz,
+  PooledFrameTxsByHash as PooledFrameTxsByHashSsz,
+} from "@skandha/types/lib/node/frameTx.js";
+import { SignableENR } from "@chainsafe/enr";
+import { privateKeyFromRaw } from "@libp2p/crypto/keys";
+import logger, { Logger } from "@skandha/api/lib/logger";
+import { serializeMempoolId } from "@skandha/params/lib/index.js";
+import { Config } from "@skandha/executor/lib/config";
+import { AllChainsMetrics } from "@skandha/monitoring/lib/index.js";
+import { Executor } from "@skandha/executor/lib/executor";
+import { INetworkOptions } from "../options/index.js";
+import { getConnectionsMap } from "../utils/index.js";
+import { INetwork, Libp2p } from "./interface.js";
+import { INetworkEventBus, NetworkEventBus } from "./events.js";
+import { MetadataController } from "./metadata.js";
+import { createNodeJsLibp2p } from "./nodejs/index.js";
+import { BundlerGossipsub } from "./gossip/index.js";
+import { ReqRespNode } from "./reqresp/ReqRespNode.js";
+import { PeerRpcScoreStore } from "./peers/score.js";
+import { PeersData } from "./peers/peersData.js";
+import { getReqRespHandlers } from "./reqresp/handlers/index.js";
+import { PeerManager } from "./peers/peerManager.js";
+import { getCoreTopics } from "./gossip/topic.js";
+import { Discv5Worker } from "./discv5/index.js";
+import { NetworkProcessor } from "./processor/index.js";
+import { pooledFrameTxHashes, pooledFrameTxsByHash } from "./reqresp/index.js";
+import fs from "node:fs";
+import path from "node:path";
+
+type NetworkModules = {
+  libp2p: Libp2p;
+  gossip: BundlerGossipsub;
+  reqResp: ReqRespNode;
+  peerManager: PeerManager;
+  metadata: MetadataController;
+  events: INetworkEventBus;
+  peerId: PeerId;
+  networkProcessor: NetworkProcessor;
+  relayersConfig: Config;
+  executor: Executor;
+  metrics: AllChainsMetrics | null;
+};
+
+export type NetworkInitOptions = {
+  opts: INetworkOptions;
+  relayersConfig: Config;
+  peerId: PeerId;
+  executor: Executor;
+  peerStoreDir?: string;
+  metrics: AllChainsMetrics | null;
+  dataDir?: string;
+  retainPeerId?: boolean;
+};
+
+export class Network implements INetwork {
+  closed = false;
+  peerId: PeerId;
+  logger: Logger;
+
+  events: INetworkEventBus;
+  metadata: MetadataController;
+  gossip: BundlerGossipsub;
+  reqResp: ReqRespNode;
+  peerManager: PeerManager;
+  libp2p: Libp2p;
+  networkProcessor: NetworkProcessor;
+  executor: Executor;
+  metrics: AllChainsMetrics | null;
+
+  relayersConfig: Config;
+  subscribedMempools = new Set<string>();
+  dataDir?: string;
+  retainPeerId?: boolean;
+
+  constructor(opts: NetworkModules) {
+    const {
+      libp2p,
+      reqResp,
+      gossip,
+      peerManager,
+      metadata,
+      events,
+      peerId,
+      networkProcessor,
+      relayersConfig,
+      executor,
+      metrics,
+    } = opts;
+    this.libp2p = libp2p;
+    this.reqResp = reqResp;
+    this.gossip = gossip;
+    this.peerManager = peerManager;
+    this.logger = logger;
+    this.metadata = metadata;
+    this.events = events;
+    this.peerId = peerId;
+    this.networkProcessor = networkProcessor;
+    this.relayersConfig = relayersConfig;
+    this.executor = executor;
+    this.metrics = metrics;
+    this.logger.info("Initialised the bundler node module", "node");
+  }
+
+  static async init(options: NetworkInitOptions): Promise<Network> {
+    const { peerId, relayersConfig, executor, metrics, dataDir, retainPeerId } = options;
+    // libp2p 1.x+ derives the node's identity from a PrivateKey rather than
+    // accepting a PeerId directly; the SignableENR (kept in sync with
+    // `peerId` by construction, see BundlerNode.init/cli) carries the raw
+    // private key bytes discv5 needs anyway.
+    const enr = options.opts.discv5?.enr as SignableENR;
+    const privateKey = privateKeyFromRaw(enr.privateKey);
+    const libp2p = await createNodeJsLibp2p(privateKey, options.opts, {
+      peerStoreDir: options.peerStoreDir,
+    });
+
+    const peersData = new PeersData();
+    const peerRpcScores = new PeerRpcScoreStore();
+    const networkEventBus = new NetworkEventBus();
+    const gossip = new BundlerGossipsub({
+      libp2p,
+      events: networkEventBus,
+      metrics,
+    });
+
+    const chainId = relayersConfig.chainId;
+    const defaultMetadata = ssz.Metadata.defaultValue();
+    const supportedMempools = relayersConfig.getSupportedMempools();
+    for (const mempool of supportedMempools) {
+      if (mempool.mempoolId) {
+        defaultMetadata.supported_mempools.push(serializeMempoolId(mempool.mempoolId));
+      }
+    }
+    const metadata = new MetadataController({
+      chainId,
+      metadata: defaultMetadata,
+    });
+    const reqResp = new ReqRespNode({
+      libp2p,
+      peersData,
+      logger,
+      reqRespHandlers: getReqRespHandlers(executor, relayersConfig, metrics),
+      metadata,
+      peerRpcScores,
+      networkEventBus,
+      metrics,
+    });
+
+    const networkProcessor = new NetworkProcessor(
+      { events: networkEventBus, relayersConfig, executor, metrics },
+      {}
+    );
+
+    const peerManagerModules = {
+      libp2p,
+      reqResp,
+      gossip,
+      logger,
+      peerRpcScores,
+      networkEventBus,
+      peersData,
+    };
+    const peerManager = new PeerManager(peerManagerModules, options.opts);
+
+    const network = new Network({
+      libp2p,
+      gossip,
+      reqResp,
+      peerManager,
+      metadata,
+      events: networkEventBus,
+      peerId,
+      networkProcessor,
+      relayersConfig,
+      executor,
+      metrics,
+    });
+    network.dataDir = dataDir;
+    network.retainPeerId = retainPeerId;
+    return network;
+  }
+
+  /** Shutdown the bundler node */
+  close(): void {
+    //switch off all event subscriptions.
+  }
+
+  /** Start bundler node */
+  async start(): Promise<void> {
+    //start all services in an order
+    await this.libp2p.start();
+    await this.reqResp.start();
+    this.reqResp.registerProtocols();
+
+    // Gossip must be running before the peer manager starts: discovery dials the boot nodes straight away, and a
+    // connection made before gossipsub registers its protocol handler cannot negotiate it, so the peer would never
+    // be a gossip peer (publishing then fails with NoPeersSubscribedToTopic).
+    await this.gossip.start();
+
+    await this.peerManager.start();
+    const discv5 = this.peerManager["discovery"]?.discv5;
+    if (!discv5) {
+      throw new Error("Discv5 not initialized");
+    }
+    const setEnrValue = discv5?.setEnrValue.bind(discv5);
+    this.metadata.start(setEnrValue);
+
+    // Save ENR after metadata updates if retainPeerId is enabled
+    if (this.retainPeerId && this.dataDir) {
+      try {
+        const enr = await this.getEnr();
+        if (enr) {
+          const enrFile = path.join(this.dataDir, "enr");
+          fs.writeFileSync(enrFile, enr.encodeTxt(), { mode: 0o600 });
+        }
+      } catch (error) {
+        this.logger.warn("Failed to save ENR after metadata update", error);
+      }
+    }
+
+    const multiaddresses = this.libp2p
+      .getMultiaddrs()
+      .map((m) => m.toString())
+      .join(",");
+
+    this.logger.info(
+      `PeerId ${this.libp2p.peerId.toString()}, Multiaddrs ${multiaddresses}`
+    );
+
+    const enr = await this.getEnr();
+
+    const supportedMempools = this.relayersConfig.getSupportedMempools();
+    for (const mempool of supportedMempools) {
+      if (mempool.mempoolId) {
+        this.subscribeGossipCoreTopics(mempool.mempoolId);
+      }
+    }
+
+    if (enr) {
+      this.logger.info(`ENR: ${enr.encodeTxt()}`);
+    } else {
+      this.logger.error("Enr not accessible");
+    }
+  }
+
+  /** Stop the bundler service node */
+  async stop(): Promise<void> {
+    if (this.closed) return;
+
+    await this.peerManager.goodbyeAndDisconnectAllPeers();
+    await this.peerManager.stop();
+    await this.gossip.stop();
+
+    await this.reqResp.stop();
+    await this.reqResp.unregisterAllProtocols();
+
+    await this.libp2p.stop();
+
+    this.closed = true;
+  }
+
+  async getEnr(): Promise<SignableENR | undefined> {
+    return this.peerManager["discovery"]?.discv5.enr();
+  }
+
+  async getMetadata(): Promise<ts.Metadata> {
+    return {
+      seq_number: this.metadata.seq_number,
+      supported_mempools: this.metadata.supported_mempools,
+    };
+  }
+
+  get discv5(): Discv5Worker | undefined {
+    return this.peerManager["discovery"]?.discv5;
+  }
+
+  get localMultiaddrs(): Multiaddr[] {
+    return this.libp2p.getMultiaddrs();
+  }
+
+  getConnectionsByPeer(): Map<string, Connection[]> {
+    return getConnectionsMap(this.libp2p);
+  }
+
+  getConnectedPeers(): PeerId[] {
+    return this.peerManager.getConnectedPeerIds();
+  }
+
+  getConnectedPeerWithInfo(): unknown[] {
+    return this.peerManager.getConnectedPeers();
+  }
+
+  getConnectedPeerCount(): number {
+    return this.peerManager.getConnectedPeerIds().length;
+  }
+
+  /* List of p2p functions supported by Bundler */
+  async publishVerifiedFrameTx(
+    verifiedFrameTx: ts.VerifiedFrameTx,
+    mempool: string
+  ): Promise<void> {
+    await this.gossip.publishVerifiedFrameTx(verifiedFrameTx, mempool);
+  }
+
+  async pooledFrameTxHashes(
+    peerId: PeerId,
+    req: ValueOf<typeof PooledFrameTxHashesRequestSsz>
+  ): Promise<ValueOf<typeof PooledFrameTxHashesSsz>> {
+    return await pooledFrameTxHashes(
+      this.reqResp,
+      peerId,
+      this.executor,
+      this.relayersConfig,
+      req
+    );
+  }
+
+  async pooledFrameTxsByHash(
+    peerId: PeerId,
+    req: ValueOf<typeof PooledFrameTxsByHashRequestSsz>
+  ): Promise<ValueOf<typeof PooledFrameTxsByHashSsz>> {
+    return await pooledFrameTxsByHash(
+      this.reqResp,
+      peerId,
+      this.executor,
+      this.relayersConfig,
+      req
+    );
+  }
+
+  //Gossip handler
+  subscribeGossipCoreTopics(mempool: string): void {
+    if (this.subscribedMempools.has(mempool)) return;
+    this.subscribedMempools.add(mempool);
+
+    for (const topic of getCoreTopics()) {
+      this.gossip.subscribeTopic({ ...topic, mempool });
+    }
+  }
+
+  unsubscribeGossipCoreTopics(mempool: string): void {
+    if (this.subscribedMempools.has(mempool)) return;
+    this.subscribedMempools.delete(mempool);
+
+    for (const topic of getCoreTopics()) {
+      this.gossip.unsubscribeTopic({ ...topic, mempool });
+    }
+  }
+
+  isSubscribedToGossipCoreTopics(mempool: string): boolean {
+    return this.subscribedMempools.has(mempool);
+  }
+
+  // Debug
+  async connectToPeer(peer: PeerId, multiaddr: Multiaddr[]): Promise<void> {
+    await this.libp2p.peerStore.merge(peer, { multiaddrs: multiaddr });
+    await this.libp2p.dial(peer);
+  }
+
+  async disconnectPeer(peer: PeerId): Promise<void> {
+    await this.libp2p.hangUp(peer);
+  }
+
+  getAgentVersion(_peerIdStr: string): string {
+    return "";
+  }
+}

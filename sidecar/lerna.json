@@ -1,0 +1,13 @@
+{
+  "packages": [
+    "packages/*"
+  ],
+  "npmClient": "yarn",
+  "version": "4.0.2",
+  "stream": "true",
+  "command": {
+    "version": {
+      "message": "chore(release): %s"
+    }
+  }
+}

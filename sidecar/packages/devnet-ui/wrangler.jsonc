@@ -1,0 +1,11 @@
+{
+  // Static hosting for the explorer on Cloudflare Workers (assets only, no Worker code).
+  // The Worker name must match the name of the Workers Builds project in the dashboard.
+  "name": "skandha-explorer",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    // Serve index.html for any path, so /tx/<hash> deep links reach the router.
+    "not_found_handling": "single-page-application"
+  }
+}

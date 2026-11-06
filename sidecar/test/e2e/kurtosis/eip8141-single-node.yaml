@@ -1,0 +1,110 @@
+# Single-participant trim of ethrex's own real Hegota devnet config
+# (fixtures/networks/hegota-testnet.yaml on github.com/forshtat/ethrex,
+# eip8141-tracer branch) - same fork-epoch schedule and genesis-generator
+# workarounds, one ethrex+lighthouse pair instead of three, no dora/faucet/
+# deposit-gating (this is a throwaway CI devnet, not a permissioned one - see
+# `prefunded_accounts` below instead of that file's REPLACE_WITH_* secrets).
+#
+# Why this exists at all, instead of ethrex's own `--dev` single-node block
+# producer (what ethrex-devnet.sh / the other e2e tests use): Hegota is
+# layered ON TOP OF Amsterdam (gloas), not before it - the real devnet
+# schedules forks by epoch (fulu@genesis, gloas@epoch 1, heze/Hegota@epoch
+# 2) specifically because a genesis that's already Hegota-active at block 0
+# produces a beacon genesis state Lighthouse rejects outright
+# ("Built-in genesis state SSZ bytes are invalid: OffsetsAreDecreasing(0)").
+# `--dev` mode's hand-rolled block producer has no such staged-activation
+# concept and picks its own (possibly wrong) Engine API version by guessing
+# from the current timestamp - a real, spec-compliant CL (Lighthouse here)
+# doesn't have that failure mode at all, which is the actual reason this
+# devnet can mine Hegota-active blocks where `--dev` couldn't.
+participants:
+  - el_type: ethrex
+    el_image: ethrex:local
+    cl_type: lighthouse
+    # NOT inferred from the tag name: this is the exact image the ethrex
+    # team's own running Hegota devnet uses, verified FOCIL-capable from its
+    # own `/eth/v1/config/spec` (carries HEZE_FORK_EPOCH and the FOCIL
+    # preset). ethrex rejects `newPayloadV5`/`forkchoiceUpdatedV4` once
+    # Hegota is active - only the V6/V5 pair (which a stock Lighthouse build
+    # does not speak) works, so any other tag halts the node at the fork
+    # boundary with no inert intermediate state to notice first.
+    cl_image: ethpandaops/lighthouse:focil
+    validator_count: 32
+    # The launcher's own default is `--http.api=admin,eth,net,web3` and
+    # nothing else - these three add what it doesn't: `ethrex` carries
+    # ethrex_simulateFrameTransaction (what this bundler's validation path
+    # calls), `debug` carries debug_getRawTransaction/debug_getRawBlockAccessList
+    # (engine_newPayloadV6 replay / EIP-7805 enforcement), `txpool` carries
+    # txpool_status. The flag is additive per occurrence - a single
+    # comma-joined value is NOT the proven form here (see
+    # fixtures/networks/hegota-testnet.yaml's own comment on this exact
+    # point, including a prior revision that got it wrong and broke pool
+    # reads).
+    el_extra_params:
+      - --http.api=ethrex
+      - --http.api=debug
+      - --http.api=txpool
+    # Fulu (active from genesis, see fulu_fork_epoch below) requires PeerDAS
+    # custody from either a supernode, a node with 128+ validators, or
+    # perfect_peerdas_enabled with 16 participants - the last two don't fit a
+    # single-node trim (32 validators, 1 participant), so this is the only
+    # option here. Matches fixtures/networks/hegota-testnet.yaml, which sets
+    # this on every one of its 3 real participants for the same reason.
+    supernode: true
+
+network_params:
+  seconds_per_slot: 6
+  # Activate Osaka from genesis.
+  fulu_fork_epoch: 0
+  # Amsterdam (gloas) at epoch 1, ahead of Hegota - see header comment on
+  # why this can't just be genesis-active.
+  gloas_fork_epoch: 1
+  # Hegota (heze): EIP-8141 frame-tx opcodes valid from epoch 2 onward.
+  heze_fork_epoch: 2
+
+  # Throwaway test key, committed here on purpose (this enclave is created
+  # and destroyed per CI run - nothing about it is a secret). Funds the
+  # sender `test/e2e/helpers.ts`'s `buildUnsignedFrameTx` signs with for
+  # this devnet (see MINING_SENDER_PRIVATE_KEY there); regenerate freely if
+  # it's ever needed elsewhere.
+  #   private key: 0x06f911c1ecb2053bb443ba0a0e28d630c583c3c0c2f334a9ecdc8c7c6ad4ea15
+  #   address:     0x5544596212F91984C986A919C8026DF0576816f9
+  prefunded_accounts: '{
+    "0x5544596212F91984C986A919C8026DF0576816f9": {"balance": "1000000ETH"}
+  }'
+
+  # The v6.1.4+ generator deploys both EIP-8282 builder predeploys but only
+  # arms EXCESS_INHIBITOR (2**256-1) at slot 0 on the *exit* predeploy, not
+  # the deposit one - a preloaded runtime image never runs the init code
+  # that would arm it itself. This entry supplies the inhibitor the
+  # generator omits, exactly as fixtures/networks/hegota-testnet.yaml does.
+  # Symptom if missing: getPayload fails on every slot from the Amsterdam
+  # boundary on, Lighthouse reports "Unknown payload", chain freezes on the
+  # last pre-Amsterdam block. Drop this once the generator arms both itself.
+  additional_preloaded_contracts:
+    "0x0000BFF46984E3725691FA540A8C7589300D8282":
+      balance: "0"
+      nonce: "1"
+      code: "0x3373fffffffffffffffffffffffffffffffffffffffe1461011c575f54807fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff146102705760015460088111605257506058565b60089003015b601190600182026001905f5b5f821115607f57810190830284830290049160010191906064565b90939004925050503660b814609f57366102705734610270575f5260205ff35b8034106102705760383567ffffffffffffffff1680633b9aca001161027057633b9aca00029034031061027057600154600101600155600354806006026004015f358155600101602035815560010160403581556001016060358155600101608035815560010160a035905560b85f5f3760b85fa0600101600355005b60035460025480820380604011610131575060405b5f5b8181146101d7578281016006026004018160b8028154815260200181600101548152602001816002015480825260401c67ffffffffffffffff16816010018160381c81600701538160301c81600601538160281c81600501538160201c81600401538160181c81600301538160101c81600201538160081c816001015353602001816003015481526020018160040154815260200190600501549052600101610133565b91018092146101e957906002556101f4565b90505f6002555f6003555b36610242575f54600154817fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1461023057600882820111610238575b50505f610264565b0160089003610264565b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff5b5f555f60015560b8025ff35b5f5ffd"
+      storage:
+        "0x0000000000000000000000000000000000000000000000000000000000000000": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+
+# v6.0.7, the pinned ethereum-package revision's own default, predates
+# v6.1.4 and does not deploy the EIP-8282 builder deposit/exit predeploys at
+# all - the chain would freeze at the Amsterdam boundary (Glamsterdam's
+# EIP-8282 makes every block invalid from activation when either predeploy
+# has no code, same rule as EIP-7002/EIP-7251). Pinned explicitly here rather
+# than by bumping the whole ethereum-package, so the generator version this
+# devnet depends on is visible in one place - matches
+# fixtures/networks/hegota-testnet.yaml. (Top-level, not under
+# network_params - this key is a sibling of it.)
+ethereum_genesis_generator_params:
+  image: ethpandaops/ethereum-genesis-generator:6.1.6
+
+# Fixed host ports (not Kurtosis's usual dynamic allocation) so the calling
+# CI job/test can target a known address without parsing `kurtosis port
+# print`/`enclave inspect` output.
+port_publisher:
+  el:
+    enabled: true
+    public_port_start: 32000

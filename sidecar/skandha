@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Convenience script to run the etherspot binary from built source
+#
+# ./skandha standalone --redirectRpc
+
+bun --bun ./packages/cli/bin/skandha.js "$@"

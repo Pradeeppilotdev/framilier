@@ -1,0 +1,21 @@
+import { PeerId } from "@libp2p/interface";
+import { ts } from "@skandha/types/lib/index.js";
+import { GossipTopic, GossipType, Message } from "../gossip/index.js";
+
+export type GossipAttestationsWork = {
+  messages: PendingGossipsubMessage[];
+};
+
+export type PendingGossipsubMessage = {
+  topic: GossipTopic;
+  msg: Message;
+  msgId: string;
+  // TODO: Refactor into accepting string (requires gossipsub changes) for easier multi-threading
+  propagationSource: PeerId;
+  seenTimestampSec: number;
+  startProcessUnixSec: number | null;
+};
+
+export type ExtractSlotRootFns = {
+  [K in GossipType]?: (data: Uint8Array) => ts.SlotRootHex | null;
+};

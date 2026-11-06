@@ -1,0 +1,77 @@
+{
+  "name": "frame-tx-sidecar",
+  "description": "P2P sidecar for EIP-8141 frame transaction alt-mempool",
+  "private": true,
+  "version": "4.1.1",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "clean": "rm -rf ./packages/*/lib ./packages/*/*.tsbuildinfo",
+    "bootstrap": "bun install",
+    "prebuild": "bun run --filter @skandha/types build",
+    "build-db": "bun run --filter @skandha/db build",
+    "build": "bun run prebuild && bun run build-db && bun run build:packages",
+    "build:packages": "cd packages/types && bun run build && cd ../db && bun run build && cd ../utils && bun run build && cd ../params && bun run build && cd ../monitoring && bun run build && cd ../executor && bun run build && cd ../api && bun run build && cd ../node && bun run build && cd ../cli && bun run build",
+    "build:workspace": "bun run --filter '@skandha/types' build && bun run --filter '@skandha/db' build && bun run --filter '@skandha/utils' build && bun run --filter '@skandha/params' build && bun run --filter '@skandha/monitoring' build && bun run --filter '@skandha/executor' build && bun run --filter '@skandha/api' build && bun run --filter '@skandha/node' build && bun run --filter '@skandha/cli' build",
+    "build:parallel": "bun run --filter '@skandha/types' build && bun run --filter '@skandha/db' build && bun run --filter '@skandha/utils' build && bun run --filter '@skandha/params' build && bun run --filter '@skandha/monitoring' build && bun run --filter '@skandha/executor' build && bun run --filter '@skandha/api' build && bun run --filter '@skandha/node' build && bun run --filter '@skandha/cli' build",
+    "build:all": "bun run build:workspace",
+    "lint": "eslint --color --ext .ts packages/*/src/",
+    "fix-lint": "eslint --ext .ts --fix packages/*/src/",
+    "test": "lerna run test --concurrency 1",
+    "test:unit": "lerna run test:unit --no-bail --concurrency 1",
+    "test:e2e": "vitest run --config test/e2e/vitest.config.ts",
+    "test:e2e:mining": "vitest run --config test/e2e/vitest.mining.config.ts",
+    "predeploy": "bun run deploy/predeploy/src/cli.ts",
+    "test:predeploy": "cd deploy/predeploy && bunx vitest run",
+    "coverage": "vitest run --coverage",
+    "check-readme": "lerna run check-readme",
+    "release:publish": "lerna publish from-package --yes --no-verify-access",
+    "release:docker": "exit 0"
+  },
+  "dependencies": {
+    "abstract-leveldown": "7.2.0",
+    "ajv": "8.17.1",
+    "lru-cache": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/chai": "4.3.6",
+    "@types/chai-as-promised": "7.1.6",
+    "@types/mocha": "10.0.1",
+    "@types/sinon": "10.0.16",
+    "@types/sinon-chai": "3.2.9",
+    "@types/abstract-leveldown": "7.2.1",
+    "@types/compression": "1.7.2",
+    "@types/node": "18.11.9",
+    "@typescript-eslint/parser": "6.21.0",
+    "@typescript-eslint/eslint-plugin": "6.21.0",
+    "eslint": "8.27.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-mocha": "10.2.0",
+    "lerna": "7.3.0",
+    "ts-node": "10.9.1",
+    "tsconfig-paths": "4.1.2",
+    "typescript": "5.4.5",
+    "chai": "4.3.8",
+    "chai-as-promised": "7.1.1",
+    "sinon": "16.0.0",
+    "sinon-chai": "3.7.0",
+    "mocha": "10.2.0",
+    "vitest": "0.34.6",
+    "vitest-when": "0.2.0",
+    "@vitest/coverage-v8": "0.34.6"
+  },
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "resolutions": {
+    "@multiformats/multiaddr": "12.5.1",
+    "ajv": "8.17.1"
+  },
+  "overrides": {
+    "@multiformats/multiaddr": "12.5.1"
+  }
+}

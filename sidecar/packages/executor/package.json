@@ -1,0 +1,54 @@
+{
+  "name": "@skandha/executor",
+  "private": "false",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "4.0.2",
+  "description": "The Relayer module of Etherspot bundler client",
+  "author": "Etherspot",
+  "homepage": "https://github.com/etherspot/skandha#readme",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "lib/**/*.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.js.map",
+    "*.d.ts",
+    "*.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/etherspot/skandha.git"
+  },
+  "bugs": {
+    "url": "https://github.com/etherspot/skandha/issues"
+  },
+  "scripts": {
+    "clean": "rm -rf lib && rm -f *.tsbuildinfo",
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint --color --ext .ts src/ test/",
+    "lint:fix": "bun run lint --fix",
+    "test": "bun run test:unit",
+    "test:unit": "vitest --run --dir test/unit/",
+    "check-readme": "typescript-docs-verifier"
+  },
+  "dependencies": {
+    "@ethereumjs/rlp": "^4.0.1",
+    "@noble/curves": "1.8.1",
+    "@flashbots/ethers-provider-bundle": "0.6.2",
+    "@skandha/monitoring": "^4.0.2",
+    "@skandha/params": "^4.0.2",
+    "@skandha/types": "^4.0.2",
+    "@skandha/utils": "^4.0.2",
+    "async-mutex": "0.4.0",
+    "axios": "^1.9.0",
+    "ethers": "5.7.2",
+    "strict-event-emitter-types": "2.0.0",
+    "viem": "2.27.0",
+    "ws": "8.16.0"
+  },
+  "devDependencies": {
+    "@types/ws": "8.2.2"
+  }
+}

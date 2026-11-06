@@ -1,0 +1,121 @@
+@import "@fontsource-variable/bricolage-grotesque";
+@import "@fontsource-variable/instrument-sans";
+@import "@fontsource-variable/spline-sans-mono";
+@import "tailwindcss";
+
+/*
+ * Design tokens. A cool, slightly blue "fog" ground with a petrol ink; verdict
+ * colors are the only saturated hues, so a failed rule is the loudest thing on
+ * any screen. Pass and fail are never color alone: they also differ in shape.
+ */
+:root {
+  color-scheme: light dark;
+  --paper: #e9eef1;
+  --rail: #dbe3e8;
+  --raised: #f5f8f9;
+  --ink: #12232e;
+  --ink-soft: #46596a;
+  --line: #bccad3;
+  --accent: #2b49c4;
+  --accent-wash: #d3ddf7;
+  --pass: #0b7a63;
+  --fail: #c2263f;
+  --warn: #8f5400;
+  --mute: #7b8c97;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0f1a22;
+    --rail: #16252f;
+    --raised: #1b2d39;
+    --ink: #dbe6ec;
+    --ink-soft: #9fb3c0;
+    --line: #2d4351;
+    --accent: #8fa6ff;
+    --accent-wash: #22305f;
+    --pass: #4cc9a8;
+    --fail: #ff7a90;
+    --warn: #e6b04c;
+    --mute: #6b8291;
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-rail: var(--rail);
+  --color-raised: var(--raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-wash: var(--accent-wash);
+  --color-pass: var(--pass);
+  --color-fail: var(--fail);
+  --color-warn: var(--warn);
+  --color-mute: var(--mute);
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Spline Sans Mono Variable", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  html {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  button,
+  input,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    line-height: 1.15;
+    margin: 0;
+  }
+  table {
+    border-collapse: collapse;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* A row that just changed: a fading wash, plus a static marker for reduced motion. */
+@keyframes arrive {
+  from {
+    background-color: var(--accent-wash);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.row-fresh {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .row-fresh {
+    animation: arrive 2.4s ease-out;
+  }
+}
