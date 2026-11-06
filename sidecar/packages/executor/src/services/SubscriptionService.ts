@@ -35,12 +35,22 @@ export class ExecutorEventBus extends (EventEmitter as {
   new (): IExecutorEventBus;
 }) {}
 
+export interface SubscriptionLimits {
+  maxPerSocket: number;
+  maxTotal: number;
+  maxBufferedBytes: number;
+}
+
 export class SubscriptionService {
   constructor(
     private eventBus: ExecutorEventBus,
     private logger: Logger,
-    private explorerService: ExplorerService | null = null
+    private explorerService: ExplorerService | null = null,
+    private limits: SubscriptionLimits = { maxPerSocket: 32, maxTotal: 4096, maxBufferedBytes: 1024 * 1024 }
   ) {
+    for (const value of Object.values(limits)) {
+      if (!Number.isSafeInteger(value) || value < 1) throw new Error("Invalid subscription limits");
+    }
     this.eventBus.on(
       ExecutorEvent.pendingUserOps,
       this.onPendingUserOps.bind(this)
@@ -66,6 +76,54 @@ export class SubscriptionService {
     [ExecutorEvent.explorerEvents]: new Set(),
   };
   private listeners: { [id: string]: WebSocket } = {};
+  private sockets = new Map<WebSocket, { ids: Set<string>; cleanup: () => void }>();
+  private subscriptionCount = 0;
+
+  private register(socket: WebSocket): string {
+    const existing = this.sockets.get(socket);
+    if (socket.readyState !== WebSocket.OPEN) {
+      throw new RpcError("Socket is not open", RpcErrorCodes.INVALID_REQUEST);
+    }
+    if ((existing?.ids.size ?? 0) >= this.limits.maxPerSocket || this.subscriptionCount >= this.limits.maxTotal) {
+      throw new RpcError("Subscription limit reached; unsubscribe before retrying", RpcErrorCodes.SERVER_ERROR);
+    }
+    let owner = existing;
+    if (!owner) {
+      const cleanup = () => this.unsubscribeSocket(socket);
+      owner = { ids: new Set(), cleanup };
+      this.sockets.set(socket, owner);
+      socket.once("close", cleanup);
+      socket.once("error", cleanup);
+    }
+    const id = this.generateEventId();
+    owner.ids.add(id);
+    this.listeners[id] = socket;
+    this.subscriptionCount++;
+    return id;
+  }
+
+  private unsubscribeSocket(socket: WebSocket): void {
+    for (const id of [...(this.sockets.get(socket)?.ids ?? [])]) this.unsubscribe(socket, id);
+  }
+
+  private send(id: string, response: object): void {
+    const socket = this.listeners[id];
+    if (!socket) return;
+    if (socket.readyState !== WebSocket.OPEN) {
+      this.unsubscribeSocket(socket);
+      return;
+    }
+    if (socket.bufferedAmount > this.limits.maxBufferedBytes) {
+      this.unsubscribeSocket(socket);
+      socket.close(1013, "Slow subscription consumer");
+      return;
+    }
+    try { socket.send(JSON.stringify(response)); }
+    catch (err) {
+      this.unsubscribeSocket(socket);
+      this.logger.error(err, "Could not send subscription event");
+    }
+  }
 
   listenPendingUserOps(socket: WebSocket): string {
     return this.listen(socket, ExecutorEvent.pendingUserOps);
@@ -101,8 +159,7 @@ export class SubscriptionService {
         RpcErrorCodes.METHOD_NOT_FOUND
       );
     }
-    const id = this.generateEventId();
-    this.listeners[id] = socket;
+    const id = this.register(socket);
     setImmediate(() => {
       if (this.listeners[id] !== socket) return; // unsubscribed in the meantime
       if (sinceSeq !== undefined) {
@@ -124,7 +181,16 @@ export class SubscriptionService {
   }
 
   unsubscribe(socket: WebSocket, id: string): void {
+    if (!Object.hasOwn(this.listeners, id) || this.listeners[id] !== socket) return;
     delete this.listeners[id];
+    this.subscriptionCount--;
+    const owner = this.sockets.get(socket);
+    owner?.ids.delete(id);
+    if (owner && owner.ids.size === 0) {
+      socket.off("close", owner.cleanup);
+      socket.off("error", owner.cleanup);
+      this.sockets.delete(socket);
+    }
     for (const event in ExecutorEvent) {
       this.events[event as ExecutorEvent].delete(id);
     }
@@ -176,8 +242,7 @@ export class SubscriptionService {
   }
 
   private listen(socket: WebSocket, event: ExecutorEvent): string {
-    const id = this.generateEventId();
-    this.listeners[id] = socket;
+    const id = this.register(socket);
     this.events[event].add(id);
     this.logger.debug(`${id} subscribed for ${event}`);
     return id;
@@ -196,19 +261,7 @@ export class SubscriptionService {
           result: data,
         },
       };
-      try {
-        const socket = this.listeners[id];
-        if (
-          socket.readyState === WebSocket.CLOSED ||
-          socket.readyState === WebSocket.CLOSING
-        ) {
-          this.unsubscribe(socket, id);
-          return;
-        }
-        this.listeners[id].send(JSON.stringify(response));
-      } catch (err) {
-        this.logger.error(err, `Could not send event. Id: ${id}`);
-      }
+      this.send(id, response);
     }
   }
 
@@ -220,26 +273,11 @@ export class SubscriptionService {
 
   // Explorer events are plain JSON: deliberately NOT passed through deepHexlify.
   private sendExplorerEvent(id: string, event: LifecycleEvent): void {
-    const socket = this.listeners[id];
-    if (!socket) return;
-    if (
-      socket.readyState === WebSocket.CLOSED ||
-      socket.readyState === WebSocket.CLOSING
-    ) {
-      this.unsubscribe(socket, id);
-      return;
-    }
-    try {
-      socket.send(
-        JSON.stringify({
-          jsonrpc: "2.0",
-          method: "skandha_subscription",
-          params: { subscription: id, result: event },
-        })
-      );
-    } catch (err) {
-      this.logger.error(err, `Could not send explorer event. Id: ${id}`);
-    }
+    this.send(id, {
+      jsonrpc: "2.0",
+      method: "skandha_subscription",
+      params: { subscription: id, result: event },
+    });
   }
 
   private generateEventId(): string {

@@ -11,7 +11,7 @@ export class SubscriptionApi {
 
   subscribe(
     socket: WebSocket,
-    event: ExecutorEvent,
+    event: string,
     sinceSeq?: number
   ): string {
     switch (event) {

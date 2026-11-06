@@ -69,6 +69,7 @@ const jwt = randomBytes(32);
 await writeFile(genesisPath, JSON.stringify(genesis));
 await writeFile(jwtPath, jwt.toString("hex"), { mode: 0o600 });
 const children = [];
+const adminKey = randomBytes(32).toString("hex");
 let meter;
 let network;
 const childEnv = Object.fromEntries(Object.entries(process.env).filter(([k]) =>
@@ -86,7 +87,7 @@ function worker(name, executable, args) {
   const fd = openSync(logfile, "a", 0o600);
   let child;
   // Unoptimized ethrex builds need room for the Hegota payload future.
-  const env = name === "ethrex" ? { ...childEnv, RUST_MIN_STACK: "67108864", TOKIO_WORKER_THREADS: "4" } : childEnv;
+  const env = name === "ethrex" ? { ...childEnv, RUST_MIN_STACK: "67108864", TOKIO_WORKER_THREADS: "4" } : name === "sidecar" ? { ...childEnv, SKANDHA_ADMIN_KEY: adminKey } : childEnv;
   try { child = spawn(executable, args, { cwd: work, env, stdio: ["ignore", fd, fd] }); }
   finally { closeSync(fd); }
   child.on("error", e => { child.startError = e; });
@@ -212,7 +213,7 @@ try {
     const expectedHash = keccak256(encodeRawFrameTx(tx));
     assert.equal(await rpc(local, "eth_sendFrameTransaction", [tx]), expectedHash);
     // Only our spawned loopback sidecar can relay to our spawned execution node.
-    const results = await producer.receipts([expectedHash], () => rpc(local, "debug_bundler_sendBundleNow"));
+    const results = await producer.receipts([expectedHash], () => rpc(local, "debug_bundler_sendBundleNow", [], undefined, adminKey));
     if (comparing) await waitForOnChain(expectedHash);
     return results.get(expectedHash);
   }
@@ -294,7 +295,7 @@ try {
     }
     const headHash = async () => (await rpc(el, "eth_getBlockByNumber", ["latest", false])).hash;
     const setIntervalSeconds = async seconds => {
-      assert.equal(await rpc(local, "debug_bundler_setBundleInterval", [seconds]), "ok");
+      assert.equal(await rpc(local, "debug_bundler_setBundleInterval", [seconds], undefined, adminKey), "ok");
     };
     report.benchmark = await measureAdmission({
       local, meter, noisyWallet: wallet, honestWallet: secondWallet, control: matched ? "valid" : "early", makeNoisy,
@@ -314,7 +315,7 @@ try {
         functionName: "getDepositInfo", args: [secondWallet] }).toLowerCase() } : undefined,
       makeHonest: () => makeFrameTx(70000n, "0x", owner.address, 0n, "0x", second),
       async mine(hashes) {
-        const mined = await producer.receipts(hashes, () => rpc(local, "debug_bundler_sendBundleNow"));
+        const mined = await producer.receipts(hashes, () => rpc(local, "debug_bundler_sendBundleNow", [], undefined, adminKey));
         if (comparing) await Promise.all(hashes.map(waitForOnChain));
         return mined;
       },

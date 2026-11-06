@@ -21,6 +21,13 @@ import {
 import { SkandhaAPI } from "./modules/skandha.js";
 import { JsonRpcRequest, JsonRpcResponse } from "./interface.js";
 import { Server } from "./server.js";
+import { toErrorResponse } from "./utils/errorResponse.js";
+
+const INVALID_PARAMS = -32602;
+
+function wsErrorResponse(error: unknown, request?: JsonRpcRequest): JsonRpcResponse {
+  return toErrorResponse(error instanceof Error ? error : new Error("Unexpected RPC failure"), request).payload as JsonRpcResponse;
+}
 
 export interface RpcHandlerOptions {
   config: Config;
@@ -119,36 +126,27 @@ export class ApiApp {
     });
 
     if (this.server.ws != null) {
-      this.server.ws.get("/rpc/", { websocket: true }, async (socket, _) => {
+      this.server.ws.get("/rpc/", { websocket: true }, async (socket, req) => {
         socket.on("message", async (message) => {
-          let response: Partial<JsonRpcResponse> = {};
+          let request: JsonRpcRequest | undefined;
+          let response: JsonRpcResponse;
           try {
-            const request: JsonRpcRequest = JSON.parse(message.toString());
-            const wsRpc = await this.handleWsRequest(
-              socket,
-              request as JsonRpcRequest
-            );
-            if (!wsRpc) {
-              try {
-                response = await this.handleRpcRequest(request, "");
-              } catch (err) {
-                const { jsonrpc, id } = request;
-                if (err instanceof RpcError) {
-                  response = {
-                    jsonrpc,
-                    id,
-                    message: err.message,
-                    data: err.data,
-                  };
-                } else if (err instanceof Error) {
-                  response = { jsonrpc, id, error: err.message };
-                } else {
-                  response = { jsonrpc, id, error: "Internal server error" };
-                }
-              }
+            let parsed: unknown;
+            try { parsed = JSON.parse(message.toString()); }
+            catch { throw new RpcError("Parse error", RpcErrorCodes.PARSE_ERROR); }
+            const candidate = parsed as JsonRpcRequest;
+            if (!candidate || typeof candidate !== "object" || Array.isArray(candidate) ||
+                candidate.jsonrpc !== "2.0" || typeof candidate.method !== "string" ||
+                (Object.hasOwn(candidate, "id") && candidate.id !== null &&
+                 typeof candidate.id !== "string" &&
+                 (typeof candidate.id !== "number" || !Number.isFinite(candidate.id)))) {
+              throw new RpcError("Invalid Request", RpcErrorCodes.INVALID_REQUEST);
             }
+            request = candidate;
+            if (await this.handleWsRequest(socket, request)) return;
+            response = await this.handleRpcRequest(request, req.ip, req.headers.authorization);
           } catch (err) {
-            response = { error: "Invalid Request" };
+            response = wsErrorResponse(err, request);
           }
           socket.send(JSON.stringify(response));
         });
@@ -165,6 +163,9 @@ export class ApiApp {
     try {
       switch (method) {
         case CustomRPCMethods.skandha_subscribe: {
+          if (!Array.isArray(params) || params.length < 1 || params.length > 2 || typeof params[0] !== "string") {
+            throw new RpcError("Expected subscription event parameters", INVALID_PARAMS);
+          }
           const eventId = this.subscriptionApi.subscribe(
             socket,
             params[0],
@@ -174,6 +175,9 @@ export class ApiApp {
           break;
         }
         case CustomRPCMethods.skandha_unsubscribe: {
+          if (!Array.isArray(params) || params.length !== 1 || typeof params[0] !== "string") {
+            throw new RpcError("Expected a subscription id", INVALID_PARAMS);
+          }
           this.subscriptionApi.unsubscribe(socket, params[0]);
           response = { jsonrpc, id, result: "ok" };
           break;
@@ -183,18 +187,12 @@ export class ApiApp {
         }
       }
     } catch (err) {
-      if (err instanceof RpcError) {
-        response = { jsonrpc, id, message: err.message, data: err.data };
-      } else if (err instanceof Error) {
-        response = { jsonrpc, id, error: err.message };
-      } else {
-        response = { jsonrpc, id, error: "Internal server error" };
-      }
+      response = wsErrorResponse(err, request);
     }
     if (response != undefined) {
       socket.send(JSON.stringify(response));
     }
-    return true; // the request can not be handled by this function
+    return true; // The subscription request was handled and answered.
   }
 
   private async handleRpcRequest(
@@ -205,13 +203,13 @@ export class ApiApp {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let result: any;
     const { method, params, jsonrpc, id } = request;
-    if (
-      this.testingMode ||
-      ip === "localhost" ||
-      ip === "127.0.0.1" ||
-      (process.env.SKANDHA_ADMIN_KEY &&
-        authKey === process.env.SKANDHA_ADMIN_KEY)
-    ) {
+    // A configured key always takes precedence, including on loopback.
+    // Unauthenticated test access is explicit and confined to local fixtures.
+    const adminKey = process.env.SKANDHA_ADMIN_KEY;
+    const loopback = ip === "localhost" || ip === "127.0.0.1" ||
+      ip === "::1" || ip === "::ffff:127.0.0.1";
+    const authorized = adminKey ? authKey === adminKey : this.testingMode && loopback;
+    if (authorized) {
       switch (method) {
         case BundlerRPCMethods.debug_bundler_setBundlingMode:
           result = await this.debugApi.setBundlingMode(params[0]);
