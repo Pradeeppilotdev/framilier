@@ -9,8 +9,10 @@ The sidecar supports **off**, **FIFO** and **fair** policies. Fair mode rotates 
 To inspect the published experiments from a fresh clone, use Node.js 20.12 or newer. This command reads the checked-in samples and recomputes the report.
 
 ```sh
-./stakelane report sidecar/evidence/hardening/full-1 --verify
+./stakelane report sidecar/evidence/compare/merged-main-7d052e7 --verify
 ```
+
+![Mac benchmark in the terminal. When wallet B started checking, all eight A simulations had finished under FIFO and six had yet to start under fair scheduling.](docs/assets/cli-report.png)
 
 To run a live demo, build the sidecar with Bun and provide the pinned ethrex executable for your platform. The CLI creates and funds its own wallets on a private loopback chain. [One-time setup](docs/OPERATOR.md#prerequisites)
 

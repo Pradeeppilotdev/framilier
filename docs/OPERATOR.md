@@ -42,6 +42,12 @@ Podman supports the same create/cp/rm sequence. The extracted Linux executable i
 
 This starts fresh disposable loopback execution nodes and sidecars for off, FIFO and fair, using the same signed inputs across policies. It includes an idle control and two measured rounds at bursts 1 and 4. A successful run verifies canonical receipts after timing. Two rounds are a smoke test, not credible evidence about production p95 latency.
 
+## Read the terminal view
+
+`compare` shows progress as each policy finishes. `report` replays a saved run immediately. In a terminal, both show the first measured round at the largest burst size. Each tile represents one of wallet A’s simulations, grouped by its state when wallet B’s simulation started. The counts come from the recorded trace timestamps.
+
+The latency bars below the tiles aggregate all measured rounds at that burst. A full run shows B’s p95 alongside B’s median and A’s median batch time. A one-round smoke run shows the observed times. `--plain` prints every burst as text, and `--json` emits the machine-readable report. Redirected output uses the plain format by default. Set `NO_COLOR=1` to keep the visual layout in monochrome.
+
 ## Full comparison
 
 ```sh
