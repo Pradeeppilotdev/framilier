@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
 import { once } from "node:events";
-import { closeSync, createReadStream, existsSync, openSync } from "node:fs";
+import { closeSync, createReadStream, existsSync, openSync, readFileSync } from "node:fs";
 import { chmod, mkdir, mkdtemp, readFile, rename, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import path from "node:path";
@@ -18,10 +18,15 @@ import { privateProducer, rpc, RpcError } from "./producer.mjs";
 import { backgroundCandidateCount, measureAdmission } from "./failure-benchmark.mjs";
 import { startTraceMeter } from "./trace-meter.mjs";
 import { denyExternalHttp } from "./private-network.mjs";
+import { checkPlan, effectiveScheduler, schedulerSettings } from "./compare-metrics.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "../..");
-const matched = process.argv[2] === "--matched-benchmark";
+const comparing = process.argv[2] === "--compare-arm";
+// Only the compare coordinator supplies the private, per-run signing keys, over stdin.
+const sweep = comparing ? JSON.parse(readFileSync(0, "utf8")) : null;
+const nonceKeyCount = comparing ? checkPlan(sweep.rounds, sweep.bursts) : backgroundCandidateCount;
+const matched = comparing || process.argv[2] === "--matched-benchmark";
 const benchmark = matched || process.argv[2] === "--builder-benchmark";
 assert.ok(process.argv.length === 2 || (benchmark && process.argv.length === 3), "unexpected fixture arguments");
 const chainId = 8141337;
@@ -39,7 +44,7 @@ if (!binary) throw new Error("Set STAKELANE_ETHREX_BIN to the pinned Hegota ethr
 const genesisBytes = await readFile(path.join(here, "hegota-genesis.json"));
 assert.equal(sha256(genesisBytes), "5fe93acb7674db5d809aae4d66bff742121ed718bcddd327efcb8c1a9e631fb4");
 const { contracts, compiler } = JSON.parse(await readFile(path.join(here, "fixtures.json"), "utf8"));
-const key = generatePrivateKey();
+const key = comparing ? sweep.primaryKey : generatePrivateKey();
 const owner = privateKeyToAccount(key);
 const genesis = JSON.parse(genesisBytes);
 genesis.config.chainId = chainId;
@@ -92,13 +97,17 @@ async function waitForRpc(instance, url) {
   throw new Error("Private RPC did not start: " + (last?.message ?? "") + "\n" + log.slice(-1600));
 }
 async function stop() {
-  for (const child of children.reverse()) {
+  for (const child of [...children].reverse()) {
     if (child.exitCode != null || child.signalCode || !child.pid) continue;
     const exited = once(child, "exit").catch(() => {});
     child.kill("SIGTERM");
     await Promise.race([exited, pause(1500)]);
     if (child.exitCode == null && !child.signalCode) child.kill("SIGKILL");
   }
+}
+
+for (const [signal, code] of [["SIGINT", 130], ["SIGTERM", 143]]) {
+  process.once(signal, () => { void stop().finally(() => process.exit(code)); });
 }
 
 try {
@@ -139,7 +148,7 @@ try {
   if (benchmark) assert.equal(rounds, 9664, "benchmark uses the recorded workload");
   const { witness, commitment } = hashChain(rounds);
   const registry = await deploy("NaiveStakingRegistry");
-  const initialWalletBalance = matched ? 10n ** 18n : 10n ** 17n;
+  const initialWalletBalance = comparing ? 10n ** 19n : matched ? 10n ** 18n : 10n ** 17n;
   const wallet = await deploy("HashChainWallet", [owner.address, commitment, BigInt(rounds)], initialWalletBalance);
   const settings = JSON.parse(await readFile(path.join(root, "config.stakelane.example.json"), "utf8"));
   if (benchmark) meter = await startTraceMeter(el);
@@ -147,6 +156,12 @@ try {
   // The pinned node can fail individual receipt lookup for multi-tx private
   // payloads. Relay one per block after the concurrent admission timers finish.
   if (matched) settings.bundleSize = 1;
+  const reconciliationSeconds = 2;
+  const deferredSeconds = 3600;
+  if (comparing) {
+    settings.admissionScheduler = schedulerSettings(sweep.mode);
+    settings.bundleInterval = reconciliationSeconds * 1000;
+  }
   const configFile = path.join(work, "sidecar.json");
   await writeFile(configFile, JSON.stringify(settings));
   const bun = process.env.STAKELANE_BUN_BIN || (existsSync(localBun) ? localBun : "bun");
@@ -157,9 +172,10 @@ try {
     "--explorer.enable", "--redirectRpc",
   ]);
   await waitForRpc(api, local);
-  const deposit = async () => {
+  const activeScheduler = comparing ? effectiveScheduler(await rpc(local, "skandha_config"), sweep.mode) : null;
+  const deposit = async (account = wallet) => {
     const abi = contracts.NaiveStakingRegistry.abi;
-    const data = encodeFunctionData({ abi, functionName: "getDepositInfo", args: [wallet] });
+    const data = encodeFunctionData({ abi, functionName: "getDepositInfo", args: [account] });
     const encoded = await rpc(el, "eth_call", [{ to: registry, data }, "latest"]);
     const [amount, delay, withdrawal] = decodeFunctionResult({ abi, functionName: "getDepositInfo", data: encoded });
     return { amountWei: amount.toString(), delay: Number(delay), withdrawal: withdrawal.toString() };
@@ -185,8 +201,16 @@ try {
     const expectedHash = keccak256(encodeRawFrameTx(tx));
     assert.equal(await rpc(local, "eth_sendFrameTransaction", [tx]), expectedHash);
     // Only our spawned loopback sidecar can relay to our spawned execution node.
-    await rpc(local, "debug_bundler_sendBundleNow");
-    return producer.receipt(expectedHash);
+    const results = await producer.receipts([expectedHash], () => rpc(local, "debug_bundler_sendBundleNow"));
+    if (comparing) await waitForOnChain(expectedHash);
+    return results.get(expectedHash);
+  }
+  async function waitForOnChain(hash) {
+    for (let i = 0; i < 120; i++) {
+      if ((await rpc(local, "skandha_frameTransactionStatus", [hash]))?.status === "OnChain") return;
+      await pause(250);
+    }
+    throw new Error("Sidecar did not observe the mined setup transaction: " + hash);
   }
   const unstakedDeposit = await deposit();
   assert.equal(unstakedDeposit.amountWei, "0");
@@ -222,19 +246,21 @@ try {
     producer: { forkchoice: "engine_forkchoiceUpdatedV5", build: "engine_getPayloadV6", import: "engine_newPayloadV6", importStatus: "VALID" },
   };
   if (benchmark) {
-    const secondKey = generatePrivateKey();
+    const secondKey = comparing ? sweep.secondKey : generatePrivateKey();
     const secondOwner = privateKeyToAccount(secondKey);
     const secondWallet = await deploy("HashChainWallet", [secondOwner.address, commitment, BigInt(rounds)], 200000000000000000n);
     const second = { wallet: secondWallet, owner: secondOwner, key: secondKey };
     // Give the independent wallet the same stake eligibility. Its timed
     // transactions use only the clean owner-signature verification path.
-    await admitAndMine(await makeFrameTx(70000n, "0x", registry, stakeWei, stakeData, second));
+    const secondStake = await admitAndMine(await makeFrameTx(70000n, "0x", registry, stakeWei, stakeData, second));
+    const secondDeposit = await deposit(secondWallet);
+    assert.deepEqual(secondDeposit, stakedDeposit, "the two benchmark wallets must have equal locked stake");
     const initialized = [];
     if (matched) {
       // Pay the higher first-write cost before timing. Each competing proof
       // uses a different initialized key, so it cannot replace a sibling.
-      for (let first = 1; first <= backgroundCandidateCount; first += 16) {
-        const length = Math.min(16, backgroundCandidateCount - first + 1);
+      for (let first = 1; first <= nonceKeyCount; first += 16) {
+        const length = Math.min(16, nonceKeyCount - first + 1);
         const keys = Array.from({ length }, (_, i) => BigInt(first + i));
         const tx = await makeFrameTx(700000n, "0x", owner.address, 0n, "0x", primary,
           { keys, seq: 0n, stateGas: 200000n });
@@ -242,13 +268,8 @@ try {
         initialized.push(receipt.transactionHash);
       }
       // A mined slot stays reserved locally until the sidecar observes its receipt.
-      for (const hash of initialized) {
-        let onChain = false;
-        for (let i = 0; i < 120 && !onChain; i++) {
-          onChain = (await rpc(local, "skandha_frameTransactionStatus", [hash]))?.status === "OnChain";
-          if (!onChain) await pause(250);
-        }
-        assert.ok(onChain, "nonce initialization still pending in sidecar: " + hash);
+      if (!comparing) {
+        for (const hash of initialized) await waitForOnChain(hash);
       }
     }
     // Change one nonzero nibble to another. Correct and incorrect witnesses
@@ -260,19 +281,46 @@ try {
       return makeFrameTx(997200n, kind === "valid" ? witness : incorrectWitness, owner.address, 0n, "0x", primary,
         { keys: [BigInt(serial)], seq: 1n, stateGas: 200000n });
     }
+    const headHash = async () => (await rpc(el, "eth_getBlockByNumber", ["latest", false])).hash;
+    const setIntervalSeconds = async seconds => {
+      assert.equal(await rpc(local, "debug_bundler_setBundleInterval", [seconds]), "ok");
+    };
     report.benchmark = await measureAdmission({
       local, meter, noisyWallet: wallet, honestWallet: secondWallet, control: matched ? "valid" : "early", makeNoisy,
+      sweep: sweep && { rounds: sweep.rounds, bursts: sweep.bursts,
+        async beginAdmission() {
+          // Our own loopback sidecar also revalidates on its timer in manual mode.
+          // Its previous receipts have been observed; measure only fresh admissions.
+          await setIntervalSeconds(deferredSeconds);
+          return headHash();
+        },
+        async endAdmission(startHead) {
+          try { assert.equal(await headHash(), startHead, "chain head advanced during admission"); }
+          finally { await setIntervalSeconds(reconciliationSeconds); }
+        },
+      },
+      stakeCall: comparing ? { to: registry.toLowerCase(), data: encodeFunctionData({ abi: contracts.NaiveStakingRegistry.abi,
+        functionName: "getDepositInfo", args: [secondWallet] }).toLowerCase() } : undefined,
       makeHonest: () => makeFrameTx(70000n, "0x", owner.address, 0n, "0x", second),
-      mine: hashes => producer.receipts(hashes, () => rpc(local, "debug_bundler_sendBundleNow")),
+      async mine(hashes) {
+        const mined = await producer.receipts(hashes, () => rpc(local, "debug_bundler_sendBundleNow"));
+        if (comparing) await Promise.all(hashes.map(waitForOnChain));
+        return mined;
+      },
     });
     if (matched) {
       report.benchmark.backgroundWitnesses = { valid: witness, late: incorrectWitness };
-      report.benchmark.nonceSetup = { initializedKeys: backgroundCandidateCount, transactions: initialized };
+      report.benchmark.nonceSetup = { initializedKeys: nonceKeyCount, transactions: initialized };
       report.benchmark.relayBundleSize = settings.bundleSize;
     }
     report.benchmark.completedAt = new Date().toISOString();
+    report.benchmark.secondStake = { ...secondDeposit, transactionHash: secondStake.receipt.transactionHash };
     report.benchmark.blockedExternalHttp = network.denied;
-    console.log("Benchmark summary:", JSON.stringify(report.benchmark.observed));
+    if (comparing) {
+      report.benchmark.schedulerReadback = activeScheduler;
+      report.benchmark.admissionWindow = { verifyFixedHead: true, requireSidecarOnChain: true,
+        deferredIntervalSeconds: deferredSeconds, reconciliationIntervalSeconds: reconciliationSeconds };
+    } else console.log("Benchmark summary:", JSON.stringify(report.benchmark.observed));
   }
   const defaultOutput = matched ? "matched-valid-benchmark.json" : benchmark ? "builder-benchmark.json" : "result.json";
   const output = path.resolve(process.env.STAKELANE_EVIDENCE || path.join(work, defaultOutput));

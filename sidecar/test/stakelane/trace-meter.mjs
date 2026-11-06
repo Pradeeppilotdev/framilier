@@ -26,6 +26,13 @@ export async function startTraceMeter(el) {
           if (active.background.has(hash)) active.signal();
         }
       }
+      if (active?.stakeCall && payload.method === "eth_call") {
+        const call = payload.params?.[0];
+        if (call?.to?.toLowerCase() === active.stakeCall.to && call?.data?.toLowerCase() === active.stakeCall.data) {
+          event = { start: performance.now(), end: null };
+          active.stakeReads.push(event);
+        }
+      }
       const upstream = request(target, {
         method: "POST",
         headers: { "content-type": "application/json", "content-length": body.length },
@@ -43,12 +50,12 @@ export async function startTraceMeter(el) {
   await once(server, "listening");
   return {
     url: "http://127.0.0.1:" + server.address().port,
-    observe(honest, background) {
+    observe(honest, background, stakeCall) {
       const backgroundSet = new Set(background);
       let signal;
       const firstBackgroundTrace = new Promise(resolve => { signal = resolve; });
-      active = { watched: new Set([honest, ...background]), background: backgroundSet, events: [], signal };
-      return { events: active.events, firstBackgroundTrace };
+      active = { watched: new Set([honest, ...background]), background: backgroundSet, events: [], signal, stakeCall, stakeReads: [] };
+      return { events: active.events, firstBackgroundTrace, stakeReads: active.stakeReads };
     },
     clear() { active = undefined; },
     async close() {

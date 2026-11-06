@@ -28,7 +28,12 @@ function comparison(trials, treatment, control) {
 }
 const hashOf = tx => keccak256(encodeRawFrameTx(tx));
 
-export async function measureAdmission({ local, meter, noisyWallet, honestWallet, makeNoisy, makeHonest, mine, control }) {
+function peakOverlap(events) {
+  return events.reduce((peak, current) => Math.max(peak,
+    events.filter(e => e.start <= current.start && current.start < e.end).length), 0);
+}
+
+export async function measureAdmission({ local, meter, noisyWallet, honestWallet, makeNoisy, makeHonest, mine, control, sweep, stakeCall }) {
   assert.equal(new URL(local).hostname, "127.0.0.1");
   assert.equal(Number(await rpc(local, "eth_chainId")), 8141337);
   assert.notEqual(noisyWallet.toLowerCase(), honestWallet.toLowerCase());
@@ -55,9 +60,9 @@ export async function measureAdmission({ local, meter, noisyWallet, honestWallet
       return { error, start, end: performance.now() };
     }
   }
-  async function trial(round, kind) {
+  async function trial(round, kind, size = kind === "idle" ? 0 : burst) {
     const background = [];
-    for (let i = 0; i < (kind === "idle" ? 0 : burst); i++) {
+    for (let i = 0; i < size; i++) {
       background.push(await makeNoisy(kind, ++serial));
     }
     const honest = await makeHonest();
@@ -68,17 +73,22 @@ export async function measureAdmission({ local, meter, noisyWallet, honestWallet
       unique.add(h);
     }
     const before = await reputation();
-    const capture = meter.observe(hash, hashes);
-    const pending = Promise.all(background.map(send));
-    if (background.length) {
-      // Admit the valid probe as soon as the first competing simulation reaches
-      // the client. A missing trace is a failed setup, not a fast measurement.
-      await Promise.race([capture.firstBackgroundTrace, pending.then(() => {
-        assert.ok(capture.events.some(e => hashes.includes(e.hash)), "no competing simulation reached ethrex");
-      })]);
+    const admissionHeadHash = sweep && await sweep.beginAdmission();
+    const capture = meter.observe(hash, hashes, stakeCall);
+    let answer, replies;
+    try {
+      const pending = Promise.all(background.map(send));
+      if (background.length) {
+        // Start B as soon as the observer receives the first competing trace.
+        await Promise.race([capture.firstBackgroundTrace, pending.then(() => {
+          assert.ok(capture.events.some(e => hashes.includes(e.hash)), "no competing simulation reached ethrex");
+        })]);
+      }
+      [answer, replies] = await Promise.all([send(honest), pending]);
+    } finally {
+      meter.clear();
+      if (sweep) await sweep.endAdmission(admissionHeadHash);
     }
-    const [answer, replies] = await Promise.all([send(honest), pending]);
-    meter.clear();
     assert.equal(answer.result, hash, answer.error?.message);
     const expected = kind === "early" ? /one witness required|6f6e65207769746e657373207265717569726564/i :
       /wrong witness|77726f6e67207769746e657373/i;
@@ -101,6 +111,8 @@ export async function measureAdmission({ local, meter, noisyWallet, honestWallet
         hash: hashes[i], nonceKey: background[i].nonceKeys[0].toString(), nonceSeq: background[i].nonceSeq.toString(),
         outcome: accepted ? "admitted" : "rejected", rejectionCode: reply.error?.code, rejectionReason: reply.error?.rpcMessage,
         admissionMs: roundMs(reply.end - reply.start),
+        submitStartRelativeToHonestMs: roundMs(reply.start - answer.start),
+        responseEndRelativeToHonestMs: roundMs(reply.end - answer.start),
         simulationRpcMs: roundMs(t.end - t.start),
         traceStartRelativeToHonestMs: roundMs(t.start - answer.start),
         traceEndRelativeToHonestMs: roundMs(t.end - answer.start),
@@ -120,16 +132,39 @@ export async function measureAdmission({ local, meter, noisyWallet, honestWallet
         const { receipt } = mined.get(item.hash);
         const verifyGas = Number(BigInt(receipt.frameReceipts[0].gasUsed));
         assert.ok(verifyGas >= 990000 && verifyGas <= 997200, "valid background skipped the expensive path");
+        if (sweep) assert.equal(verifyGas, 993512, "comparison workload changed");
         item.mined = { blockNumber: Number(receipt.blockNumber), blockHash: receipt.blockHash, verifyGas };
       }
     }
     const { receipt } = mined.get(hash);
     const active = backgrounds.filter(t => t.traceStartRelativeToHonestMs <= 0 && t.traceEndRelativeToHonestMs > 0).length;
     if (background.length) assert.ok(active > 0, "probe missed the background simulation");
-    return { round, kind, honestHash: hash, honestMs: roundMs(answer.end - answer.start),
+    const batchMs = replies.length ? Math.max(...replies.map(r => r.end)) - Math.min(...replies.map(r => r.start)) : null;
+    const honestStakeLookupRpcMs = stakeCall && capture.stakeReads.map(e => {
+      assert.ok(e.end !== null, "incomplete stake lookup");
+      return roundMs(e.end - e.start);
+    });
+    return { round, kind, burst: size, admissionHeadHash, backgroundBatchMs: batchMs === null ? null : roundMs(batchMs),
+      peakTraces: peakOverlap(capture.events), peakBackgroundTraces: peakOverlap(capture.events.filter(e => e.hash !== hash)),
+      honestHash: hash, honestMs: roundMs(answer.end - answer.start), honestStakeLookupRpcMs,
+      beforeHonestTraceMs: roundMs(hTrace.start - answer.start), afterHonestTraceMs: roundMs(answer.end - hTrace.end),
       honestSimulationRpcMs: roundMs(hTrace.end - hTrace.start),
       backgroundActiveAtHonestSend: active, honestBlock: Number(receipt.blockNumber), honestBlockHash: receipt.blockHash,
       background: backgrounds, reputation: { before, after } };
+  }
+  if (sweep) {
+    const sizes = [0, ...sweep.bursts];
+    const warmup = [], trials = [];
+    for (let round = -1; round < sweep.rounds; round++) {
+      const offset = Math.max(0, round) % sizes.length;
+      const order = [...sizes.slice(offset), ...sizes.slice(0, offset)];
+      for (const size of order) {
+        const sample = await trial(round, size ? "valid" : "idle", size);
+        (round === -1 ? warmup : trials).push(sample);
+      }
+      if ((round + 1) % 5 === 0 && round >= 0) console.log(`Completed ${round + 1}/${sweep.rounds} measured rounds.`);
+    }
+    return { noisyWallet, honestWallet, warmup, trials };
   }
   const warmup = [];
   for (const kind of orders[0]) warmup.push(await trial(-1, kind));
