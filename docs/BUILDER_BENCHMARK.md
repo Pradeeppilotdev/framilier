@@ -6,7 +6,7 @@ The original scheduler comparison below ran on Apple Silicon at `7d052e7`. The l
 
 When wallet A submitted eight heavy transactions at once, fair scheduling reduced wallet B’s p95 admission time from 678.0 ms under FIFO to 238.2 ms. A’s median time to admit its whole batch rose from 593.2 ms to 622.1 ms. Both policies had four slots. Fair scheduling allowed one sender to occupy at most two slots with heavy work.
 
-`./stakelane compare` replayed the same signed transactions under each policy on a fresh private chain (`8141337`) on one Mac, using commit `7d052e7`. Both wallets staked 0.012 test ETH. When A sent a burst, B submitted one cheap transaction as A’s first simulation started. B’s timer ended when the sidecar returned its transaction hash. A’s batch time ran from its first submission to its last admission response. The runner mined the transactions after these timers stopped.
+`./framilier compare` replayed the same signed transactions under each policy on a fresh private chain (`8141337`) on one Mac, using commit `7d052e7`. Both wallets staked 0.012 test ETH. When A sent a burst, B submitted one cheap transaction as A’s first simulation started. B’s timer ended when the sidecar returned its transaction hash. A’s batch time ran from its first submission to its last admission response. The runner mined the transactions after these timers stopped.
 
 | Heavy transactions from A | Policy | B median (ms) | B p95 (ms) | A batch median (ms) |
 | ---: | --- | ---: | ---: | ---: |
@@ -82,12 +82,12 @@ In both runs the submitting wallet's `seen` count stayed at **2** and its reputa
 
 For a broader local sweep, report burst size or concurrency separately from offered requests per second. Publish the sample count with p50 and p95. A CPU-cost claim also requires process CPU measurements for the sidecar and execution client. A node-wide budget should count failed verification work. Sender reputation penalties would require evidence that the sender authorized the failed request.
 
-## Run stakelane compare
+## Run framilier compare
 
-From the repository root, `./stakelane compare` starts fresh private loopback processes. It uses the Bun, Node and pinned ethrex setup described in [the local runbook](SIDECAR.md#reproduce-the-mined-transaction). The default sweep contains an idle control and bursts of 1, 4 and 8 valid transactions. Each condition has one excluded warm-up and 20 measured rounds. The order of the burst sizes rotates between rounds. For a short baseline smoke test run:
+From the repository root, `./framilier compare` starts fresh private loopback processes. It uses the Bun, Node and pinned ethrex setup described in [the local runbook](SIDECAR.md#reproduce-the-mined-transaction). The default sweep contains an idle control and bursts of 1, 4 and 8 valid transactions. Each condition has one excluded warm-up and 20 measured rounds. The order of the burst sizes rotates between rounds. For a short baseline smoke test run:
 
 ```sh
-./stakelane compare --baseline-only --rounds 2 --bursts 1,4
+./framilier compare --baseline-only --rounds 2 --bursts 1,4
 ```
 
 - B submits a cheap valid transaction when the observer sees the first competing trace. Its timer starts at submission and stops when the sidecar returns the admission hash. A’s batch time runs from its first submission until the last hash comes back. Signing, setup and block production take place outside these timers.
@@ -117,7 +117,7 @@ Both of these earlier sweeps measured the default sidecar. The two-heavy-per-sen
 The following offline check covers the two earlier baseline sweeps and their replay controls. It runs from the repository root with Node alone. It recomputes the median and nearest-rank p95 from individual trials, counts the receipt records, checks for reused transaction hashes and verifies the signed-input fingerprint. In the instrumented repeat it also reconstructs A’s batch time from the earliest submission and last admission response.
 
 ```sh
-node --test sidecar/test/stakelane/compare-evidence.test.mjs
+node --test sidecar/test/framilier/compare-evidence.test.mjs
 ```
 
 One interrupted attempt left no final report. A separate attempt recorded two traced simulations for a single hash and stopped before producing a timing row. The sidecar can revalidate pending entries after it observes a new block. The current fixture separates that maintenance from initial admission and retains the exact-one-trace check. [Excluded attempt](../sidecar/evidence/compare/excluded-attempt.json)
@@ -126,7 +126,7 @@ A separate replay control started two private nodes with identical disposable si
 
 ### Scheduler integration
 
-The CLI sets these network configuration keys on each fresh sidecar. It reads `skandha_config.admissionScheduler` and checks the effective `mode`, `slots`, `maxHeavyPerSender`, `maxWaiting` and `heavyThreshold` before reporting enabled-mode measurements. The comparison adapter in `sidecar/test/stakelane/compare-metrics.mjs` owns this mapping. The sidecar schedules the work.
+The CLI sets these network configuration keys on each fresh sidecar. It reads `skandha_config.admissionScheduler` and checks the effective `mode`, `slots`, `maxHeavyPerSender`, `maxWaiting` and `heavyThreshold` before reporting enabled-mode measurements. The comparison adapter in `sidecar/test/framilier/compare-metrics.mjs` owns this mapping. The sidecar schedules the work.
 
 ```json
 {"schedulerMode":"fair","schedulerSlots":4,"schedulerMaxHeavyPerSender":2,"schedulerMaxWaiting":64,"schedulerHeavyThreshold":100000}
@@ -139,18 +139,18 @@ The enabled modes are `fifo` and `fair`. Both use four total slots. In fair mode
 Run the matched hash-chain workload comparison from `sidecar/`.
 
 ```sh
-node test/stakelane/run.mjs --matched-benchmark
+node test/framilier/run.mjs --matched-benchmark
 ```
 
 To reproduce the earlier early-versus-late comparison, run the following command.
 
 ```sh
-node test/stakelane/run.mjs --builder-benchmark
+node test/framilier/run.mjs --builder-benchmark
 ```
 
-For a fresh checkout, follow the [private node setup](SIDECAR.md#reproduce-the-mined-transaction) first. The runner prints the report path under `.runtime/`. Set `STAKELANE_EVIDENCE` to a new path to retain an export.
+For a fresh checkout, follow the [private node setup](SIDECAR.md#reproduce-the-mined-transaction) first. The runner prints the report path under `.runtime/`. Set `FRAMILIER_EVIDENCE` to a new path to retain an export.
 
 - [Early-failure control, run 1](../sidecar/evidence/builder-benchmark.json)
 - [Early-failure control, run 2](../sidecar/evidence/builder-benchmark-repeat.json)
-- [Benchmark implementation](../sidecar/test/stakelane/failure-benchmark.mjs)
+- [Benchmark implementation](../sidecar/test/framilier/failure-benchmark.mjs)
 

@@ -6,10 +6,10 @@
   "relayers": [],
   "rpcEndpoint": "https://altmempool.forshtat.com",
   "rpcEndpointSubmit": "http://127.0.0.1:8545",
-  "standardMempoolId": "stakelane-budget-v1",
+  "standardMempoolId": "framilier-budget-v1",
   "supportedMempools": [
     {
-      "mempoolId": "stakelane-budget-v1",
+      "mempoolId": "framilier-budget-v1",
       "entryPoint": "0x00000000000000000000000000000000000000aa"
     }
   ],

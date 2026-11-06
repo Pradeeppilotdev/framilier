@@ -7,12 +7,12 @@
     "node": ">=20.12.0"
   },
   "scripts": {
-    "test:inclusion": "node test/stakelane/run.mjs",
-    "test:builder-benchmark": "node test/stakelane/run.mjs --builder-benchmark",
-    "test:matched-benchmark": "node test/stakelane/run.mjs --matched-benchmark",
-    "start:stakelane": "bun --bun ./packages/cli/bin/skandha.js standalone --configFile config.stakelane.example.json --dataDir .runtime/data --api.address 127.0.0.1 --api.port 14337 --api.ws false --executor.bundlingMode manual --explorer.enable --redirectRpc",
-    "test:operator": "node --test test/stakelane/*.test.mjs",
-    "test:stakelane": "cd packages/executor && bun run vitest run test/stakelane test/services test/modules test/entities",
+    "test:inclusion": "node test/framilier/run.mjs",
+    "test:builder-benchmark": "node test/framilier/run.mjs --builder-benchmark",
+    "test:matched-benchmark": "node test/framilier/run.mjs --matched-benchmark",
+    "start:framilier": "bun --bun ./packages/cli/bin/skandha.js standalone --configFile config.framilier.example.json --dataDir .runtime/data --api.address 127.0.0.1 --api.port 14337 --api.ws false --executor.bundlingMode manual --explorer.enable --redirectRpc",
+    "test:operator": "node --test test/framilier/*.test.mjs",
+    "test:framilier": "cd packages/executor && bun run vitest run test/framilier test/services test/modules test/entities",
     "clean": "rm -rf ./packages/*/lib ./packages/*/*.tsbuildinfo",
     "bootstrap": "bun install",
     "prebuild": "bun run --filter @skandha/types build",

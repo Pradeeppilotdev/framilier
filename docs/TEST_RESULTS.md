@@ -2,7 +2,7 @@
 
 Recorded on **6 November 2026, India time**. Evidence timestamps use UTC and therefore show 5 November for this run. This is a historical observation of a resettable devnet.
 
-For the subsequent StakeLane fork and its mined high-work transaction, see [the sidecar test record](SIDECAR.md).
+For the subsequent framilier fork and its mined high-work transaction, see [the sidecar test record](SIDECAR.md).
 
 ## Restart check on 6 November, 13:11–13:14 IST
 
@@ -94,21 +94,21 @@ For a fresh reproduction, obtain test funds using the currently supported devnet
 
 ## Validation and evidence
 
-- TypeScript checking passed with `stakelane_probe.ts` included.
-- The upstream workshop suite passed **57 tests in 14 files**. These tests were not newly written for StakeLane.
+- TypeScript checking passed with `framilier_probe.ts` included.
+- The upstream workshop suite passed **57 tests in 14 files**. These tests were not newly written for framilier.
 - The live run used temporary ESM entry-point adapters to pass arguments and collect results without exiting the JavaScript runtime. Signing, transaction encoding, contracts and receipt checks were unchanged.
 - The Solidity test suite was not run during this session; the workshop's committed contract artifacts were used for the deployments.
 
 | Evidence file | Contents |
 | --- | --- |
-| `stakelane-probe/live-test-result.json` | Consolidated result, versions, four budget cases and limitations |
-| `stakelane-probe/budget-results.json` | Probe outputs, including the initial gateway wait and eventual primary inclusion |
-| `stakelane-probe/workshop-live-results.json` | Storage controls, staking and admission-debug results |
-| `stakelane-probe/baseline-reroute.json` | Identical baseline resubmission and receipt |
-| `stakelane-probe/routing-diagnostics.json` | Gateway peers and primary-sidecar checks |
-| `stakelane-probe/funding-result.json` | The single participant-funding transfer and receipt |
-| `stakelane-probe/final-checks.json` | Final stake/reputation context, balances, nonce and client version |
-| `stakelane-probe/runtime-adapter-notes.json` | Runtime adapter and endpoint changes |
+| `framilier-probe/live-test-result.json` | Consolidated result, versions, four budget cases and limitations |
+| `framilier-probe/budget-results.json` | Probe outputs, including the initial gateway wait and eventual primary inclusion |
+| `framilier-probe/workshop-live-results.json` | Storage controls, staking and admission-debug results |
+| `framilier-probe/baseline-reroute.json` | Identical baseline resubmission and receipt |
+| `framilier-probe/routing-diagnostics.json` | Gateway peers and primary-sidecar checks |
+| `framilier-probe/funding-result.json` | The single participant-funding transfer and receipt |
+| `framilier-probe/final-checks.json` | Final stake/reputation context, balances, nonce and client version |
+| `framilier-probe/runtime-adapter-notes.json` | Runtime adapter and endpoint changes |
 
 ## Follow-up to the original baseline
 

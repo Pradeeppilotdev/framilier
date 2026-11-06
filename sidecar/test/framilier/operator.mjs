@@ -6,15 +6,17 @@ import { access, readFile, realpath } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { checkPlan, summarize, workloadDigest, effectiveScheduler } from "./compare-metrics.mjs";
+import { renderTerminalReport, useTerminalView } from "./terminal-view.mjs";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
-const help = `StakeLane — measure admission latency and its throughput trade-off
+const help = `framilier — measure admission latency and its throughput trade-off
 
-  ./stakelane doctor [--json]                  Check local dependencies; sends nothing
-  ./stakelane compare --preset quick           Smoke test (2 rounds; not a p95 study)
-  ./stakelane compare --preset full --output ./results/run-001
-  ./stakelane report ./results/run-001 --verify [--json]
+  ./framilier doctor [--json]                  Check local dependencies; sends nothing
+  ./framilier compare --preset quick           Smoke test (2 rounds; not a p95 study)
+  ./framilier compare --preset full --output ./results/run-001
+  ./framilier report ./results/run-001 --verify [--json|--plain]
 
+In a terminal, compare and report show when wallet B got a turn. Use --plain for all rows.
 Compare uses disposable loopback chains, never the public devnet.
 Full comparison: 20 rounds at bursts 1,4,8; run --help for all options.
 Setup and binary pins: docs/SIDECAR.md`;
@@ -56,11 +58,11 @@ export async function doctor() {
   const [nodeMajor, nodeMinor] = process.versions.node.split(".").map(Number);
   checks.push({ name: "Node", ok: nodeMajor > 20 || (nodeMajor === 20 && nodeMinor >= 12), detail: process.version, fix: "Install Node.js 20.12+ (24 LTS recommended)." });
   const localBun = path.join(root, ".runtime/bin/bun");
-  const bun = process.env.STAKELANE_BUN_BIN || (existsSync(localBun) ? localBun : "bun");
-  const ethrex = process.env.STAKELANE_ETHREX_BIN || path.join(root, ".runtime/bin/ethrex");
+  const bun = process.env.FRAMILIER_BUN_BIN || (existsSync(localBun) ? localBun : "bun");
+  const ethrex = process.env.FRAMILIER_ETHREX_BIN || path.join(root, ".runtime/bin/ethrex");
   for (const [name, command, fix] of [
-    ["Bun", bun, "Install Bun 1.3.14 or newer in the 1.x series, or set STAKELANE_BUN_BIN."],
-    ["ethrex", ethrex, "Set STAKELANE_ETHREX_BIN to ethrex commit 9aa3645d795945c64400f41a70aace0edfa7f383."],
+    ["Bun", bun, "Install Bun 1.3.14 or newer in the 1.x series, or set FRAMILIER_BUN_BIN."],
+    ["ethrex", ethrex, "Set FRAMILIER_ETHREX_BIN to ethrex commit 9aa3645d795945c64400f41a70aace0edfa7f383."],
   ]) {
     const result = spawnSync(command, ["--version"], { encoding: "utf8", timeout: 10000 });
     const detail = (result.stdout || result.stderr || result.error?.message || "unavailable").trim();
@@ -115,7 +117,20 @@ function verifyTrialRecords(benchmark, bursts) {
   }
 }
 
-export async function verifyReport(directory) {
+export function selectDisplayTrials(trials, bursts) {
+  const largest = Math.max(...bursts);
+  return trials.filter(trial => trial.round === 0 && trial.burst === largest);
+}
+
+export function printTerminalReport(report, trialsByMode, source) {
+  console.log(renderTerminalReport(report, trialsByMode, {
+    source,
+    columns: process.stdout.columns,
+    color: !Object.hasOwn(process.env, "NO_COLOR") && Boolean(process.stdout.hasColors?.()),
+  }));
+}
+
+export async function verifyReport(directory, trialsByMode) {
   const dir = path.resolve(directory);
   const comparison = JSON.parse(await readFile(path.join(dir, "comparison.json"), "utf8"));
   assert.equal(comparison.format, 1, "unsupported report format");
@@ -157,6 +172,7 @@ export async function verifyReport(directory) {
     const pins = [arm.genesisHash, arm.ethrexBinarySha256, arm.fixtureArtifactSha256, arm.signedWorkloadSha256, arm.sidecarBuildSha256 ?? null];
     if (reference) assert.deepEqual(pins, reference, "policies used different inputs");
     else reference = pins;
+    if (trialsByMode) trialsByMode[mode] = selectDisplayTrials(benchmark.trials, comparison.bursts);
     measured++;
   }
   if (comparison.status === "complete") assert.ok(!onlyBaseline && measured === 3, "complete comparison requires three measured policies");
@@ -179,9 +195,12 @@ async function main() {
   }
   if (command === "report") {
     const [directory, ...flags] = args;
-    assert.ok(directory && !directory.startsWith("-") && flags.every(f => ["--verify", "--json"].includes(f)), "Usage: ./stakelane report <directory> --verify [--json]");
-    const result = await verifyReport(directory);
-    if (flags.includes("--json")) console.log(JSON.stringify(result));
+    assert.ok(directory && !directory.startsWith("-") && flags.every(f => ["--verify", "--json", "--plain"].includes(f)), "Usage: ./framilier report <directory> --verify [--json|--plain]");
+    const json = flags.includes("--json");
+    const trialsByMode = !json && useTerminalView(process.stdout, flags.includes("--plain")) ? {} : null;
+    const result = await verifyReport(directory, trialsByMode);
+    if (json) console.log(JSON.stringify(result));
+    else if (trialsByMode && result.verified) printTerminalReport(result.comparison, trialsByMode, "saved");
     else {
       console.log(`Verified ${result.measuredPolicies} measured policies. Status: ${result.status}`);
       for (const [mode, arm] of Object.entries(result.comparison.policies)) {

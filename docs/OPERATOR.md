@@ -1,6 +1,6 @@
-# Run StakeLane
+# Run framilier
 
-StakeLane is for alternative-mempool node operators measuring the trade-off between another wallet's admission latency and a busy wallet's batch completion time. It does not select block contents or provide Sybil resistance.
+framilier is for alternative-mempool node operators measuring the trade-off between another wallet's admission latency and a busy wallet's batch completion time. It does not select block contents or provide Sybil resistance.
 
 ## Prerequisites
 
@@ -15,21 +15,21 @@ cd sidecar
 bun install --frozen-lockfile
 bun run build
 cd ..
-export STAKELANE_ETHREX_BIN=/absolute/path/to/ethrex
-./stakelane doctor
+export FRAMILIER_ETHREX_BIN=/absolute/path/to/ethrex
+./framilier doctor
 ```
 
-For runtime checks, Bun is selected from `STAKELANE_BUN_BIN`, `sidecar/.runtime/bin/bun`, then `PATH`. Use a Bun executable on your shell’s `PATH` for the install and build commands above. `doctor` checks prerequisites locally. It recognizes the pinned ethrex revision in the version output. For a build that omits the revision, it recognizes the archived Apple Silicon binary by SHA-256 or checks that the executable resolves to `target/debug/ethrex` inside a source checkout at the full pinned commit with clean tracked files. The latter check identifies the local source and build path. Each comparison records the actual executable hash.
+For runtime checks, Bun is selected from `FRAMILIER_BUN_BIN`, `sidecar/.runtime/bin/bun`, then `PATH`. Use a Bun executable on your shell’s `PATH` for the install and build commands above. `doctor` checks prerequisites locally. It recognizes the pinned ethrex revision in the version output. For a build that omits the revision, it recognizes the archived Apple Silicon binary by SHA-256 or checks that the executable resolves to `target/debug/ethrex` inside a source checkout at the full pinned commit with clean tracked files. The latter check identifies the local source and build path. Each comparison records the actual executable hash.
 
 On Linux amd64 with Docker, the pinned image avoids a Rust source build. These commands extract its executable without starting an execution container:
 
 ```sh
 mkdir -p sidecar/.runtime/bin
-docker create --name stakelane-extract ghcr.io/forshtat/eip8141-devnet@sha256:c9a7770f892e02255999e1c0ffd596ecee704d9175c2480811ccdcfa1c2224c6
-docker cp stakelane-extract:/usr/local/bin/ethrex sidecar/.runtime/bin/ethrex
-docker rm stakelane-extract
-export STAKELANE_ETHREX_BIN="$PWD/sidecar/.runtime/bin/ethrex"
-./stakelane doctor
+docker create --name framilier-extract ghcr.io/forshtat/eip8141-devnet@sha256:c9a7770f892e02255999e1c0ffd596ecee704d9175c2480811ccdcfa1c2224c6
+docker cp framilier-extract:/usr/local/bin/ethrex sidecar/.runtime/bin/ethrex
+docker rm framilier-extract
+export FRAMILIER_ETHREX_BIN="$PWD/sidecar/.runtime/bin/ethrex"
+./framilier doctor
 ```
 
 Podman supports the same create/cp/rm sequence. The extracted Linux executable is not a macOS binary; use the native build instructions on macOS. The fixed extraction container name must be unused; do not remove someone else's container to make it available.
@@ -37,18 +37,24 @@ Podman supports the same create/cp/rm sequence. The extracted Linux executable i
 ## Smoke test
 
 ```sh
-./stakelane compare --preset quick --output ./results/smoke-001
+./framilier compare --preset quick --output ./results/smoke-001
 ```
 
 This starts fresh disposable loopback execution nodes and sidecars for off, FIFO and fair, using the same signed inputs across policies. It includes an idle control and two measured rounds at bursts 1 and 4. A successful run verifies canonical receipts after timing. Two rounds are a smoke test, not credible evidence about production p95 latency.
 
+## Read the terminal view
+
+`compare` shows progress as each policy finishes. `report` replays a saved run immediately. In a terminal, both show the first measured round at the largest burst size. Each tile represents one of wallet A’s simulations, grouped by its state when wallet B’s simulation started. The counts come from the recorded trace timestamps.
+
+The latency bars below the tiles aggregate all measured rounds at that burst. A full run shows B’s p95 alongside B’s median and A’s median batch time. A one-round smoke run shows the observed times. `--plain` prints every burst as text, and `--json` emits the machine-readable report. Redirected output uses the plain format by default. Set `NO_COLOR=1` to keep the visual layout in monochrome.
+
 ## Full comparison
 
 ```sh
-./stakelane compare --preset full --output ./results/full-001
-./stakelane report ./results/full-001 --verify
-./stakelane compare --preset full --order fair,fifo,off --output ./results/full-002
-./stakelane report ./results/full-002 --verify
+./framilier compare --preset full --output ./results/full-001
+./framilier report ./results/full-001 --verify
+./framilier compare --preset full --order fair,fifo,off --output ./results/full-002
+./framilier report ./results/full-002 --verify
 ```
 
 Full defaults to 20 rounds at bursts 1, 4 and 8, plus idle and excluded warm-ups. Counterbalance policy order on the repeat; never run the two comparisons concurrently on the same machine. The output directory must not already exist, preventing silent replacement or mixing of results. `--rounds` and `--bursts` override the preset within the command's safety bounds. Explicit `--baseline-only` tests only off. `--json` emits a final JSON report on stdout, with progress on stderr.
@@ -91,7 +97,7 @@ When enabled, every `FrameTxSimulationService` invocation also shares a total ex
 ```sh
 cd sidecar
 bun run build
-bun run test:stakelane
+bun run test:framilier
 bun run test:operator
 cd ..
 ```

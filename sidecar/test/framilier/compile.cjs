@@ -1,8 +1,8 @@
 // The workshop opcode helpers require exactly solc 0.8.28.
 const fs = require("node:fs");
 const path = require("node:path");
-const solc = require(process.env.STAKELANE_SOLC || "solc");
-const support = path.resolve(process.env.STAKELANE_SUPPORT ||
+const solc = require(process.env.FRAMILIER_SOLC || "solc");
+const support = path.resolve(process.env.FRAMILIER_SUPPORT ||
   path.join(__dirname, "../../../mempool-workshop/node_modules/@forshtat/hegota-support"));
 const expected = "0.8.28+commit.7893614a";
 if (!solc.version().startsWith(expected)) throw new Error("Expected solc " + expected);

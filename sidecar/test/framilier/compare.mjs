@@ -7,11 +7,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { checkPlan, summarize, workloadDigest } from "./compare-metrics.mjs";
+import { useTerminalView } from "./terminal-view.mjs";
 
-const help = `Usage: ./stakelane compare [--bursts 1,4,8] [--rounds 20] [--baseline-only]
+const help = `Usage: ./framilier compare [--bursts 1,4,8] [--rounds 20] [--baseline-only]
 
-Options: --preset quick|full, --output <new-directory>, --json,
+Options: --preset quick|full, --output <new-directory>, --json, --plain,
          --order off,fifo,fair (counterbalance order across repeated runs).
+In a terminal, see what A’s checks were doing when B started. Use --plain for all rows.
 Quick is a smoke check only; full defaults to 20 rounds and bursts 1,4,8.
 
 Start a private loopback chain for each scheduling policy and measure two wallets.
@@ -29,7 +31,7 @@ const usageError = message => { throw new Error(`${message}\n${help}`); };
 async function runPolicy(mode, plan, keys, dir, jsonOutput) {
   const output = path.join(dir, `${mode}.json`);
   const child = spawn(process.execPath, [path.join(here, "run.mjs"), "--compare-arm"], {
-    env: { ...process.env, STAKELANE_EVIDENCE: output }, stdio: ["pipe", jsonOutput ? 2 : "inherit", "inherit"],
+    env: { ...process.env, FRAMILIER_EVIDENCE: output }, stdio: ["pipe", jsonOutput ? 2 : "inherit", "inherit"],
   });
   const interrupt = () => child.kill("SIGTERM");
   process.once("SIGINT", interrupt);
@@ -78,7 +80,7 @@ async function main() {
   const { values } = parseArgs({ args, options: {
     help: { type: "boolean", short: "h" }, "baseline-only": { type: "boolean" },
     bursts: { type: "string" }, rounds: { type: "string" },
-    preset: { type: "string", default: "full" }, output: { type: "string" }, json: { type: "boolean" },
+    preset: { type: "string", default: "full" }, output: { type: "string" }, json: { type: "boolean" }, plain: { type: "boolean" },
     order: { type: "string", default: "off,fifo,fair" },
   } });
   if (values.help) return console.log(help);
@@ -88,7 +90,7 @@ async function main() {
   checkPlan(plan.rounds, plan.bursts);
   const order = values.order.split(",");
   assert.deepEqual([...order].sort(), ["fair", "fifo", "off"], "order must contain off,fifo,fair exactly once");
-  const { doctor } = await import("./operator.mjs");
+  const { doctor, printTerminalReport, selectDisplayTrials } = await import("./operator.mjs");
   const prerequisites = await doctor();
   const missing = prerequisites.checks.filter(check => !check.ok);
   if (missing.length) {
@@ -113,13 +115,15 @@ async function main() {
     preset: values.preset, interpretation: plan.rounds < 20 ? "smoke-only" : "exploratory-local",
     host: { os: platform(), arch: arch(), node: process.version, ethrexWorkers: 4 }, ...plan, requestedModes: modes, policies: {} };
   let reference;
+  const trialsByMode = !values.json && useTerminalView(process.stdout, values.plain) ? {} : null;
   log("Comparison evidence:", path.join(dir, "comparison.json"));
-  for (const mode of modes) {
+  for (const [index, mode] of modes.entries()) {
     if (mode !== "off" && report.policies.off?.schedulerReadback === null) {
       report.policies[mode] = { status: "unavailable", reason: "skandha_config did not report an active admission scheduler" };
       continue;
     }
-    log(`Starting ${mode === "off" ? "baseline" : mode} on a fresh private chain (${plan.rounds} rounds per burst).`);
+    const phase = trialsByMode ? `[${index + 1}/${modes.length}] ` : "";
+    log(`${phase}Starting ${mode === "off" ? "baseline" : mode} on a fresh private chain (${plan.rounds} rounds per burst).`);
     // A disconnected or killed process can leave this manifest, without a final summary.
     report.policies[mode] = { status: "in-progress" };
     await save(report, dir);
@@ -135,6 +139,11 @@ async function main() {
       report.policies[mode] = { status: "measured", schedulerReadback: b.schedulerReadback, ...inputs,
         evidenceFile: `${mode}.json`, summary: summarize(b.trials, plan.rounds, plan.bursts, b.schedulerReadback) };
       await save(report, dir);
+      if (trialsByMode) {
+        trialsByMode[mode] = selectDisplayTrials(b.trials, plan.bursts);
+        const mined = report.policies[mode].summary.reduce((total, row) => total + row.aMined + row.bMined, 0);
+        log(`${phase}${mode} complete · ${mined} measured transactions mined`);
+      }
     } catch (err) {
       report.policies[mode] = { status: "failed", reason: err.message };
       report.status = "failed";
@@ -147,7 +156,11 @@ async function main() {
   report.completedAt = new Date().toISOString();
   await save(report, dir);
   if (values.json) console.log(JSON.stringify(report));
-  else { table(report); log("Evidence:", path.join(dir, "comparison.json")); }
+  else {
+    if (trialsByMode && !partial) printTerminalReport(report, trialsByMode, "live");
+    else table(report);
+    log("Evidence:", path.join(dir, "comparison.json"));
+  }
   if (partial) process.exitCode = 2;
 }
 

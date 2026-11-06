@@ -1,4 +1,4 @@
-# StakeLane hardening validation
+# framilier hardening validation
 
 Cresnex supplied these Linux results in PR #4 at `8de92f3`, based on `7d052e7`. The archived runs identify their compiled sidecar by SHA-256. The tests and timing tables below describe that contributor build. Subsequent review changes were tested separately on macOS. [Original Mac scheduler measurements](BUILDER_BENCHMARK.md#scheduler-comparison-on-6-november-2026)
 
@@ -51,7 +51,7 @@ At burst 4, fair reduced B p50 by **29.8%** and p95 by **28.6%**, while A batch 
 Evidence: [manifest](../sidecar/evidence/hardening/full-1/comparison.json), [off samples](../sidecar/evidence/hardening/full-1/off.json), [FIFO samples](../sidecar/evidence/hardening/full-1/fifo.json), [fair samples](../sidecar/evidence/hardening/full-1/fair.json), [host metadata](../sidecar/evidence/hardening/environment.json).
 
 ```sh
-./stakelane report sidecar/evidence/hardening/full-1 --verify
+./framilier report sidecar/evidence/hardening/full-1 --verify
 ```
 
 Collection ran on a shared desktop. One short targeted unit check ran during the first baseline arm; this is a background-load limitation, not an excluded trial. A separate repeat checks the central eight-heavy result in reverse policy order without concurrent builds or unit tests.
@@ -74,12 +74,12 @@ At burst 8, fair reduced B p50 **55.4%** and p95 **57.8%**, while A batch p50 in
 Evidence: [repeat manifest](../sidecar/evidence/hardening/repeat-8/comparison.json).
 
 ```sh
-./stakelane report sidecar/evidence/hardening/repeat-8 --verify
+./framilier report sidecar/evidence/hardening/repeat-8 --verify
 ```
 
 ## Small-workload regression
 
-A separate fresh private chain with `STAKELANE_HASH_ROUNDS=1` passed the inclusion runner and all negative controls. The VERIFY frame used **7,886 gas**; both frames succeeded in canonical block 5. This confirms small supported workloads no longer fail the old unconditional 500,000-gas minimum. The runner now bounds custom rounds to 1–9,664 under its fixed execution allowance; the measured benchmark still requires exactly 9,664 rounds and 993,512 VERIFY gas. [Receipt and controls](../sidecar/evidence/hardening/small-workload.json).
+A separate fresh private chain with `FRAMILIER_HASH_ROUNDS=1` passed the inclusion runner and all negative controls. The VERIFY frame used **7,886 gas**; both frames succeeded in canonical block 5. This confirms small supported workloads no longer fail the old unconditional 500,000-gas minimum. The runner now bounds custom rounds to 1–9,664 under its fixed execution allowance; the measured benchmark still requires exactly 9,664 rounds and 993,512 VERIFY gas. [Receipt and controls](../sidecar/evidence/hardening/small-workload.json).
 
 ## Interpretation limits
 

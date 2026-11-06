@@ -1,4 +1,4 @@
-// Copy into mempool-workshop/src/steps/stakelane_probe.ts.
+// Copy into mempool-workshop/src/steps/framilier_probe.ts.
 // Reviewed against workshop bcfe02a196ca97b6fb0d1044db9d0b4c673831fc.
 // A bounded declared-budget probe, not an expensive-validation or load test.
 import { execFileSync } from "node:child_process";
@@ -27,7 +27,7 @@ function errorDetails(e: unknown) {
 async function main() {
   const args = process.argv.slice(2);
   if (args.includes("--help")) {
-    console.log("node --import tsx src/steps/stakelane_probe.ts --budget 70000 [--rpc http://127.0.0.1:14337/rpc/] [--submit [--admission-only | --relay-raw]]\nDefault: estimate only. A loopback sidecar in manual mode can record admission alone or forward the identical signed bytes through eth_sendRawTransaction.");
+    console.log("node --import tsx src/steps/framilier_probe.ts --budget 70000 [--rpc http://127.0.0.1:14337/rpc/] [--submit [--admission-only | --relay-raw]]\nDefault: estimate only. A loopback sidecar in manual mode can record admission alone or forward the identical signed bytes through eth_sendRawTransaction.");
     return;
   }
   let budget = 70000n;
@@ -90,7 +90,7 @@ async function main() {
   try {
     report.workshopCommit = existsSync(join(workshopRoot, ".git"))
       ? execFileSync("git", ["-C", workshopRoot, "rev-parse", "HEAD"], { encoding: "utf8" }).trim()
-      : JSON.parse(readFileSync(join(workshopRoot, ".stakelane-source.json"), "utf8")).revision;
+      : JSON.parse(readFileSync(join(workshopRoot, ".framilier-source.json"), "utf8")).revision;
   }
   catch { report.workshopCommit = "unknown"; }
   report.blockBefore = await rpc("eth_blockNumber");

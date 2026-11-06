@@ -1,4 +1,4 @@
-StakeLane: first devnet budget check
+framilier: first devnet budget check
 
 LIVE TEST UPDATE — 6 November 2026 (India time)
 The pinned workshop dependencies are installed in ../mempool-workshop. TypeScript
@@ -28,7 +28,7 @@ workshop folder. Do NOT rerun step_1_check: it resets recorded deployed addresse
 Never share .workshop-state.json. Fresh-checkout instructions below are historical
 setup instructions; existing-state work resumes with the current wallet.
 The source was downloaded as a pinned archive, so it has no git HEAD; the pinned
-revision is recorded in ../mempool-workshop/.stakelane-source.json.
+revision is recorded in ../mempool-workshop/.framilier-source.json.
 
 ORIGINAL ARCHIVE PREPARATION RECORD
 Prepared 6 November 2026 (India time). The live RPC connection from the research
@@ -55,7 +55,7 @@ cd mempool-workshop
 git checkout bcfe02a196ca97b6fb0d1044db9d0b4c673831fc
 yarn install --frozen-lockfile
 
-Copy stakelane_probe.ts from this archive to src/steps/stakelane_probe.ts.
+Copy framilier_probe.ts from this archive to src/steps/framilier_probe.ts.
 Read the workshop README.md and AGENTS.md. If the mentors provide a newer tested
 revision, use it instead and check compatibility. The script records git HEAD.
 
@@ -71,13 +71,13 @@ Do not rerun step_1_check in an existing workshop checkout casually: it resets
 recorded addresses and step completion state. Never publish .workshop-state.json.
 
 FIRST CONTROL: UNSTAKED, SMALL ALLOWANCE
-yarn tsx src/steps/stakelane_probe.ts --budget 70000
+yarn tsx src/steps/framilier_probe.ts --budget 70000
 This estimates only. It neither submits nor proves admission.
 Then submit one low-cost baseline and confirm its receipt:
-yarn tsx src/steps/stakelane_probe.ts --budget 70000 --submit
+yarn tsx src/steps/framilier_probe.ts --budget 70000 --submit
 
 ONLY IF THAT BASELINE WORKS, test a larger declared allowance:
-yarn tsx src/steps/stakelane_probe.ts --budget 500001 --submit
+yarn tsx src/steps/framilier_probe.ts --budget 500001 --submit
 Read the result before another invocation. If it is admitted but stays pending,
 STOP and use step_11_debug; do not accumulate pending transactions.
 
@@ -85,8 +85,8 @@ STAKED COMPARISON: SAME WALLET
 Use the official commands to stake and establish the expected clean baseline:
 yarn step_7_stake
 yarn step_8_tx_violating_alt
-yarn tsx src/steps/stakelane_probe.ts --budget 70000 --submit
-yarn tsx src/steps/stakelane_probe.ts --budget 500001 --submit
+yarn tsx src/steps/framilier_probe.ts --budget 70000 --submit
+yarn tsx src/steps/framilier_probe.ts --budget 500001 --submit
 
 Run those commands individually, examining each result. Step 8 checks the
 workshop's original staked storage-access demonstration; it is not a high-gas

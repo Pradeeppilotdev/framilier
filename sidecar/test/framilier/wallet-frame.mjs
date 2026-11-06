@@ -1,9 +1,10 @@
-import { concatHex, keccak256, stringToHex, toHex } from "viem";
+import { concatHex, keccak256, toHex } from "viem";
 import { sign } from "viem/accounts";
 import { computeSigHash } from "../../packages/executor/lib/services/FrameTxService/codec.js";
 
 export function hashChain(rounds) {
-  const witness = keccak256(stringToHex("StakeLane private inclusion fixture v1"));
+  // Fixed input shared by the archived and new hash-chain runs.
+  const witness = "0x0561fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289";
   let commitment = witness;
   for (let i = 0; i < rounds; i++) commitment = keccak256(commitment);
   return { witness, commitment };
