@@ -1,0 +1,55 @@
+{
+  "gitCommit": "7d052e778fba6a86fb4f70c0d7940b2e62605285",
+  "gitTree": "e4ccf0adff86c73c7d8da90c98e29bcb72b42915",
+  "pullRequests": [
+    "https://github.com/Pradeeppilotdev/stakelane/pull/1",
+    "https://github.com/Pradeeppilotdev/stakelane/pull/2"
+  ],
+  "reproduce": "./stakelane compare",
+  "environment": "Private loopback ethrex and local sidecar on one Mac.",
+  "chainId": 8141337,
+  "host": {
+    "os": "darwin",
+    "arch": "arm64",
+    "node": "v26.12.1",
+    "ethrexWorkers": 4
+  },
+  "completedAt": "2026-11-06T16:08:40.763Z",
+  "automatedChecksPassed": {
+    "executor": 436,
+    "comparison_and_saved_evidence": 9,
+    "gossip_wire_format": 4,
+    "explorer": 31
+  },
+  "totalAutomatedChecksPassed": 480,
+  "distinctMeasuredSignedInputs": 340,
+  "measuredInclusionsAcrossThreeChains": 1020,
+  "heavyVerifyGasPerReceipt": 993512,
+  "warmupsExcluded": true,
+  "roundsPerConditionPerPolicy": 20,
+  "countsPerPolicy_A_then_B": {
+    "off": [
+      260,
+      80
+    ],
+    "fifo": [
+      260,
+      80
+    ],
+    "fair": [
+      260,
+      80
+    ]
+  },
+  "signedWorkloadSha256IncludingWarmups": "97e4a570a43edeeb0755aabad39a9cf3ae8b774038dc22102de6ab182b2e1b36",
+  "ethrexCommit": "9aa3645d795945c64400f41a70aace0edfa7f383",
+  "latencyDefinition": "B is the second wallet. Its admission time ends when the sidecar returns its hash. Mining happens outside the timer.",
+  "statistics": "Median and nearest-rank p95 over 20 measured rounds for each policy and burst size.",
+  "excludedRun": "An earlier 20-round attempt lost its terminal connection during fair scheduling. Its measurements are excluded.",
+  "fileSha256": {
+    "comparison.json": "cc3d293d8dde010163c42474d45de614d8b0a5908455d8767f36984ad3fe42fe",
+    "off.json": "c7d53c2430cf52cffa27a7a44f805f9869645cc792b0ee149abaaea82217119f",
+    "fifo.json": "51a6ef6672737b4ae60f1c5854310e4efd7b1ea478e9083850deb3a5fe4d75ec",
+    "fair.json": "bad51c35c7fe4427e2bfde0c53146b90ec90f3c17b16933cde11c6f9efda8899"
+  }
+}
