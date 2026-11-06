@@ -86,3 +86,9 @@ A separate fresh private chain with `STAKELANE_HASH_ROUNDS=1` passed the inclusi
 The workload is a synthetic Keccak hash chain with 993,512 VERIFY gas, not a real privacy protocol or post-quantum wallet. Admission timings exclude signing, setup, mining and the maintenance window. Maintenance is deliberately deferred during timed initial admission; mixed-path capacity is covered by regression tests, not a production load benchmark. The execution and sidecar binary/build hashes identify what ran; fingerprints and saved receipts improve reproducibility but are not independent attestations.
 
 There is no guarantee of starvation freedom if an underlying task never settles. A node-wide execution budget cannot control direct requests to an independently exposed ethrex API. Per-sender controls can be bypassed with more identities; sender names are not authenticated before validation. No claims of production security, Sybil resistance, measured inclusion-latency improvement or guaranteed prizes are made.
+
+## macOS merge review
+
+The integrated source at `cdb065b` built on Apple Silicon with Node 26.12.1 and Bun 1.4.4. All 521 checks passed (460 executor, 22 operator and evidence, 8 peer, and 31 explorer). The checks include the follow-up replacement race and rejection of mislabeled reports. `doctor` recognized the local execution binary.
+
+A fresh one-round comparison replayed identical signed inputs under fair, FIFO and off on private chain `8141337`. All 18 measured submissions mined across the three chains. This is a functional smoke check. An earlier attempt interrupted during the final policy was excluded from this record. The 20-round tables above describe the contributor’s archived Linux build. [Smoke samples and summary](../sidecar/evidence/compare/pr4-macos-smoke/comparison.json) · [Build and input fingerprints](../sidecar/evidence/compare/pr4-macos-smoke/verification.json)

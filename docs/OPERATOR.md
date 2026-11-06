@@ -19,7 +19,7 @@ export STAKELANE_ETHREX_BIN=/absolute/path/to/ethrex
 ./stakelane doctor
 ```
 
-For runtime checks, Bun is selected from `STAKELANE_BUN_BIN`, `sidecar/.runtime/bin/bun`, then `PATH`. Use a Bun executable on your shell’s `PATH` for the install and build commands above. `doctor` checks prerequisites locally. It recognizes the pinned ethrex revision in the version output or the recorded SHA-256 of the tested Apple Silicon binary when its version omits the revision.
+For runtime checks, Bun is selected from `STAKELANE_BUN_BIN`, `sidecar/.runtime/bin/bun`, then `PATH`. Use a Bun executable on your shell’s `PATH` for the install and build commands above. `doctor` checks prerequisites locally. It recognizes the pinned ethrex revision in the version output. For a build that omits the revision, it recognizes the archived Apple Silicon binary by SHA-256 or checks that the executable resolves to `target/debug/ethrex` inside a source checkout at the full pinned commit with clean tracked files. The latter check identifies the local source and build path. Each comparison records the actual executable hash.
 
 On Linux amd64 with Docker, the pinned image avoids a Rust source build. These commands extract its executable without starting an execution container:
 
