@@ -31,7 +31,7 @@ export class Server {
 
     if (config.ws) {
       if (config.wsPort == config.port) {
-        await app.register(websocket);
+        await app.register(websocket, { options: { maxPayload: 1024 * 1024 } });
         ws = app;
       } else {
         ws = fastify({
@@ -39,11 +39,13 @@ export class Server {
           disableRequestLogging: !config.enableRequestLogging,
           ignoreTrailingSlash: true,
         });
+        await ws.register(websocket, { options: { maxPayload: 1024 * 1024 } });
       }
     }
 
     app.addHook("preHandler", (req, reply, done) => {
       
+      if (!config.enableRequestLogging) { done(); return; }
       if (req.url === "/version" || req.url === "/healthcheck") {
         // do nothing
       } else if (req.method === "POST") {
@@ -68,7 +70,7 @@ export class Server {
     });
     // RESPONSE LOG
     app.addHook("preSerialization", (request, reply, payload, done) => {
-      if (payload) {
+      if (config.enableRequestLogging && payload) {
         request.log.info({ body: payload }, "RESPONSE ::");
       }
       done();

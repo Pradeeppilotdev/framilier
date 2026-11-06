@@ -14,7 +14,7 @@ export class RpcError extends Error {
   }
 }
 
-export async function rpc(url, method, params = [], jwt) {
+export async function rpc(url, method, params = [], jwt, adminKey) {
   const headers = { "content-type": "application/json" };
   if (jwt) {
     const header = Buffer.from('{"alg":"HS256","typ":"JWT"}').toString("base64url");
@@ -23,6 +23,7 @@ export async function rpc(url, method, params = [], jwt) {
     const signature = createHmac("sha256", jwt).update(message).digest("base64url");
     headers.authorization = "Bearer " + message + "." + signature;
   }
+  if (adminKey) headers.authorization = adminKey;
   const response = await fetch(url, {
     method: "POST", headers,
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }, (_, v) =>

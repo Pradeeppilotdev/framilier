@@ -46,7 +46,7 @@
     "ethers": "5.7.2",
     "strict-event-emitter-types": "2.0.0",
     "viem": "2.27.0",
-    "ws": "8.16.0"
+    "ws": "8.22.1"
   },
   "devDependencies": {
     "@types/ws": "8.2.2"

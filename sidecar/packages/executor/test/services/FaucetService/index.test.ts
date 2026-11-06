@@ -57,3 +57,50 @@ describe("FaucetService", () => {
     expect(sendTransaction).not.toHaveBeenCalled();
   });
 });
+
+describe("FaucetService backlog bounds", () => {
+  it("rejects overflow before backend work and releases capacity after failures", async () => {
+    let release!: () => void;
+    const blocked = new Promise<void>(resolve => { release = resolve; });
+    const getBalance = vi.fn(async () => { await blocked; return 0n; });
+    const sendTransaction = vi.fn();
+    const faucet = new FaucetService({ account: { address: FAUCET }, sendTransaction } as any,
+      { getBalance } as any, Date.now, 2);
+    const first = expect(faucet.drip(ADDRESS)).rejects.toThrow("empty");
+    const second = expect(faucet.drip(ADDRESS)).rejects.toThrow("empty");
+    await Promise.resolve();
+    await expect(faucet.drip(ADDRESS)).rejects.toMatchObject({ code: -32000, message: expect.stringContaining("retry later") });
+    expect(getBalance).toHaveBeenCalledTimes(1);
+    release();
+    await Promise.all([first, second]);
+    await expect(faucet.drip(ADDRESS)).rejects.toThrow("empty");
+    expect(getBalance).toHaveBeenCalledTimes(3);
+    expect(sendTransaction).not.toHaveBeenCalled();
+  });
+
+  it("preserves serialization and recovers after a submission failure", async () => {
+    let release!: () => void;
+    const blocked = new Promise<void>(resolve => { release = resolve; });
+    const sendTransaction = vi.fn().mockImplementationOnce(async () => {
+      await blocked;
+      throw new Error("submission unavailable");
+    }).mockResolvedValue("0xabc");
+    const faucet = new FaucetService({ account: { address: FAUCET }, sendTransaction } as any,
+      { getBalance: vi.fn(async () => FAUCET_AMOUNT * 10n) } as any, Date.now, 2);
+    const first = expect(faucet.drip(ADDRESS)).rejects.toThrow("submission unavailable");
+    const second = faucet.drip(ADDRESS);
+    await new Promise(resolve => setImmediate(resolve));
+    expect(sendTransaction).toHaveBeenCalledTimes(1);
+    await expect(faucet.drip(ADDRESS)).rejects.toThrow("queue is full");
+    release();
+    await first;
+    await expect(second).resolves.toBe("0xabc");
+    expect(sendTransaction).toHaveBeenCalledTimes(2);
+    await expect(faucet.drip(ADDRESS)).rejects.toThrow("already received");
+    expect((faucet as any).pending).toBe(0);
+  });
+
+  it.each([0, -1, 1.5, Number.NaN])("rejects invalid backlog limit %s", value => {
+    expect(() => new FaucetService({} as any, {} as any, Date.now, value)).toThrow(/maxPending/);
+  });
+});

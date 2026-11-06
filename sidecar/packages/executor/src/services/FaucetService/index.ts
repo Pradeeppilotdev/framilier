@@ -8,6 +8,8 @@ export const FAUCET_ADDRESS_COOLDOWN_MS = 60 * 60 * 1000;
 /** Drips per window across all addresses, so a script cannot drain the faucet account. */
 export const FAUCET_GLOBAL_LIMIT = 100;
 export const FAUCET_GLOBAL_WINDOW_MS = 60 * 60 * 1000;
+/** Total active and waiting requests; slow backends must not retain an unbounded backlog. */
+export const FAUCET_MAX_PENDING = 32;
 
 /**
  * Sends a fixed amount of ETH from a dedicated faucet account. Requests are
@@ -19,12 +21,18 @@ export class FaucetService {
   private lastDrip = new Map<string, number>();
   private recent: number[] = [];
   private queue: Promise<unknown> = Promise.resolve();
+  private pending = 0;
 
   constructor(
     private wallet: WalletClient,
     private publicClient: Pick<PublicClient, "getBalance">,
-    private now: () => number = Date.now
-  ) {}
+    private now: () => number = Date.now,
+    private maxPending: number = FAUCET_MAX_PENDING
+  ) {
+    if (!Number.isSafeInteger(maxPending) || maxPending < 1) {
+      throw new Error("Faucet maxPending must be a positive safe integer");
+    }
+  }
 
   get amount(): bigint {
     return FAUCET_AMOUNT;
@@ -35,9 +43,13 @@ export class FaucetService {
     if (typeof to !== "string" || !isAddress(to, { strict: false })) {
       throw new RpcError("Expected an address", RpcErrorCodes.INVALID_REQUEST);
     }
+    if (this.pending >= this.maxPending) {
+      return Promise.reject(new RpcError("Faucet queue is full; retry later", RpcErrorCodes.SERVER_ERROR));
+    }
     const address = to as Address;
+    this.pending++;
     // Runs after earlier requests settle; a failure must not block the queue.
-    const result = this.queue.then(() => this.send(address));
+    const result = this.queue.then(() => this.send(address)).finally(() => { this.pending--; });
     this.queue = result.catch(() => undefined);
     return result;
   }
