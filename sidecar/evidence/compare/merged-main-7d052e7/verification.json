@@ -2,10 +2,10 @@
   "gitCommit": "7d052e778fba6a86fb4f70c0d7940b2e62605285",
   "gitTree": "e4ccf0adff86c73c7d8da90c98e29bcb72b42915",
   "pullRequests": [
-    "https://github.com/Pradeeppilotdev/stakelane/pull/1",
-    "https://github.com/Pradeeppilotdev/stakelane/pull/2"
+    "https://github.com/Pradeeppilotdev/framilier/pull/1",
+    "https://github.com/Pradeeppilotdev/framilier/pull/2"
   ],
-  "reproduce": "./stakelane compare",
+  "reproduce": "./framilier compare",
   "environment": "Private loopback ethrex and local sidecar on one Mac.",
   "chainId": 8141337,
   "host": {

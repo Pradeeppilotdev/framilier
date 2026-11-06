@@ -75,7 +75,7 @@ export function budgetDetail(entry: EntityValidationBudget, limit: bigint): stri
 }
 
 /**
- * StakeLane PR 1: default threshold for classifying a frame transaction
+ * framilier PR 1: default threshold for classifying a frame transaction
  * as a heavy admission job.
  * Total declared VERIFY budget > 100,000 is heavy.
  */

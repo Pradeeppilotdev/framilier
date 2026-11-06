@@ -13,7 +13,7 @@ import { hashChain, signedWalletFrame } from "./wallet-frame.mjs";
 
 const [mode, genesis] = process.argv.slice(2);
 if (!["--submit", "--observe"].includes(mode) || !/^0x[0-9a-f]{64}$/.test(genesis ?? "") || process.argv.length !== 4) {
-  console.log("Usage: node test/stakelane/public-inclusion.mjs (--submit | --observe) <verified-public-genesis-hash>");
+  console.log("Usage: node test/framilier/public-inclusion.mjs (--submit | --observe) <verified-public-genesis-hash>");
   process.exit(mode === "--help" ? 0 : 1);
 }
 const el = "https://altmempool.forshtat.com";
@@ -204,7 +204,7 @@ const report = { verifiedAt: new Date().toISOString(), chainId, genesis, executi
   deposit: { amountWei: amount, unstakeDelaySeconds: Number(unstakeDelay), withdrawalTime: withdrawal },
   proof, declaredVerifyGas: 997200, signatureGas: 2800, totalDeclaredValidationGas: 1000000,
   outcome: proof.receipt ? "MINED" : proof.sidecarStatus, actualVerifyGas: verifyUsed, diagnostics, explorer };
-const output = process.env.STAKELANE_EVIDENCE || work + "/result.json";
+const output = process.env.FRAMILIER_EVIDENCE || work + "/result.json";
 await writeFile(output, encode(report));
 console.log("Public outcome", report.outcome, "\nExplorer", explorer, "\nEvidence", output);
 if (!proof.receipt) process.exitCode = 2;

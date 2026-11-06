@@ -37,7 +37,7 @@ function harness(deposits: Record<string, Deposit> = {}, code: Hex | undefined =
   const getCode = vi.fn(async () => code);
   const logger = { debug: vi.fn(), error: vi.fn() } as any;
   const config = { minStake: STAKE, minUnstakeDelay: 86400, precompiles: [], whitelistedEntities: {},
-    relayOpsWithWhitelistedEntities: false, standardMempoolId: "stakelane-test" } as unknown as NetworkConfig;
+    relayOpsWithWhitelistedEntities: false, standardMempoolId: "framilier-test" } as unknown as NetworkConfig;
   const validation = new FrameTxValidationService(registry as unknown as StakingRegistryService,
     reputation as unknown as ReputationService, config, logger, undefined, getCode);
   return { validation, registry, reputation, getCode, logger };
@@ -62,7 +62,7 @@ function sign(transaction: FrameTransaction) {
   return transaction;
 }
 
-describe("StakeLane BUDGET-010 accounting", () => {
+describe("framilier BUDGET-010 accounting", () => {
   it("charges all signature schemes only to the sender", () => {
     const transaction = tx([frame(50_000n, 2), frame(900_000n, 1, PAYER)]);
     transaction.signatures = [0, 1, 2].map(scheme => ({ scheme, signer: "0x", msg: "0x", signature: "0x" })) as any;
@@ -100,12 +100,12 @@ describe("StakeLane BUDGET-010 accounting", () => {
   });
 });
 
-describe("StakeLane real validation pipeline", () => {
+describe("framilier real validation pipeline", () => {
   it.each([97_200n, 997_200n])("accepts the exact inclusive boundary with a real secp256k1 signature: %s", async gas => {
     const transaction = sign(tx([frame(gas)]));
     const h = harness(gas > 100_000n ? { [SENDER]: locked } : {});
     const collector = new CheckCollector();
-    await expect(h.validation.validate(transaction, simulation(transaction), collector)).resolves.toMatchObject({ mempoolMembership: { "stakelane-test": true } });
+    await expect(h.validation.validate(transaction, simulation(transaction), collector)).resolves.toMatchObject({ mempoolMembership: { "framilier-test": true } });
     expect(collector.toChecks()).toEqual(expect.arrayContaining([expect.objectContaining({ rule: "BUDGET-010", verdict: "pass" })]));
   });
   it.each([97_201n, 997_201n])("rejects one gas above the signature-inclusive boundary: %s", async gas => {

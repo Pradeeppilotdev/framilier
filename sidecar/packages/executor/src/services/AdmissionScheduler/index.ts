@@ -38,7 +38,7 @@ function checkedLimit(name: string, value: number, minimum: number): number {
 }
 
 /**
- * StakeLane PR 1: sender-fair admission scheduler.
+ * framilier PR 1: sender-fair admission scheduler.
  *
  * Provides operator-selectable admission scheduling for EIP-8141 frame
  * transactions:

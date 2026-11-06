@@ -50,8 +50,8 @@ async function buildDigest() {
 const localTools = path.join(root, ".runtime", "bin");
 const localEthrex = path.join(localTools, "ethrex");
 const localBun = path.join(localTools, "bun");
-const binary = process.env.STAKELANE_ETHREX_BIN || (existsSync(localEthrex) ? localEthrex : undefined);
-if (!binary) throw new Error("Set STAKELANE_ETHREX_BIN to the pinned Hegota ethrex executable; see docs/SIDECAR.md");
+const binary = process.env.FRAMILIER_ETHREX_BIN || (existsSync(localEthrex) ? localEthrex : undefined);
+if (!binary) throw new Error("Set FRAMILIER_ETHREX_BIN to the pinned Hegota ethrex executable; see docs/SIDECAR.md");
 const genesisBytes = await readFile(path.join(here, "hegota-genesis.json"));
 assert.equal(sha256(genesisBytes), "5fe93acb7674db5d809aae4d66bff742121ed718bcddd327efcb8c1a9e631fb4");
 const { contracts, compiler } = JSON.parse(await readFile(path.join(here, "fixtures.json"), "utf8"));
@@ -154,14 +154,14 @@ try {
     assert.ok(receipt.contractAddress);
     return receipt.contractAddress;
   }
-  const rounds = Number(process.env.STAKELANE_HASH_ROUNDS || 9664);
+  const rounds = Number(process.env.FRAMILIER_HASH_ROUNDS || 9664);
   assert.ok(Number.isInteger(rounds) && rounds >= 1 && rounds <= 9664, "rounds must be 1–9664 under the fixed 997200 execution-gas allowance");
   if (benchmark) assert.equal(rounds, 9664, "benchmark uses the recorded workload");
   const { witness, commitment } = hashChain(rounds);
   const registry = await deploy("NaiveStakingRegistry");
   const initialWalletBalance = comparing ? 10n ** 19n : matched ? 10n ** 18n : 10n ** 17n;
   const wallet = await deploy("HashChainWallet", [owner.address, commitment, BigInt(rounds)], initialWalletBalance);
-  const settings = JSON.parse(await readFile(path.join(root, "config.stakelane.example.json"), "utf8"));
+  const settings = JSON.parse(await readFile(path.join(root, "config.framilier.example.json"), "utf8"));
   if (benchmark) meter = await startTraceMeter(el);
   Object.assign(settings, { rpcEndpoint: meter?.url ?? el, rpcEndpointSubmit: el, stakingRegistryAddress: registry });
   // The pinned node can fail individual receipt lookup for multi-tx private
@@ -175,7 +175,7 @@ try {
   }
   const configFile = path.join(work, "sidecar.json");
   await writeFile(configFile, JSON.stringify(settings));
-  const bun = process.env.STAKELANE_BUN_BIN || (existsSync(localBun) ? localBun : "bun");
+  const bun = process.env.FRAMILIER_BUN_BIN || (existsSync(localBun) ? localBun : "bun");
   const api = worker("sidecar", bun, [
     "--bun", path.join(root, "packages/cli/bin/skandha.js"), "standalone",
     "--configFile", configFile, "--dataDir", path.join(work, "db"), "--api.address", "127.0.0.1",
@@ -334,7 +334,7 @@ try {
     } else console.log("Benchmark summary:", JSON.stringify(report.benchmark.observed));
   }
   const defaultOutput = matched ? "matched-valid-benchmark.json" : benchmark ? "builder-benchmark.json" : "result.json";
-  const output = path.resolve(process.env.STAKELANE_EVIDENCE || path.join(work, defaultOutput));
+  const output = path.resolve(process.env.FRAMILIER_EVIDENCE || path.join(work, defaultOutput));
   await writeFile(output + ".partial", JSON.stringify(report, null, 2) + "\n");
   await rename(output + ".partial", output);
   console.log("Mined", mined.receipt.transactionHash, "in block", mined.block.number, "with VERIFY gas", Number(verifyUsed));

@@ -7,10 +7,16 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { ethrexProvenance, verifyReport } from "./operator.mjs";
 import { recoverSubmission, saveSubmissionIntent } from "./submission-journal.mjs";
-import { signedWalletFrame } from "./wallet-frame.mjs";
+import { hashChain, signedWalletFrame } from "./wallet-frame.mjs";
 import { privateKeyToAccount } from "viem/accounts";
 import { encodeRawFrameTx } from "../../packages/executor/lib/services/FrameTxService/codec.js";
 import { keccak256 } from "viem";
+
+test("uses the archived hash-chain witness and commitment", async () => {
+  const evidence = new URL("../../evidence/private-inclusion.json", import.meta.url);
+  const { workload } = JSON.parse(await readFile(evidence, "utf8"));
+  assert.deepEqual(hashChain(workload.rounds), { witness: workload.witness, commitment: workload.commitment });
+});
 
 test("offline report verifies the saved baseline without disguising incomplete status", async () => {
   const result = await verifyReport(fileURLToPath(new URL("../../evidence/compare/run-1", import.meta.url)));
@@ -32,7 +38,7 @@ test("baseline-only verification accepts only a measured off-only request", asyn
     r => { r.requestedModes = ["off", "off"]; },
     r => { r.policies.off.status = "success"; },
   ];
-  const dir = await mkdtemp(path.join(tmpdir(), "stakelane-status-test-"));
+  const dir = await mkdtemp(path.join(tmpdir(), "framilier-status-test-"));
   try {
     await writeFile(path.join(dir, "off.json"), await readFile(path.join(directory, "off.json")));
     for (const mutate of mutations) {
@@ -49,7 +55,7 @@ test("baseline-only verification accepts only a measured off-only request", asyn
 });
 
 test("offline report rejects modified statistics", async () => {
-  const dir = await mkdtemp(path.join(tmpdir(), "stakelane-report-test-"));
+  const dir = await mkdtemp(path.join(tmpdir(), "framilier-report-test-"));
   try {
     const base = new URL("../../evidence/compare/run-2/", import.meta.url);
     const report = JSON.parse(await readFile(new URL("comparison.json", base)));
@@ -61,7 +67,7 @@ test("offline report rejects modified statistics", async () => {
 });
 
 test("report rejects missing fingerprints or receipt records and a mislabeled partial run", async () => {
-  const dir = await mkdtemp(path.join(tmpdir(), "stakelane-consistency-"));
+  const dir = await mkdtemp(path.join(tmpdir(), "framilier-consistency-"));
   const source = new URL("../../evidence/compare/run-2/", import.meta.url);
   const raw = JSON.parse(await readFile(new URL("off.json", source)));
   const report = JSON.parse(await readFile(new URL("comparison.json", source)));
@@ -86,11 +92,11 @@ test("report rejects missing fingerprints or receipt records and a mislabeled pa
 });
 
 test("compare checks order and prerequisites before creating output; existing directories are preserved", async () => {
-  const dir = await mkdtemp(path.join(tmpdir(), "stakelane-output-"));
+  const dir = await mkdtemp(path.join(tmpdir(), "framilier-output-"));
   const cli = fileURLToPath(new URL("./operator.mjs", import.meta.url));
   const bun = path.join(dir, "bun");
   const ethrex = path.join(dir, "ethrex");
-  const env = { ...process.env, STAKELANE_BUN_BIN: bun, STAKELANE_ETHREX_BIN: ethrex };
+  const env = { ...process.env, FRAMILIER_BUN_BIN: bun, FRAMILIER_ETHREX_BIN: ethrex };
   const invoke = (...args) => spawnSync(process.execPath, [cli, ...args], { encoding: "utf8", env });
   try {
     const empty = path.join(dir, "new");
@@ -116,16 +122,16 @@ test("CLI help and doctor provide actionable output without starting a chain", (
   const help = spawnSync(process.execPath, [cli, "--help"], { encoding: "utf8" });
   assert.equal(help.status, 0); assert.match(help.stdout, /doctor/);
   const doctor = spawnSync(process.execPath, [cli, "doctor", "--json"], {
-    encoding: "utf8", env: { ...process.env, STAKELANE_ETHREX_BIN: "/nonexistent/ethrex" },
+    encoding: "utf8", env: { ...process.env, FRAMILIER_ETHREX_BIN: "/nonexistent/ethrex" },
   });
   assert.equal(doctor.status, 2);
   const report = JSON.parse(doctor.stdout);
   assert.equal(report.status, "not-ready");
-  assert.match(report.checks.find(c => c.name === "ethrex").fix, /STAKELANE_ETHREX_BIN/);
+  assert.match(report.checks.find(c => c.name === "ethrex").fix, /FRAMILIER_ETHREX_BIN/);
 });
 
 test("an idempotent build uses only its clean pinned source checkout and real Cargo debug path", async () => {
-  const dir = await mkdtemp(path.join(tmpdir(), "stakelane-ethrex-source-"));
+  const dir = await mkdtemp(path.join(tmpdir(), "framilier-ethrex-source-"));
   const checkout = path.join(dir, "ethrex");
   const binary = path.join(checkout, "target/debug/ethrex");
   const tracked = path.join(checkout, "Cargo.toml");
@@ -183,7 +189,7 @@ test("recovery reconstructs identical signed frames only after confirmed absence
 });
 
 test("concurrent writers publish one complete journal intent and preserve the winner", async () => {
-  const dir = await mkdtemp(path.join(tmpdir(), "stakelane-journal-"));
+  const dir = await mkdtemp(path.join(tmpdir(), "framilier-journal-"));
   try {
     const file = path.join(dir, "proof.json");
     const contents = ['{"hash":"first"}', '{"hash":"second"}'];

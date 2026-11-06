@@ -1,6 +1,6 @@
 # Public relay report
 
-On 6 November 2026 the organizers' primary alternative mempool on chain `1337` admitted StakeLane's signed hash-chain workload. Its final public status was `Cancelled`. The execution receipt was null at the 14:02 IST recheck. The same workload mined separately on private chain `8141337`.
+On 6 November 2026 the organizers' primary alternative mempool on chain `1337` admitted framilier's signed hash-chain workload. Its final public status was `Cancelled`. The execution receipt was null at the 14:02 IST recheck. The same workload mined separately on private chain `8141337`.
 
 | Item | Value |
 | --- | --- |
@@ -17,4 +17,4 @@ A separate execution RPC dry-run of the identical signed bytes returned `executi
 
 For the operators: can the primary relayer or builder logs identify the submission response, target block or payload-selection reason for this hash between **08:05:47 and 08:06:27 UTC**? The claim here covers this transaction only.
 
-[Public receipts, admission and simulation snapshot](../sidecar/evidence/public-admission-1337.json) · [Public submission code](../sidecar/test/stakelane/public-inclusion.mjs) · [Separate private mined receipt](../sidecar/evidence/private-inclusion.json)
+[Public receipts, admission and simulation snapshot](../sidecar/evidence/public-admission-1337.json) · [Public submission code](../sidecar/test/framilier/public-inclusion.mjs) · [Separate private mined receipt](../sidecar/evidence/private-inclusion.json)

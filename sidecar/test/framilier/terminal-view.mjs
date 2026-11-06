@@ -70,7 +70,7 @@ export function renderTerminalReport(report, trialsByMode, { source = "saved", c
     inclusions += arm.summary.reduce((sum, r) => sum + r.aMined + r.bMined, 0);
   }
 
-  heading("StakeLane  /  Admission scheduler", `${source === "saved" ? "Saved report" : "Live run"} · ${statuses[report.status] ?? "Unknown status"}`);
+  heading("framilier  /  Admission scheduler", `${source === "saved" ? "Saved report" : "Live run"} · ${statuses[report.status] ?? "Unknown status"}`);
   line(accent("━".repeat(width)));
   line(`Local chain ${report.chainId}   ·   Burst ${burst}   ·   ${roundCount} measured ${roundCount === 1 ? "round" : "rounds"} per load`);
   if (pending.length) line(pending.join("   ·   "));

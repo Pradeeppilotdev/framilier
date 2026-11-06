@@ -24,7 +24,7 @@
 - Added a bounded admission benchmark with an independent valid wallet, matched early and late rejections, per-transaction simulation RPC timing, and reputation snapshots. The private fixture blocks ethrex's automatic release lookup locally.
 - Recorded two runs. Four late failures increased median valid-wallet admission to 46.874 and 47.280 ms. The noisy wallet's seen counter stayed at 2, and all 72 measured valid transactions mined. [Report and reproduction](docs/BUILDER_BENCHMARK.md)
 
-## StakeLane sidecar — 2026-11-06 (India time)
+## framilier sidecar — 2026-11-06 (India time)
 
 - Mined the exact 1,000,000-gas declaration on a private ethrex chain. The staked wallet used 993,512 execution gas to verify a 9,664-step hash chain in block 5. The run includes on-chain stake registration, an unstaked rejection, the one-gas-over rejection and an incorrect-witness rejection. [Mined receipt](sidecar/evidence/private-inclusion.json)
 
@@ -62,7 +62,7 @@
 ### Open at the initial public checkpoint
 
 - A sidecar patch implementing per-entity budgets and a supported inclusion route for its transactions.
-- Real expensive-verification workloads, multi-entity isolation and a StakeLane conformance suite.
+- Real expensive-verification workloads, multi-entity isolation and a framilier conformance suite.
 - A 1,000,001-gas probe, which was not submitted after the explicit lower cap was established.
 
 The imported workshop's contracts, codec, staking implementation and 57 tests are upstream work. This checkpoint does not modify the deployed sidecar or implement the new accounting rule.

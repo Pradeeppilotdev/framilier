@@ -55,7 +55,7 @@ const makeTx = (sender: `0x${string}`, verifyGas: bigint, nonceSeq: bigint = 0n)
   recentRootReferences: [],
 });
 
-describe("StakeLane PR 1: Admission Scheduler Integration", () => {
+describe("framilier PR 1: Admission Scheduler Integration", () => {
   it("RPC and gossip share the same gate, and a dispatched request runs the ordinary validation path exactly once", async () => {
     // 2 total admission slots, at most 1 heavy job per sender
     const scheduler = new AdmissionScheduler({

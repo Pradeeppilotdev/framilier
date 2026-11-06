@@ -9,7 +9,7 @@ import { parseArgs } from "node:util";
 import { checkPlan, summarize, workloadDigest } from "./compare-metrics.mjs";
 import { useTerminalView } from "./terminal-view.mjs";
 
-const help = `Usage: ./stakelane compare [--bursts 1,4,8] [--rounds 20] [--baseline-only]
+const help = `Usage: ./framilier compare [--bursts 1,4,8] [--rounds 20] [--baseline-only]
 
 Options: --preset quick|full, --output <new-directory>, --json, --plain,
          --order off,fifo,fair (counterbalance order across repeated runs).
@@ -31,7 +31,7 @@ const usageError = message => { throw new Error(`${message}\n${help}`); };
 async function runPolicy(mode, plan, keys, dir, jsonOutput) {
   const output = path.join(dir, `${mode}.json`);
   const child = spawn(process.execPath, [path.join(here, "run.mjs"), "--compare-arm"], {
-    env: { ...process.env, STAKELANE_EVIDENCE: output }, stdio: ["pipe", jsonOutput ? 2 : "inherit", "inherit"],
+    env: { ...process.env, FRAMILIER_EVIDENCE: output }, stdio: ["pipe", jsonOutput ? 2 : "inherit", "inherit"],
   });
   const interrupt = () => child.kill("SIGTERM");
   process.once("SIGINT", interrupt);

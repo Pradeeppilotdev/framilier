@@ -66,7 +66,7 @@ export class Executor {
   public explorerService: ExplorerService | null = null;
   // Present only with --explorer.enable and SKANDHA_FAUCET_KEY set.
   public faucet: FaucetService | null = null;
-  // StakeLane PR 1: admission scheduler owned by each executor instance
+  // framilier PR 1: admission scheduler owned by each executor instance
   public admissionScheduler: AdmissionScheduler;
 
   private db: IDbController;

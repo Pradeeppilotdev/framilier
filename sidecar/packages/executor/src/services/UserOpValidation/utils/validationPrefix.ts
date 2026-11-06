@@ -291,7 +291,7 @@ export function validateStructuralRules(
   // per-scheme cost comes from.
   const sigCost = budgetPolicy === "canonical" ? signatureVerificationCost(tx) : BigInt(0);
   const totalVerifyGas = executionSum + sigCost;
-  // StakeLane enforces BUDGET-010 separately, using address attribution and
+  // framilier enforces BUDGET-010 separately, using address attribution and
   // registry state. Keep the canonical policy for explicit comparisons/tests.
   if (budgetPolicy === "canonical" && totalVerifyGas > MAX_VERIFY_GAS) {
     return {

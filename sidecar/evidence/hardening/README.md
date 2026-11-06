@@ -11,8 +11,8 @@ The workload, actors, genesis, ethrex binary, compiled fixtures and sidecar buil
 Verify saved runs from the repository root:
 
 ```sh
-./stakelane report sidecar/evidence/hardening/full-1 --verify
-./stakelane report sidecar/evidence/hardening/repeat-8 --verify
+./framilier report sidecar/evidence/hardening/full-1 --verify
+./framilier report sidecar/evidence/hardening/repeat-8 --verify
 ```
 
 Verify file checksums from this directory :

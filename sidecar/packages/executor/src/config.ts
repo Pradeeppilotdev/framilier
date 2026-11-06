@@ -617,7 +617,7 @@ const bundlerDefaultConfigs: BundlerConfig = {
   banSlack: 50,
   minStake: parseEther("0.01"),
   minUnstakeDelay: 0,
-  // StakeLane PR 1: admission scheduler defaults
+  // framilier PR 1: admission scheduler defaults
   schedulerMode: "off",
   schedulerSlots: 4,
   schedulerMaxHeavyPerSender: 2,
