@@ -26,3 +26,4 @@ export async function requestDevnetFaucet(recipientAddress: string): Promise<Fau
 
   return data.result as FaucetResponse;
 }
+

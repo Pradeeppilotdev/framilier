@@ -1,9 +1,9 @@
 import { encodeAbiParameters, parseAbiParameters, Hex, toHex, concat } from 'viem';
 import { Frame, FrameMode, FrameTransaction, BuildFrameTxOptions, ZKRecoveryParams } from './types.js';
-import { DEVNET_ENDPOINTS, GAS_LIMITS, DEPLOYED_CONTRACTS, DEMO_TENANT } from './constants.js';
+import { DEVNET_ENDPOINTS, GAS_LIMITS, DEPLOYED_CONTRACTS } from './constants.js';
 
 /**
- * Builds an EIP-8141 Frame Transaction supporting both Self-Paid and Sponsored Multi-Tenant modes.
+ * Builds an EIP-8141 Frame Transaction supporting both Self-Paid and Paymaster-Sponsored modes.
  */
 export function buildFrameTransaction(options: BuildFrameTxOptions): FrameTransaction {
   const isSelfPaid = options.paymentMode ? options.paymentMode === 'self' : options.selfPaid !== false;
@@ -30,16 +30,15 @@ export function buildFrameTransaction(options: BuildFrameTxOptions): FrameTransa
       data: options.callData,
     });
   } else {
-    // MODE B: SPONSORED (Multi-Tenant Paymaster pays gas via 0x01, Account approves execution via 0x02)
-    const paymasterAddress = options.paymaster || DEPLOYED_CONTRACTS.MULTI_TENANT_PAYMASTER;
-    const tenantId = options.tenantId || DEMO_TENANT.TENANT_ID;
-    const paymasterData = options.paymasterData || tenantId;
+    // MODE B: SPONSORED (SimplePaymaster pays gas via 0x01, Account approves execution via 0x02)
+    const paymasterAddress = options.paymaster || DEPLOYED_CONTRACTS.SIMPLE_PAYMASTER;
+    const paymasterData = options.paymasterData || '0x';
 
     // Frame 0: VERIFY mode on Paymaster (Approves Payment 0x01)
     frames.push({
       mode: FrameMode.VERIFY,
       target: paymasterAddress,
-      gasLimit: 120_000n,
+      gasLimit: options.gasLimit || GAS_LIMITS.DEFAULT_VERIFY_GAS,
       value: 0n,
       data: paymasterData,
     });

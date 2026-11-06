@@ -143,41 +143,68 @@ program
   });
 
 /**
- * Command 3: send-tx (Clean 1-Click Dispatch)
+ * Command 4: send-tx (Dual-Toggle Dispatch: Payment & Mempool Route)
  */
 program
   .command('send-tx')
-  .description('Send an EIP-8141 Frame Transaction (Self-Paid or Sponsored toggle)')
+  .description('Send an EIP-8141 Frame Transaction with dual toggles (Payment Mode & Mempool Route)')
   .requiredOption('--account <address>', 'Frame Account address')
   .requiredOption('--target <address>', 'Target contract address to call')
   .option('--data <hex>', 'Call data in hex', '0x')
-  .option('--self-paid', 'Toggle: Account pays its own gas directly (Default)', true)
-  .option('--sponsored', 'Toggle: Use Paymaster to sponsor gas')
-  .option('--paymaster <address>', 'Paymaster address (if sponsored)')
+  .option('--payment <mode>', 'Payment mode toggle: "self" or "sponsored"', 'self')
+  .option('--self-paid', 'Toggle shorthand: Account pays its own gas directly (0x03)')
+  .option('--sponsored', 'Toggle shorthand: SimplePaymaster sponsors gas (0x01 + 0x02)')
+  .option('--paymaster <address>', 'SimplePaymaster address (defaults to deployed SimplePaymaster)', DEPLOYED_CONTRACTS.SIMPLE_PAYMASTER)
+  .option('--route <mode>', 'Mempool routing toggle: "auto", "public", or "altmempool"', 'auto')
+  .option('--altmempool', 'Force dispatch via ERC-8421 Alt-Mempool Gateway')
+  .option('--public', 'Force dispatch via Canonical Public Mempool')
   .option('--json', 'Output results as JSON for AI agents')
   .action(async (options) => {
-    const isSelfPaid = !options.sponsored;
-    const client = createPublicClient({
-      transport: http(DEVNET_ENDPOINTS.DEVNET_1.rpc),
-    });
+    // 1. Payment mode toggle resolution
+    let isSelfPaid = true;
+    if (options.sponsored || options.payment === 'sponsored') {
+      isSelfPaid = false;
+    } else if (options.selfPaid || options.payment === 'self') {
+      isSelfPaid = true;
+    }
 
+    // 2. Build frame transaction using SDK
     const frameTx = buildFrameTransaction({
       account: options.account as Hex,
       target: options.target as Hex,
       callData: options.data as Hex,
       selfPaid: isSelfPaid,
-      paymaster: (options.paymaster as Hex) || (isSelfPaid ? undefined : DEPLOYED_CONTRACTS.SIMPLE_PAYMASTER),
+      paymentMode: isSelfPaid ? 'self' : 'sponsored',
+      paymaster: isSelfPaid ? undefined : ((options.paymaster as Hex) || DEPLOYED_CONTRACTS.SIMPLE_PAYMASTER),
     });
 
+    const client = createPublicClient({
+      transport: http(DEVNET_ENDPOINTS.DEVNET_1.rpc),
+    });
+
+    // 3. Pre-flight admission simulation using Viem extension
     const admission = await simulateFrameAdmission(client, frameTx);
-    const result = await sendFrameTransaction(client, frameTx);
+
+    // 4. Mempool route toggle resolution
+    let forceAltMempool = false;
+    if (options.route === 'altmempool' || options.altmempool) {
+      forceAltMempool = true;
+    } else if (options.route === 'public' || options.public) {
+      forceAltMempool = false;
+    } else {
+      // 'auto': Automatically select Alt-Mempool if verification gas > 100,000
+      forceAltMempool = admission.requiresAltMempool;
+    }
+
+    // 5. Send transaction using Viem extension
+    const result = await sendFrameTransaction(client, frameTx, { forceAltMempool });
 
     const output = {
       status: 'SUCCESS',
       txHash: result.txHash,
-      mode: isSelfPaid ? 'SELF-PAID (0x03)' : 'SPONSORED (0x01 + 0x02)',
+      paymentMode: isSelfPaid ? 'SELF-PAID (Frame 0x03)' : `SPONSORED (SimplePaymaster: ${options.paymaster || DEPLOYED_CONTRACTS.SIMPLE_PAYMASTER})`,
       verifyGas: admission.totalVerifyGas.toString(),
-      mempoolRouted: admission.requiresAltMempool ? 'ERC-8421 Alt-Mempool' : 'Canonical Public Mempool',
+      mempoolRouted: forceAltMempool ? 'ERC-8421 Alt-Mempool' : 'Canonical Public Mempool',
       endpoint: result.endpointUsed,
       explorerUrl: `${DEVNET_ENDPOINTS.EXPLORER}/tx/${result.txHash}`,
     };
@@ -189,7 +216,7 @@ program
       console.log('   🚀  Frame Transaction Dispatched');
       console.log('======================================================');
       console.log(`Tx Hash         : ${output.txHash}`);
-      console.log(`Payment Mode    : ${output.mode}`);
+      console.log(`Payment Mode    : ${output.paymentMode}`);
       console.log(`Verify Gas      : ${output.verifyGas} gas`);
       console.log(`Mempool Route   : ${output.mempoolRouted}`);
       console.log(`Endpoint Used   : ${output.endpoint}`);
@@ -199,7 +226,7 @@ program
   });
 
 /**
- * Command 4: recover-zk (One-Click ZK Guardian Recovery)
+ * Command 5: recover-zk (One-Click ZK Guardian Recovery)
  */
 program
   .command('recover-zk')

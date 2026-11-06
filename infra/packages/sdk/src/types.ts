@@ -43,7 +43,6 @@ export interface BuildFrameTxOptions {
   selfPaid?: boolean; // TOGGLE: true = Self-Paid (0x03), false = Sponsored (0x01 + 0x02)
   paymentMode?: PaymentMode;
   routeMode?: RouteMode;
-  tenantId?: Hex;
   paymaster?: Address;
   paymasterData?: Hex;
   validationData?: Hex;
