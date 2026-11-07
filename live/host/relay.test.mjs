@@ -38,7 +38,9 @@ function database() {
 test(
   "a real runner must claim the fixed job before it can post its result",
   { skip: !DatabaseSync },
-  async () => {
+  async (t) => {
+    let now = Date.now();
+    t.mock.method(Date, "now", () => now);
     const db = database();
     const env = { DB: db, FRAMILIER_RUNNER_TOKEN: randomUUID() };
     const runner = randomUUID(),
@@ -78,6 +80,12 @@ test(
     assert.equal((await (await operator("poll", {})).json()).id, run.id);
     assert.equal((await (await operator("poll", { runner: rival })).json()).id, null);
     assert.equal((await operator("report", { id: run.id, runner: rival, status: "failed" })).status, 409);
+    // The node keeps computing locally while the relay cannot hear it. Once the
+    // 45-second idle heartbeat would be stale, the already claimed job still lives.
+    now += 90_000;
+    assert.equal((await (await call("/api/runs/" + run.id, "GET")).json()).status, "running");
+    assert.equal((await operator("report", { id: run.id, status: "running", policy: "fair" })).status, 200);
+    now += 120_000;
     const result = {
       source: "live",
       chainId: 8141337,
@@ -91,17 +99,20 @@ test(
       400
     );
     assert.equal((await operator("report", { id: run.id, status: "complete", result })).status, 200);
+    // Retrying when the acknowledgement was lost cannot replace its stored data.
+    assert.equal((await operator("report", { id: run.id, status: "complete", result })).status, 200);
+    assert.equal((await operator("report", { id: run.id, status: "failed" })).status, 409);
     const seen = await (await call("/api/runs/" + run.id, "GET")).json();
     assert.equal(seen.status, "complete");
     assert.deepEqual(seen.result, result);
     assert.equal((await guest()).status, 429);
-    db.sql.exec("UPDATE framilier_runner SET seen=0");
+    now += 46_000;
     assert.equal((await guest()).status, 503);
     db.sql.exec("UPDATE framilier_runs SET ended=0");
     await operator("poll", {});
     const next = await (await guest()).json();
     await operator("poll", {});
-    db.sql.exec("UPDATE framilier_runs SET lease=0 WHERE state='running'");
+    now += 181_000;
     assert.equal((await operator("report", { id: next.id, status: "complete", result })).status, 409);
     assert.equal((await (await call("/api/runs/" + next.id, "GET")).json()).status, "failed");
     db.sql.close();

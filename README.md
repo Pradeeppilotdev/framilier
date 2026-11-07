@@ -4,7 +4,7 @@ framilier schedules transaction admission work for EIP-8141 alternative-mempool 
 
 The sidecar supports **off**, **FIFO** and **fair** policies. Fair mode rotates senders, limits heavy concurrency per sender, bounds per-sender backlogs and shares an execution budget across admission, estimates and revalidation. This is operator resource control, not Sybil resistance or a guarantee of inclusion.
 
-[Try the live comparison](https://framilier-live.tealdumpling1.chatgpt.site). See which checks started before wallet B, start a fresh one-round run, or explore the verified 20-round benchmark. To serve the same page locally after setup, run `./framilier live`. [Runner setup](docs/OPERATOR.md#browser-demo)
+[Try the live comparison](https://framilier.onchainroamers.tech). See which checks started before wallet B, start a fresh one-round run, or explore the verified 20-round benchmark. To serve the same page locally after setup, run `./framilier live`. [Runner setup](docs/OPERATOR.md#browser-demo)
 
 ## Run and verify
 

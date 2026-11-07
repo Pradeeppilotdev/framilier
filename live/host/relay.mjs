@@ -1,6 +1,8 @@
 // One private benchmark node serves one shared job at a time. The public side
 // only creates fixed jobs and reads their status; it cannot choose an RPC or command.
 const heartbeatWindow = 45_000;
+// Claimed jobs can survive short relay outages while the node continues the benchmark.
+const activeLease = 3 * 60_000;
 const runTimeout = 15 * 60_000;
 const cooldown = 60_000;
 const retention = 60 * 60_000;
@@ -105,7 +107,7 @@ async function privateRoute(path, request, db, now) {
           `UPDATE framilier_runs SET state='running', owner=?, lease=?
         WHERE state='queued' OR (state='running' AND owner=?)`
         )
-        .bind(body.runner, now + heartbeatWindow, body.runner),
+        .bind(body.runner, now + activeLease, body.runner),
       query,
     ]);
     return json({ id: batch.at(-1).results[0]?.id ?? null });
@@ -136,14 +138,27 @@ async function privateRoute(path, request, db, now) {
       policy,
       body.status === "complete" ? JSON.stringify(body.result) : null,
       terminal ? now : null,
-      now + heartbeatWindow,
+      now + activeLease,
       body.id,
       body.runner,
       now,
       now - runTimeout
     )
     .run();
-  return update.meta.changes ? json({ ok: true }) : json({ error: "Lease expired." }, 409);
+  if (update.meta.changes) {
+    if (terminal) {
+      // The final report also announces that the runner is available for the next job.
+      await db.prepare("UPDATE framilier_runner SET seen=? WHERE slot=1 AND seen<?").bind(now, now).run();
+    }
+    return json({ ok: true });
+  }
+  if (terminal) {
+    // A lost acknowledgement must permit retrying a delivered terminal result.
+    const delivered = await db.prepare("SELECT id FROM framilier_runs WHERE id=? AND owner=? AND state=?")
+      .bind(body.id, body.runner, body.status).first();
+    if (delivered) return json({ ok: true });
+  }
+  return json({ error: "Lease expired." }, 409);
 }
 
 export async function handleApi(request, env) {

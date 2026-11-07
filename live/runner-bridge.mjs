@@ -23,7 +23,7 @@ async function relay(path, message) {
   const response = await fetch(new URL("/_runner/" + path, host), {
     ...options,
     method: "POST",
-    signal: AbortSignal.timeout(8000),
+    signal: AbortSignal.timeout(20000),
     headers: { authorization: "Bearer " + token, "content-type": "application/json" },
     body: JSON.stringify({ runner, ...message }),
   });
@@ -40,65 +40,64 @@ function log(message) {
 }
 
 async function tick() {
-  // Do not advertise an idle machine as available when its private API is down.
   if (!job) {
     const health = await fetch(local + "/", {
-      ...options,
-      method: "HEAD",
-      signal: AbortSignal.timeout(3000),
+      ...options, method: "HEAD", signal: AbortSignal.timeout(3000),
     });
     if (!health.ok) throw Error("Local runner unavailable");
+    const { id } = await relay("poll", {});
+    if (!id) { log("Listening for a comparison."); return; }
+    job = { id };
   }
-  const { id } = await relay("poll", {});
-  if (!id) {
-    job = null;
-    log("Listening for a comparison.");
-    return;
-  }
-  if (job?.id !== id) job = { id };
-  // Keep completed reports until the host acknowledges them. A dropped HTTP
-  // response must never start a second benchmark for an existing job.
-  if (!job.report) {
+
+  if (!job.localId && !job.report) {
     try {
-      if (!job.localId) {
-        const response = await fetch(local + "/api/runs", {
-          ...options,
-          method: "POST",
-          headers: { "x-framilier-run": "1" },
-          signal: AbortSignal.timeout(3500),
-        });
-        if (response.status === 429) {
-          log("Waiting for local runner cooldown.");
-          return;
-        }
+      const response = await fetch(local + "/api/runs", {
+        ...options, method: "POST", headers: { "x-framilier-run": "1" }, signal: AbortSignal.timeout(3500),
+      });
+      if (response.status === 429) {
+        log("Waiting for local runner cooldown.");
+      } else {
         if (!response.ok) throw Error("Local runner unavailable");
         job.localId = (await response.json()).id;
         if (!job.localId) throw Error("Local runner returned no job");
         log("Running fixed private-chain comparison.");
       }
-      const response = await fetch(local + "/api/runs/" + encodeURIComponent(job.localId), {
-        ...options,
-        signal: AbortSignal.timeout(3500),
-      });
-      if (!response.ok) throw Error("Local job unavailable");
-      const state = await response.json();
-      if (state.status === "complete") job.report = { status: "complete", result: state.result };
-      else if (state.status === "failed") job.report = { status: "failed" };
-      else if (state.policy && job.policy !== state.policy) {
-        job.pendingPolicy = state.policy;
-      }
     } catch {
+      // The local service may have accepted the POST before losing the connection.
+      // Do not submit a second benchmark when its ID is unknown.
       job.report = { status: "failed" };
     }
   }
-  if (job.pendingPolicy && !job.report) {
-    await relay("report", { id, status: "running", policy: job.pendingPolicy });
-    job.policy = job.pendingPolicy;
-    job.pendingPolicy = null;
+
+  if (job.localId && !job.report) {
+    try {
+      const response = await fetch(local + "/api/runs/" + encodeURIComponent(job.localId), {
+        ...options, signal: AbortSignal.timeout(5000),
+      });
+      if (response.status === 404) job.report = { status: "failed" };
+      else {
+        if (!response.ok) throw Error("Local job temporarily unavailable");
+        const state = await response.json();
+        if (state.status === "complete") job.report = { status: "complete", result: state.result };
+        else if (state.status === "failed") job.report = { status: "failed" };
+        else if (state.policy) job.policy = state.policy;
+      }
+    } catch {
+      log("Retrying the existing local job.");
+    }
   }
-  if (job.report) {
-    await relay("report", { id, ...job.report });
+
+  // One edge request delivers progress and renews the lease, or delivers the final
+  // report. Keep a terminal report until the edge confirms it or rejects the lease.
+  const update = job.report || { status: "running", policy: job.policy };
+  const acknowledgement = await relay("report", { id: job.id, ...update });
+  if (!acknowledgement) {
+    log("Job lease expired before acknowledgement.");
+    job = null;
+  } else if (job.report) {
     log("Reported " + job.report.status + ".");
+    job = null;
   }
 }
 
