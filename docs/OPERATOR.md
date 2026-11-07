@@ -98,6 +98,8 @@ Run `./framilier compare --shared-paymaster --rounds 1 --bursts 8` to test two s
 
 For each measured burst the runner checks all three frames in each transaction, verifies that the receipt names the shared payer, and reconciles its balance decrease with the receipt fees for both wallets. Each policy also submits a signed transaction carrying the wrong witness and requires a sidecar rejection. Use `./framilier report <run-directory> --verify` to recheck the recorded payer, stake, fees and rejection. One round demonstrates the mechanism. Use repeated runs for latency comparisons.
 
+The [one-round shared-paymaster run](../sidecar/evidence/compare/shared-paymaster-smoke/comparison.json) recorded 81 measured inclusions across off, FIFO and fair, covering an idle control and bursts of eight and sixteen. With sixteen heavy frames, B started 17th under FIFO and 3rd under fair. In the same round, A’s batch took 1,233 ms under FIFO and 1,851 ms under fair. Replay the evidence with `./framilier report sidecar/evidence/compare/shared-paymaster-smoke --verify`.
+
 ## Tests
 
 ```sh
