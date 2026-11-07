@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { checkPlan, summarize, workloadDigest, sponsorshipEvidence } from "./compare-metrics.mjs";
 import { useTerminalView } from "./terminal-view.mjs";
+import { createCompareProgress, runLoggedFixture } from "./compare-progress.mjs";
 
 const help = `Usage: ./framilier compare [--bursts 1,4,8] [--rounds 20] [--baseline-only] [--shared-paymaster]
 
@@ -30,8 +31,16 @@ Setup: docs/SIDECAR.md (Node, built sidecar, Bun and the pinned ethrex binary).`
 const here = path.dirname(fileURLToPath(import.meta.url));
 const usageError = message => { throw new Error(`${message}\n${help}`); };
 
-async function runPolicy(mode, plan, keys, dir, jsonOutput) {
+async function runPolicy(mode, plan, keys, dir, jsonOutput, progress) {
   const output = path.join(dir, `${mode}.json`);
+  if (progress) {
+    await runLoggedFixture({
+      executable: process.execPath, args: [path.join(here, "run.mjs"), "--compare-arm"],
+      input: JSON.stringify({ ...plan, ...keys, mode }), env: { ...process.env, FRAMILIER_EVIDENCE: output },
+      logPath: path.join(dir, `${mode}.log`), onStage: stage => progress.stage(stage),
+    });
+    return JSON.parse(await readFile(output, "utf8"));
+  }
   const child = spawn(process.execPath, [path.join(here, "run.mjs"), "--compare-arm"], {
     env: { ...process.env, FRAMILIER_EVIDENCE: output }, stdio: ["pipe", jsonOutput ? 2 : "inherit", "inherit"],
   });
@@ -114,7 +123,8 @@ async function main() {
     await mkdir(dir); // Refuse to overwrite or combine prior measurements.
   } else dir = await mkdtemp(path.join(runtime, "compare-"));
   const log = (...args) => (values.json ? console.error : console.log)(...args);
-  if (plan.rounds < 20) log("SMOKE ONLY: fewer than 20 rounds; tail percentiles are descriptive, not a latency study.");
+  const visual = !values.json && useTerminalView(process.stdout, values.plain);
+  if (plan.rounds < 20 && !visual) log("SMOKE ONLY: fewer than 20 rounds; tail percentiles are descriptive, not a latency study.");
   const { generatePrivateKey } = await import("viem/accounts");
   const keys = { primaryKey: generatePrivateKey(), secondKey: generatePrivateKey() };
   const modes = values["baseline-only"] ? ["off"] : order;
@@ -122,43 +132,49 @@ async function main() {
     preset: values.preset, interpretation: plan.rounds < 20 ? "smoke-only" : "exploratory-local",
     host: { os: platform(), arch: arch(), node: process.version, ethrexWorkers: 4 }, ...plan, requestedModes: modes, policies: {} };
   let reference;
-  const trialsByMode = !values.json && useTerminalView(process.stdout, values.plain) ? {} : null;
-  log("Comparison evidence:", path.join(dir, "comparison.json"));
-  for (const [index, mode] of modes.entries()) {
-    if (mode !== "off" && report.policies.off?.schedulerReadback === null) {
-      report.policies[mode] = { status: "unavailable", reason: "skandha_config did not report an active admission scheduler" };
-      continue;
-    }
-    const phase = trialsByMode ? `[${index + 1}/${modes.length}] ` : "";
-    log(`${phase}Starting ${mode === "off" ? "baseline" : mode} on a fresh private chain (${plan.rounds} rounds per burst).`);
-    // A disconnected or killed process can leave this manifest, without a final summary.
-    report.policies[mode] = { status: "in-progress" };
-    await save(report, dir);
-    try {
-      const run = await runPolicy(mode, plan, keys, dir, values.json);
-      const b = run.benchmark;
-      assert.equal(run.chainId, report.chainId);
-      assert.ok(b.blockedExternalHttp.some(e => e.authority === "api.github.com:443"), "missing loopback isolation check");
-      const sponsorship = sponsorshipEvidence(run, plan.sharedPaymaster);
-      const inputs = { genesisHash: run.genesisHash, sidecarBuildSha256: run.sidecarBuildSha256, ethrexBinarySha256: run.ethrexBinarySha256,
-        fixtureArtifactSha256: run.fixtureArtifactSha256, signedWorkloadSha256: workloadDigest(b), ...(sponsorship && { sponsorship }) };
-      if (reference) assert.deepEqual(inputs, reference, "mode ran different transactions, genesis, binary or fixtures");
-      else reference = inputs;
-      report.policies[mode] = { status: "measured", schedulerReadback: b.schedulerReadback, ...inputs,
-        evidenceFile: `${mode}.json`, summary: summarize(b.trials, plan.rounds, plan.bursts, b.schedulerReadback, sponsorship?.heavyVerifyGas) };
-      await save(report, dir);
-      if (trialsByMode) {
-        trialsByMode[mode] = selectDisplayTrials(b.trials, plan.bursts);
-        const mined = report.policies[mode].summary.reduce((total, row) => total + row.aMined + row.bMined, 0);
-        log(`${phase}${mode} complete · ${mined} measured transactions mined`);
+  const trialsByMode = visual ? {} : null;
+  const progress = trialsByMode ? createCompareProgress({ plan, modes, chainId: report.chainId }) : null;
+  if (!progress) log("Comparison evidence:", path.join(dir, "comparison.json"));
+  try {
+    for (const [index, mode] of modes.entries()) {
+      if (mode !== "off" && report.policies.off?.schedulerReadback === null) {
+        report.policies[mode] = { status: "unavailable", reason: "skandha_config did not report an active admission scheduler" };
+        continue;
       }
-    } catch (err) {
-      report.policies[mode] = { status: "failed", reason: err.message };
-      report.status = "failed";
+      const phase = trialsByMode ? `[${index + 1}/${modes.length}] ` : "";
+      if (progress) progress.start(mode, index);
+      else log(`${phase}Starting ${mode === "off" ? "baseline" : mode} on a fresh private chain (${plan.rounds} rounds per burst).`);
+      // A disconnected or killed process can leave this manifest, without a final summary.
+      report.policies[mode] = { status: "in-progress" };
       await save(report, dir);
-      throw err;
+      try {
+        const run = await runPolicy(mode, plan, keys, dir, values.json, progress);
+        progress?.stage("verify");
+        const b = run.benchmark;
+        assert.equal(run.chainId, report.chainId);
+        assert.ok(b.blockedExternalHttp.some(e => e.authority === "api.github.com:443"), "missing loopback isolation check");
+        const sponsorship = sponsorshipEvidence(run, plan.sharedPaymaster);
+        const inputs = { genesisHash: run.genesisHash, sidecarBuildSha256: run.sidecarBuildSha256, ethrexBinarySha256: run.ethrexBinarySha256,
+          fixtureArtifactSha256: run.fixtureArtifactSha256, signedWorkloadSha256: workloadDigest(b), ...(sponsorship && { sponsorship }) };
+        if (reference) assert.deepEqual(inputs, reference, "mode ran different transactions, genesis, binary or fixtures");
+        else reference = inputs;
+        report.policies[mode] = { status: "measured", schedulerReadback: b.schedulerReadback, ...inputs,
+          evidenceFile: `${mode}.json`, summary: summarize(b.trials, plan.rounds, plan.bursts, b.schedulerReadback, sponsorship?.heavyVerifyGas) };
+        await save(report, dir);
+        if (trialsByMode) {
+          trialsByMode[mode] = selectDisplayTrials(b.trials, plan.bursts);
+          const mined = report.policies[mode].summary.reduce((total, row) => total + row.aMined + row.bMined, 0);
+          progress.complete(mined);
+        }
+      } catch (err) {
+        progress?.failed(path.join(dir, `${mode}.log`));
+        report.policies[mode] = { status: "failed", reason: err.message };
+        report.status = "failed";
+        await save(report, dir);
+        throw err;
+      }
     }
-  }
+  } finally { progress?.close(); }
   const partial = modes.some(mode => report.policies[mode].status !== "measured");
   report.status = partial ? "incomplete" : values["baseline-only"] ? "baseline-only" : "complete";
   report.completedAt = new Date().toISOString();
