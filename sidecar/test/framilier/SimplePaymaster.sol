@@ -1,74 +1,34 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity 0.8.28;
 
-interface IEIP8141 {
-    uint8 constant APPROVE_NONE = 0x00;
-    uint8 constant APPROVE_PAY  = 0x01;
-    uint8 constant APPROVE_EXEC = 0x02;
-    uint8 constant APPROVE_ALL  = 0x03;
-}
+import {HegotaSupport} from "@forshtat/hegota-support/contracts/HegotaSupport.sol";
+import {Devnet} from "@forshtat/hegota-support/contracts/Devnet.sol";
+import {Scope, TxParam} from "@forshtat/hegota-support/contracts/Params.sol";
 
-/**
- * @title SimplePaymaster
- * @notice EIP-8141 compliant gas sponsorship paymaster for shared-paymaster benchmarks.
- * @dev Returns APPROVE_PAY (0x01) during its VERIFY frame.
- */
-contract SimplePaymaster is IEIP8141 {
-    address public owner;
-    mapping(address => bool) public authorizedSenders;
-    mapping(address => uint256) public sponsoredGasLimit;
+import {NaiveStakingRegistry} from "./NaiveStakingRegistry.sol";
 
-    event GasSponsored(address indexed sender, uint256 maxCost);
-    event FundsDeposited(address indexed sender, uint256 amount);
+/// Gas sponsor for exactly two wallets on the disposable benchmark chain.
+contract SimplePaymaster is HegotaSupport(Devnet.ERC8421_WORKSHOP) {
+    address private immutable walletA;
+    address private immutable walletB;
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "SimplePaymaster: Unauthorized");
-        _;
+    constructor(
+        address first,
+        address second,
+        NaiveStakingRegistry registry,
+        uint256 stakeAmount,
+        uint32 unstakeDelaySec
+    ) payable {
+        require(first != address(0) && second != address(0) && first != second, "distinct senders");
+        walletA = first;
+        walletB = second;
+        require(stakeAmount > 0 && msg.value > stakeAmount, "fund stake and fees");
+        registry.addStake{value: stakeAmount}(unstakeDelaySec);
     }
 
-    constructor() payable {
-        owner = msg.sender;
-    }
-
-    /**
-     * @notice Called during VERIFY mode (Frame 0 in a sponsored transaction).
-     */
-    function validateFrame(
-        uint256 frameIndex,
-        bytes calldata paymasterData
-    ) external returns (uint8 approvalMode) {
-        if (address(this).balance == 0) return APPROVE_NONE;
-        
-        if (paymasterData.length >= 20) {
-            address user = address(bytes20(paymasterData[:20]));
-            if (authorizedSenders[user] || authorizedSenders[address(0)]) {
-                emit GasSponsored(user, tx.gasprice);
-                return APPROVE_PAY;
-            }
-        }
-
-        if (authorizedSenders[address(0)]) {
-            return APPROVE_PAY;
-        }
-
-        return APPROVE_NONE;
-    }
-
-    function setAuthorizedSender(address sender, bool authorized) external onlyOwner {
-        authorizedSenders[sender] = authorized;
-    }
-
-    function deposit() external payable {
-        emit FundsDeposited(msg.sender, msg.value);
-    }
-
-    function withdraw(address payable recipient, uint256 amount) external onlyOwner {
-        require(amount <= address(this).balance, "Insufficient balance");
-        (bool ok, ) = recipient.call{value: amount}("");
-        require(ok, "Withdraw failed");
-    }
-
-    receive() external payable {
-        emit FundsDeposited(msg.sender, msg.value);
+    fallback() external payable {
+        address sender = address(uint160(txparam(TxParam.SENDER)));
+        require(sender == walletA || sender == walletB, "unsponsored sender");
+        approve(Scope.PAYMENT);
     }
 }

@@ -1,97 +1,56 @@
 import assert from "node:assert/strict";
-import test from "node:test";
 import { readFile } from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import test from "node:test";
+import { recoverAddress, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { signedSponsoredWalletFrame, signedWalletFrame } from "./wallet-frame.mjs";
+import { computeSigHash } from "../../packages/executor/lib/services/FrameTxService/codec.js";
+import {
+  calculateDeclaredVerifyGas, isHeavyFrameTx,
+} from "../../packages/executor/lib/services/UserOpValidation/utils/validationBudget.js";
+import { signedWalletFrame } from "./wallet-frame.mjs";
 
-const here = path.dirname(fileURLToPath(import.meta.url));
+const wallet = "0x1111111111111111111111111111111111111111";
+const paymaster = "0x2222222222222222222222222222222222222222";
+const target = "0x3333333333333333333333333333333333333333";
+const key = generatePrivateKey();
+const owner = privateKeyToAccount(key).address;
+const base = { chainId: 8141337, wallet, owner, key, nonceSeq: 0n, target };
 
-test("fixtures.json includes compiled SimplePaymaster", async () => {
-  const fixtures = JSON.parse(await readFile(path.join(here, "fixtures.json"), "utf8"));
-  assert.ok(fixtures.contracts.SimplePaymaster, "SimplePaymaster missing from fixtures.json");
-  assert.ok(fixtures.contracts.SimplePaymaster.abi.length > 0, "SimplePaymaster ABI missing");
-  assert.ok(fixtures.contracts.SimplePaymaster.bytecode.startsWith("0x"), "SimplePaymaster bytecode invalid");
+test("pinned compiler artifacts include both sponsored fixtures", async () => {
+  const file = new URL("./fixtures.json", import.meta.url);
+  const { compiler, contracts } = JSON.parse(await readFile(file, "utf8"));
+  assert.match(compiler, /^0\.8\.28\+commit\.7893614a/);
+  for (const name of ["SponsoredHashChainWallet", "SimplePaymaster"]) {
+    assert.match(contracts[name].bytecode, /^0x[0-9a-f]+$/);
+    assert.ok(contracts[name].abi.some(item => item.type === "constructor" && item.stateMutability === "payable"));
+  }
 });
 
-test("signedSponsoredWalletFrame constructs valid 3-frame EIP-8141 payload", async () => {
-  const ownerKey = generatePrivateKey();
-  const owner = privateKeyToAccount(ownerKey);
-  const mockWallet = "0x1111111111111111111111111111111111111111";
-  const mockPaymaster = "0x2222222222222222222222222222222222222222";
-  const mockTarget = "0x3333333333333333333333333333333333333333";
+test("signed sponsored prefix identifies separate sender and payer with the intended scheduler classes", async () => {
+  const witness = toHex(123n, {size: 32});
+  const heavy = await signedWalletFrame({ ...base, paymaster, gas: 997200n, verifyData: witness });
+  const cheap = await signedWalletFrame({ ...base, paymaster, gas: 70000n, verifyData: "0x" });
+  assert.deepEqual(heavy.frames.map(f => [f.mode, f.flags, f.target]), [
+    [1, 2, null], [1, 1, paymaster], [2, 0, target],
+  ]);
+  assert.equal(heavy.frames[0].data, witness + "01");
+  assert.equal(cheap.frames[0].data, "0x01");
+  assert.equal(heavy.frames[1].data, "0x");
+  assert.equal(calculateDeclaredVerifyGas(cheap), 92800n);
+  assert.equal(isHeavyFrameTx(cheap), false);
+  assert.equal(calculateDeclaredVerifyGas(heavy), 1020000n);
+  assert.equal(isHeavyFrameTx(heavy), true);
 
-  const tx = await signedSponsoredWalletFrame({
-    chainId: 8141337,
-    wallet: mockWallet,
-    owner: owner.address,
-    key: ownerKey,
-    paymaster: mockPaymaster,
-    nonceSeq: 0n,
-    gas: 997200n,
-    verifyData: "0xabcdef",
-    target: mockTarget,
-  });
-
-  // Verify 3-frame pipeline
-  assert.equal(tx.frames.length, 3, "Expected 3 frames in sponsored transaction");
-
-  // Frame 0: VERIFY mode on Paymaster (flags = 1, APPROVE_PAY)
-  assert.equal(tx.frames[0].mode, 1);
-  assert.equal(tx.frames[0].flags, 1);
-  assert.equal(tx.frames[0].target, mockPaymaster);
-
-  // Frame 1: VERIFY mode on Account (flags = 2, APPROVE_EXEC)
-  assert.equal(tx.frames[1].mode, 1);
-  assert.equal(tx.frames[1].flags, 2);
-  assert.equal(tx.frames[1].target, null);
-  assert.equal(tx.frames[1].limits.execution, 997200n);
-
-  // Frame 2: SENDER mode on Target (flags = 0, Execution)
-  assert.equal(tx.frames[2].mode, 2);
-  assert.equal(tx.frames[2].flags, 0);
-  assert.equal(tx.frames[2].target, mockTarget);
-
-  // Signatures present
-  assert.equal(tx.signatures.length, 1);
-  assert.ok(tx.signatures[0].signature.startsWith("0x"));
+  const bytes = heavy.signatures[0].signature;
+  const signature = {yParity: Number(bytes.slice(0, 4)), r: "0x" + bytes.slice(4, 68), s: "0x" + bytes.slice(68)};
+  assert.equal(await recoverAddress({hash: computeSigHash(heavy), signature}), owner);
+  heavy.frames[1].target = target;
+  assert.notEqual(await recoverAddress({hash: computeSigHash(heavy), signature}), owner);
 });
 
-test("comparing self-paid 2-frame vs shared-paymaster 3-frame structures", async () => {
-  const ownerKey = generatePrivateKey();
-  const owner = privateKeyToAccount(ownerKey);
-  const mockWallet = "0x1111111111111111111111111111111111111111";
-  const mockPaymaster = "0x2222222222222222222222222222222222222222";
-
-  const selfPaidTx = await signedWalletFrame({
-    chainId: 8141337,
-    wallet: mockWallet,
-    owner: owner.address,
-    key: ownerKey,
-    nonceSeq: 0n,
-    gas: 997200n,
-    verifyData: "0x",
-    target: owner.address,
-  });
-
-  const sponsoredTx = await signedSponsoredWalletFrame({
-    chainId: 8141337,
-    wallet: mockWallet,
-    owner: owner.address,
-    key: ownerKey,
-    paymaster: mockPaymaster,
-    nonceSeq: 0n,
-    gas: 997200n,
-    verifyData: "0x",
-    target: owner.address,
-  });
-
-  assert.equal(selfPaidTx.frames.length, 2);
-  assert.equal(selfPaidTx.frames[0].flags, 3); // APPROVE_ALL = 0x03
-
-  assert.equal(sponsoredTx.frames.length, 3);
-  assert.equal(sponsoredTx.frames[0].flags, 1); // APPROVE_PAY = 0x01
-  assert.equal(sponsoredTx.frames[1].flags, 2); // APPROVE_EXEC = 0x02
-  assert.equal(sponsoredTx.frames[0].target, mockPaymaster);
+test("self-paid sender keeps its signed two-frame payload", async () => {
+  const witness = toHex(321n, {size: 32});
+  const tx = await signedWalletFrame({ ...base, gas: 997200n, verifyData: witness });
+  assert.deepEqual(tx.frames.map(f => [f.mode, f.flags, f.target]), [[1, 3, null], [2, 0, target]]);
+  assert.equal(tx.frames[0].data, witness);
 });

@@ -5,7 +5,7 @@ import { constants, createReadStream, existsSync } from "node:fs";
 import { access, readFile, realpath } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { checkPlan, summarize, workloadDigest, effectiveScheduler } from "./compare-metrics.mjs";
+import { checkPlan, summarize, workloadDigest, effectiveScheduler, sponsorshipEvidence } from "./compare-metrics.mjs";
 import { renderTerminalReport, useTerminalView } from "./terminal-view.mjs";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
@@ -85,7 +85,7 @@ export async function doctor() {
   return { status: checks.every(c => c.ok) ? "ready" : "not-ready", checks };
 }
 
-function verifyTrialRecords(benchmark, bursts) {
+function verifyTrialRecords(benchmark, bursts, heavyVerifyGas = 993512) {
   assert.deepEqual(benchmark.warmup.map(t => [t.round, t.burst]), [0, ...bursts].map(n => [-1, n]), "missing or unexpected warm-up");
   const hash32 = /^0x[0-9a-f]{64}$/i;
   const seen = new Set();
@@ -103,7 +103,7 @@ function verifyTrialRecords(benchmark, bursts) {
     }
     for (const a of trial.background) {
       assert.equal(a.outcome, "admitted");
-      assert.equal(a.mined?.verifyGas, 993512);
+      assert.equal(a.mined?.verifyGas, heavyVerifyGas);
       assert.match(a.mined.blockHash, hash32, "missing heavy receipt block");
       assert.ok(Number.isSafeInteger(a.mined.blockNumber) && a.mined.blockNumber >= 0, "missing heavy receipt height");
     }
@@ -124,6 +124,7 @@ export function selectDisplayTrials(trials, bursts) {
 }
 
 export function printTerminalReport(report, trialsByMode, source) {
+  if (report.sharedPaymaster) console.log("Shared-paymaster workload: both wallets use the same fee payer.");
   console.log(renderTerminalReport(report, trialsByMode, {
     source,
     columns: process.stdout.columns,
@@ -157,7 +158,9 @@ export async function verifyReport(directory, trialsByMode) {
     const raw = JSON.parse(await readFile(path.join(dir, arm.evidenceFile), "utf8"));
     assert.equal(raw.chainId, comparison.chainId);
     const benchmark = raw.benchmark;
-    verifyTrialRecords(benchmark, comparison.bursts);
+    const sponsorship = sponsorshipEvidence(raw, comparison.sharedPaymaster);
+    assert.deepEqual(arm.sponsorship ?? null, sponsorship, "sponsorship differs from receipt evidence");
+    verifyTrialRecords(benchmark, comparison.bursts, sponsorship?.heavyVerifyGas);
     const scheduler = effectiveScheduler({ admissionScheduler: benchmark.schedulerReadback }, mode);
     assert.deepEqual(arm.schedulerReadback, scheduler);
     assert.match(arm.genesisHash, /^0x[0-9a-f]{64}$/i, "missing genesis fingerprint");
@@ -169,8 +172,8 @@ export async function verifyReport(directory, trialsByMode) {
       assert.equal(raw[field], arm[field], field);
     }
     assert.equal(workloadDigest(benchmark), arm.signedWorkloadSha256, "signed input fingerprint mismatch");
-    assert.deepEqual(summarize(benchmark.trials, comparison.rounds, comparison.bursts, scheduler), arm.summary, "summary differs from samples");
-    const pins = [arm.genesisHash, arm.ethrexBinarySha256, arm.fixtureArtifactSha256, arm.signedWorkloadSha256, arm.sidecarBuildSha256 ?? null];
+    assert.deepEqual(summarize(benchmark.trials, comparison.rounds, comparison.bursts, scheduler, sponsorship?.heavyVerifyGas), arm.summary, "summary differs from samples");
+    const pins = [arm.genesisHash, arm.ethrexBinarySha256, arm.fixtureArtifactSha256, arm.signedWorkloadSha256, arm.sidecarBuildSha256 ?? null, sponsorship];
     if (reference) assert.deepEqual(pins, reference, "policies used different inputs");
     else reference = pins;
     if (trialsByMode) trialsByMode[mode] = selectDisplayTrials(benchmark.trials, comparison.bursts);
@@ -203,6 +206,7 @@ async function main() {
     if (json) console.log(JSON.stringify(result));
     else if (trialsByMode && result.verified) printTerminalReport(result.comparison, trialsByMode, "saved");
     else {
+      if (result.comparison.sharedPaymaster) console.log("Shared-paymaster workload: both wallets use the same fee payer.");
       console.log(`Verified ${result.measuredPolicies} measured policies. Status: ${result.status}`);
       for (const [mode, arm] of Object.entries(result.comparison.policies)) {
         for (const row of arm.summary ?? []) {
