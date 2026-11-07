@@ -11,7 +11,40 @@ import { readReport } from "./report.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const defaultRoot = path.resolve(here, "..");
-const replayPath = "sidecar/evidence/compare/merged-main-7d052e7";
+const replayPaths = {
+  "self-paid": "sidecar/evidence/compare/merged-main-7d052e7",
+  "shared-paymaster": "sidecar/evidence/compare/shared-paymaster-smoke",
+};
+const isScenario = value => Object.hasOwn(replayPaths, value);
+
+function requestScenario(req) {
+  return new Promise((resolve, reject) => {
+    let bytes = 0;
+    const chunks = [];
+    function cleanup() {
+      req.off("data", data); req.off("end", end); req.off("error", fail); req.off("aborted", aborted);
+    }
+    function fail(error) { cleanup(); req.resume(); reject(error); }
+    function aborted() { fail(new Error("Request interrupted")); }
+    function data(chunk) {
+      bytes += chunk.length;
+      if (bytes > 512) return fail(new Error("Request too large"));
+      chunks.push(chunk);
+    }
+    function end() {
+      cleanup();
+      try {
+        const text = Buffer.concat(chunks).toString("utf8");
+        if (!text.length) return resolve("self-paid");
+        const body = JSON.parse(text);
+        if (!body || typeof body !== "object" || Array.isArray(body) ||
+            Object.keys(body).length !== 1 || !isScenario(body.scenario)) throw Error("Invalid scenario");
+        resolve(body.scenario);
+      } catch (error) { reject(error); }
+    }
+    req.on("data", data); req.on("end", end); req.on("error", fail); req.on("aborted", aborted);
+  });
+}
 const assets = new Map([
   ["/", ["index.html", "text/html; charset=utf-8"]],
   ["/index.html", ["index.html", "text/html; charset=utf-8"]],
@@ -35,7 +68,8 @@ function signalGroup(pid, signal) {
   }
 }
 
-async function runComparison(root, signal, updatePolicy) {
+async function runComparison(root, signal, updatePolicy, scenario) {
+  if (!isScenario(scenario)) throw Error("Unknown scenario");
   const scratch = await mkdtemp(path.join(tmpdir(), "framilier-web-"));
   const evidence = path.join(scratch, "result");
   try {
@@ -46,7 +80,8 @@ async function runComparison(root, signal, updatePolicy) {
       if (process.env[key]) env[key] = process.env[key];
     }
     const child = spawn(path.join(root, "framilier"),
-      ["compare", "--rounds", "1", "--bursts", "8", "--output", evidence, "--plain"],
+      ["compare", "--rounds", "1", "--bursts", "8", "--output", evidence, "--plain",
+        ...(scenario === "shared-paymaster" ? ["--shared-paymaster"] : [])],
       { cwd: root, env, detached: true, stdio: ["ignore", "pipe", "inherit"] });
     const output = createInterface({ input: child.stdout });
     output.on("line", line => {
@@ -82,12 +117,13 @@ async function runComparison(root, signal, updatePolicy) {
 
 export function createDemo({ root = defaultRoot, compare = runComparison, now = Date.now, timeout = runTimeout } = {}) {
   const runs = new Map();
-  let active, controller, pending, replay;
+  let active, controller, pending;
+  const replays = new Map();
   let nextStart = 0;
   let stopping = false;
 
-  function start() {
-    const run = { id: randomUUID(), status: "running", startedAt: new Date(now()).toISOString() };
+  function start(scenario) {
+    const run = { id: randomUUID(), scenario, status: "running", startedAt: new Date(now()).toISOString() };
     runs.set(run.id, run);
     active = run;
     controller = new AbortController();
@@ -95,7 +131,9 @@ export function createDemo({ root = defaultRoot, compare = runComparison, now = 
     const timer = setTimeout(() => controller.abort(), timeout);
     pending = (async () => {
       try {
-        run.result = await compare(root, signal, policy => { run.policy = policy; });
+        const result = await compare(root, signal, policy => { run.policy = policy; }, scenario);
+        if (result?.scenario !== scenario || result.source !== "live") throw Error("Mismatched comparison result");
+        run.result = result;
         run.status = "complete";
       } catch (error) {
         console.error("Live comparison failed:", error.message);
@@ -124,10 +162,16 @@ export function createDemo({ root = defaultRoot, compare = runComparison, now = 
         return;
       }
 
-      if (req.method === "GET" && route === "/api/replay") {
-        // A pending promise shares verification work across simultaneous page loads.
-        replay ??= readReport(path.join(root, replayPath), "replay").catch(error => { replay = null; throw error; });
-        return sendJson(res, 200, await replay);
+      const url = new URL(route, "http://localhost");
+      if (req.method === "GET" && url.pathname === "/api/replay") {
+        const scenario = url.searchParams.get("scenario") ?? "self-paid";
+        if (!isScenario(scenario) || [...url.searchParams.keys()].some(key => key !== "scenario") ||
+            url.searchParams.getAll("scenario").length > 1)
+          return sendJson(res, 400, { error: "Choose self-paid or shared-paymaster." });
+        // Share verification work only among requests for the same archive.
+        if (!replays.has(scenario)) replays.set(scenario,
+          readReport(path.join(root, replayPaths[scenario]), "replay").catch(error => { replays.delete(scenario); throw error; }));
+        return sendJson(res, 200, await replays.get(scenario));
       }
 
       // A single host slot; finished records are bounded in age and count.
@@ -139,15 +183,17 @@ export function createDemo({ root = defaultRoot, compare = runComparison, now = 
         // This server grants no cross-origin access. Public judges use only the fixed command.
         if (req.headers["x-framilier-run"] !== "1" || req.headers["sec-fetch-site"] === "cross-site")
           return sendJson(res, 403, { error: "Start the comparison from this page." });
-        if (req.headers["transfer-encoding"] || Number(req.headers["content-length"] || 0) !== 0)
-          return sendJson(res, 400, { error: "This comparison accepts no parameters." });
+        let scenario;
+        try { scenario = await requestScenario(req); }
+        catch { return sendJson(res, 400, { error: "Choose only a self-paid or shared-paymaster scenario." }); }
         if (stopping) return sendJson(res, 503, { error: "The runner is stopping." });
-        if (active) return sendJson(res, 202, active);
+        if (active) return active.scenario === scenario ? sendJson(res, 202, active)
+          : sendJson(res, 409, { error: `The runner is busy with a ${active.scenario} comparison. Try this scenario after it finishes.`, activeScenario: active.scenario });
         if (now() < nextStart) {
           res.setHeader("Retry-After", Math.ceil((nextStart - now()) / 1000));
           return sendJson(res, 429, { error: "The runner is cooling down. Try again shortly." });
         }
-        return sendJson(res, 202, start());
+        return sendJson(res, 202, start(scenario));
       }
       if (req.method === "GET" && route.startsWith("/api/runs/")) {
         const run = runs.get(route.slice("/api/runs/".length));

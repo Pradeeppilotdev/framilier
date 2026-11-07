@@ -19,6 +19,7 @@ if (
 // The public service can name a job, but cannot change which local command or URL is used.
 const local = "http://127.0.0.1:4173";
 const options = { redirect: "error", cache: "no-store" };
+const isScenario = value => value === "self-paid" || value === "shared-paymaster";
 async function relay(path, message) {
   const response = await fetch(new URL("/_runner/" + path, host), {
     ...options,
@@ -45,23 +46,26 @@ async function tick() {
       ...options, method: "HEAD", signal: AbortSignal.timeout(3000),
     });
     if (!health.ok) throw Error("Local runner unavailable");
-    const { id } = await relay("poll", {});
+    const { id, scenario } = await relay("poll", {});
     if (!id) { log("Listening for a comparison."); return; }
-    job = { id };
+    job = { id, scenario };
+    if (!isScenario(scenario)) job.report = { status: "failed" };
   }
 
   if (!job.localId && !job.report) {
     try {
       const response = await fetch(local + "/api/runs", {
-        ...options, method: "POST", headers: { "x-framilier-run": "1" }, signal: AbortSignal.timeout(3500),
+        ...options, method: "POST", headers: { "x-framilier-run": "1", "content-type": "application/json" },
+        body: JSON.stringify({ scenario: job.scenario }), signal: AbortSignal.timeout(3500),
       });
-      if (response.status === 429) {
-        log("Waiting for local runner cooldown.");
+      if (response.status === 429 || response.status === 409) {
+        log("Waiting for the local runner to become available.");
       } else {
         if (!response.ok) throw Error("Local runner unavailable");
-        job.localId = (await response.json()).id;
-        if (!job.localId) throw Error("Local runner returned no job");
-        log("Running fixed private-chain comparison.");
+        const state = await response.json();
+        if (state.scenario !== job.scenario || !state.id) throw Error("Local runner returned a different scenario");
+        job.localId = state.id;
+        log("Running " + job.scenario + " private-chain comparison.");
       }
     } catch {
       // The local service may have accepted the POST before losing the connection.
@@ -79,7 +83,9 @@ async function tick() {
       else {
         if (!response.ok) throw Error("Local job temporarily unavailable");
         const state = await response.json();
-        if (state.status === "complete") job.report = { status: "complete", result: state.result };
+        if (state.scenario !== job.scenario) job.report = { status: "failed" };
+        else if (state.status === "complete") job.report = state.result?.scenario === job.scenario
+          ? { status: "complete", result: state.result } : { status: "failed" };
         else if (state.status === "failed") job.report = { status: "failed" };
         else if (state.policy) job.policy = state.policy;
       }

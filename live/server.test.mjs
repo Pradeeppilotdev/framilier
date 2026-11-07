@@ -28,14 +28,15 @@ test("same fixed job is shared, polled, rate limited and expired", async t => {
   const [first, second] = await Promise.all([request("/api/runs", post), request("/api/runs", post)]);
   assert.equal(first.status, 202);
   const job = await first.json();
+  assert.equal(job.scenario, "self-paid");
   assert.equal((await second.json()).id, job.id);
   const route = "/api/runs/" + job.id;
   assert.equal((await (await request(route)).json()).policy, "fifo");
   assert.equal(calls, 1);
-  finish({ source: "live" });
+  finish({ source: "live", scenario: "self-paid" });
   const result = await (await request(route)).json();
   assert.equal(result.status, "complete");
-  assert.deepEqual(result.result, { source: "live" });
+  assert.deepEqual(result.result, { source: "live", scenario: "self-paid" });
   const retry = await request("/api/runs", post);
   assert.equal(retry.status, 429);
   assert.equal(retry.headers.get("retry-after"), "60");
@@ -73,4 +74,60 @@ test("saved route serves verified reports without running the benchmark", async 
   assert.equal(data.source, "replay");
   assert.equal(data.rounds, 20);
   assert.ok(data.policies.fair.timeline.some(event => event.wallet === "B"));
+});
+
+
+test("sponsor selection is bound to the job and never joins another scenario", async t => {
+  let finish, received;
+  const request = await startServer(t, {
+    compare: async (_root, _signal, _update, scenario) => {
+      received = scenario;
+      return new Promise(resolve => { finish = resolve; });
+    },
+  });
+  const sponsored = { ...post, body: JSON.stringify({ scenario: "shared-paymaster" }) };
+  const first = await request("/api/runs", sponsored);
+  assert.equal(first.status, 202);
+  const job = await first.json();
+  assert.equal(job.scenario, "shared-paymaster");
+  assert.equal(received, "shared-paymaster");
+  assert.equal((await (await request("/api/runs", sponsored)).json()).id, job.id);
+  const conflict = await request("/api/runs", post);
+  assert.equal(conflict.status, 409);
+  assert.equal((await conflict.json()).activeScenario, "shared-paymaster");
+  finish({ source: "live", scenario: "shared-paymaster" });
+  const done = await (await request("/api/runs/" + job.id)).json();
+  assert.equal(done.status, "complete");
+  assert.equal(done.result.scenario, "shared-paymaster");
+});
+
+test("invalid or oversized scenario payloads cannot start a benchmark", async t => {
+  const request = await startServer(t, { compare: () => assert.fail("must not run") });
+  for (const body of ['null', '[]', '{}', '{"scenario":"zk"}', '{"scenario":"self-paid","rounds":500}',
+      '{"scenario":"shared-paymaster","url":"https://example.com"}', ' '.repeat(513)]) {
+    assert.equal((await request("/api/runs", { ...post, body })).status, 400, body.slice(0, 100));
+  }
+});
+
+test("a completed result from a different scenario is an explicit failure", async t => {
+  const request = await startServer(t, { compare: async () => ({ source: "live", scenario: "self-paid" }) });
+  const job = await (await request("/api/runs", { ...post, body: '{"scenario":"shared-paymaster"}' })).json();
+  const state = await (await request("/api/runs/" + job.id)).json();
+  assert.equal(state.status, "failed");
+  assert.equal(state.result, undefined);
+});
+
+test("replay scenario selects its own verified evidence and rejects extra query options", async t => {
+  const request = await startServer(t, { compare: () => assert.fail("must not run") });
+  const a = await (await request("/api/replay?scenario=self-paid")).json();
+  const b = await (await request("/api/replay?scenario=shared-paymaster")).json();
+  assert.equal(a.scenario, "self-paid");
+  assert.equal(a.rounds, 20);
+  assert.equal(b.scenario, "shared-paymaster");
+  assert.equal(b.rounds, 1);
+  assert.equal(b.source, "replay");
+  for (const route of ["/api/replay?scenario=nope", "/api/replay?scenario=self-paid&rounds=5",
+      "/api/replay?scenario=self-paid&scenario=shared-paymaster"]) {
+    assert.equal((await request(route)).status, 400);
+  }
 });

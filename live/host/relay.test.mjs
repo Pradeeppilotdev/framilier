@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { handleApi } from "./relay.mjs";
+import { handleApi, initialize } from "./relay.mjs";
 
 // node:sqlite is available in Node 22.13+. Run these D1 dialect and lifecycle
 // tests there; the application and standalone Node server also work on Node 20.
@@ -16,6 +16,7 @@ function database() {
       first: () => compiled().get(...values),
       run: () => ({ meta: compiled().run(...values) }),
       execute: () => ({ results: compiled().all(...values) }),
+      all: () => ({ results: compiled().all(...values) }),
     };
   }
   return {
@@ -88,6 +89,7 @@ test(
     now += 120_000;
     const result = {
       source: "live",
+      scenario: "self-paid",
       chainId: 8141337,
       rounds: 1,
       burst: 8,
@@ -118,3 +120,51 @@ test(
     db.sql.close();
   }
 );
+
+
+test("existing relay databases migrate once and preserve self-paid jobs", { skip: !DatabaseSync }, async () => {
+  const db = database();
+  db.sql.exec(`CREATE TABLE framilier_runs (
+    id TEXT PRIMARY KEY, state TEXT NOT NULL, created INTEGER NOT NULL, ended INTEGER,
+    owner TEXT, lease INTEGER, policy TEXT, result TEXT)`);
+  const id = randomUUID();
+  db.sql.prepare("INSERT INTO framilier_runs (id,state,created) VALUES (?,'complete',1)").run(id);
+  await Promise.all([initialize(db), initialize(db)]);
+  assert.equal(db.sql.prepare("SELECT scenario FROM framilier_runs WHERE id=?").get(id).scenario, "self-paid");
+  assert.equal(db.sql.prepare("PRAGMA table_info(framilier_runs)").all().filter(c => c.name === "scenario").length, 1);
+  db.sql.close();
+});
+
+test("relay binds a sponsor choice through claim and rejects mismatched results", { skip: !DatabaseSync }, async () => {
+  const db = database();
+  const env = { DB: db, FRAMILIER_RUNNER_TOKEN: randomUUID() };
+  const runner = randomUUID();
+  const call = (path, body, privateCall = false) => handleApi(new Request("https://demo.example" + path, {
+    method: "POST", headers: privateCall ? { authorization: "Bearer " + env.FRAMILIER_RUNNER_TOKEN } : { "x-framilier-run": "1" },
+    body: body === undefined ? undefined : typeof body === "string" ? body : JSON.stringify(body),
+  }), env);
+  try {
+    await call("/_runner/poll", { runner }, true);
+    for (const body of ["null", "[]", "{}", { scenario: "other" }, { scenario: "self-paid", rounds: 9 }, "x".repeat(513)]) {
+      assert.equal((await call("/api/runs", body)).status, 400);
+    }
+    const start = await call("/api/runs", { scenario: "shared-paymaster" });
+    assert.equal(start.status, 202);
+    const job = await start.json();
+    assert.equal(job.scenario, "shared-paymaster");
+    const conflict = await call("/api/runs");
+    assert.equal(conflict.status, 409);
+    assert.equal((await conflict.json()).activeScenario, "shared-paymaster");
+    assert.equal((await (await call("/api/runs", { scenario: "shared-paymaster" })).json()).id, job.id);
+    const claim = await (await call("/_runner/poll", { runner }, true)).json();
+    assert.deepEqual(claim, { id: job.id, scenario: "shared-paymaster" });
+    const result = { source: "live", scenario: "self-paid", chainId: 8141337, rounds: 1, burst: 8,
+      policies: { off: {}, fifo: {}, fair: {} } };
+    assert.equal((await call("/_runner/report", { runner, id: job.id, status: "complete", result }, true)).status, 400);
+    result.scenario = "shared-paymaster";
+    assert.equal((await call("/_runner/report", { runner, id: job.id, status: "complete", result }, true)).status, 200);
+    const stored = db.sql.prepare("SELECT scenario,result FROM framilier_runs WHERE id=?").get(job.id);
+    assert.equal(stored.scenario, "shared-paymaster");
+    assert.equal(JSON.parse(stored.result).scenario, "shared-paymaster");
+  } finally { db.sql.close(); }
+});

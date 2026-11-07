@@ -10,16 +10,30 @@ const tables = [
   "CREATE TABLE IF NOT EXISTS framilier_runner (slot INTEGER PRIMARY KEY, seen INTEGER NOT NULL)",
   `CREATE TABLE IF NOT EXISTS framilier_runs (
     id TEXT PRIMARY KEY, state TEXT NOT NULL, created INTEGER NOT NULL, ended INTEGER,
-    owner TEXT, lease INTEGER, policy TEXT, result TEXT)`,
+    owner TEXT, lease INTEGER, policy TEXT, result TEXT,
+    scenario TEXT NOT NULL DEFAULT 'self-paid' CHECK (scenario IN ('self-paid','shared-paymaster')))`,
   "CREATE UNIQUE INDEX IF NOT EXISTS framilier_one_job ON framilier_runs ((1)) WHERE state IN ('queued','running')",
 ];
 const ready = new WeakMap();
+const isScenario = value => value === "self-paid" || value === "shared-paymaster";
 
 export function initialize(db) {
   if (!ready.has(db)) {
     ready.set(
       db,
-      db.batch(tables.map((sql) => db.prepare(sql))).catch((error) => {
+      (async () => {
+        await db.batch(tables.map((sql) => db.prepare(sql)));
+        const hasScenario = async () => (await db.prepare("PRAGMA table_info(framilier_runs)").all())
+          .results.some(column => column.name === "scenario");
+        if (!await hasScenario()) {
+          try {
+            await db.prepare("ALTER TABLE framilier_runs ADD COLUMN scenario TEXT NOT NULL DEFAULT 'self-paid' CHECK (scenario IN ('self-paid','shared-paymaster'))").run();
+          } catch (error) {
+            // Another isolate may have completed the same additive migration.
+            if (!await hasScenario()) throw error;
+          }
+        }
+      })().catch((error) => {
         ready.delete(db);
         throw error;
       })
@@ -35,6 +49,7 @@ function json(value, status = 200, headers = {}) {
 function publicJob(row) {
   const data = {
     id: row.id,
+    scenario: row.scenario,
     status: row.state === "queued" ? "running" : row.state,
     startedAt: new Date(row.created).toISOString(),
   };
@@ -64,8 +79,9 @@ function expire(db, now) {
 
 const validId = (value) => typeof value === "string" && /^[0-9a-f]{8}-[0-9a-f-]{27}$/.test(value);
 
-async function readMessage(request) {
+async function readMessage(request, limit = 24_576, allowEmpty = false) {
   const reader = request.body?.getReader();
+  if (!reader && allowEmpty) return undefined;
   if (!reader) throw Error("Missing message");
   const decoder = new TextDecoder();
   let length = 0,
@@ -74,13 +90,15 @@ async function readMessage(request) {
     const { done, value } = await reader.read();
     if (done) break;
     length += value.byteLength;
-    if (length > 24_576) {
+    if (length > limit) {
       await reader.cancel();
       throw Error("Message too large");
     }
     body += decoder.decode(value, { stream: true });
   }
-  return JSON.parse(body + decoder.decode());
+  body += decoder.decode();
+  if (!body.length && allowEmpty) return undefined;
+  return JSON.parse(body);
 }
 
 async function privateRoute(path, request, db, now) {
@@ -93,7 +111,7 @@ async function privateRoute(path, request, db, now) {
   if (!validId(body?.runner)) return json({ error: "Invalid runner ID." }, 400);
   if (path === "/_runner/poll") {
     const query = db
-      .prepare(`SELECT id FROM framilier_runs WHERE owner=? AND state='running'`)
+      .prepare(`SELECT id,scenario FROM framilier_runs WHERE owner=? AND state='running'`)
       .bind(body.runner);
     const batch = await db.batch([
       expire(db, now),
@@ -110,7 +128,8 @@ async function privateRoute(path, request, db, now) {
         .bind(body.runner, now + activeLease, body.runner),
       query,
     ]);
-    return json({ id: batch.at(-1).results[0]?.id ?? null });
+    const job = batch.at(-1).results[0];
+    return json(job ? { id: job.id, scenario: job.scenario } : { id: null });
   }
 
   if (!validId(body.id) || !["running", "complete", "failed"].includes(body.status))
@@ -120,12 +139,17 @@ async function privateRoute(path, request, db, now) {
     const result = body.result;
     if (
       result?.source !== "live" ||
+      !isScenario(result.scenario) ||
       result.chainId !== 8141337 ||
       result.rounds !== 1 ||
       result.burst !== 8 ||
       !["off", "fifo", "fair"].every((p) => result.policies?.[p])
     )
       return json({ error: "Invalid live result." }, 400);
+    const job = await db.prepare("SELECT scenario FROM framilier_runs WHERE id=? AND owner=?")
+      .bind(body.id, body.runner).first();
+    if (job && job.scenario !== result.scenario)
+      return json({ error: "Result does not match the requested scenario." }, 400);
   }
   const terminal = body.status !== "running";
   const update = await db
@@ -164,6 +188,7 @@ async function privateRoute(path, request, db, now) {
 export async function handleApi(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
+  if (url.search) return json({ error: "Unknown route." }, 404);
   const privatePath = path === "/_runner/poll" || path === "/_runner/report";
   const readId = path.startsWith("/api/runs/") && path.slice(10);
   if (!privatePath && path !== "/api/runs" && !validId(readId)) return json({ error: "Unknown route." }, 404);
@@ -183,13 +208,17 @@ export async function handleApi(request, env) {
 
   if (path === "/api/runs" && request.headers.get("x-framilier-run") !== "1")
     return json({ error: "Start the comparison from this page." }, 403);
-  if (path === "/api/runs" && request.body !== null) {
-    // Some edge runtimes represent a length-zero POST as an empty stream.
-    const reader = request.body.getReader();
-    const { done } = await reader.read();
-    if (!done) {
-      await reader.cancel();
-      return json({ error: "This comparison accepts no parameters." }, 400);
+  let scenario = "self-paid";
+  if (path === "/api/runs") {
+    try {
+      const body = await readMessage(request, 512, true);
+      if (body !== undefined) {
+        if (!body || typeof body !== "object" || Array.isArray(body) ||
+            Object.keys(body).length !== 1 || !isScenario(body.scenario)) throw Error("Invalid scenario");
+        scenario = body.scenario;
+      }
+    } catch {
+      return json({ error: "Choose only a self-paid or shared-paymaster scenario." }, 400);
     }
   }
 
@@ -219,17 +248,18 @@ export async function handleApi(request, env) {
     expire(db, now),
     db
       .prepare(
-        `INSERT OR IGNORE INTO framilier_runs (id,state,created,lease)
-      SELECT ?, 'queued', ?, ? WHERE EXISTS (SELECT 1 FROM framilier_runner WHERE slot=1 AND seen>?)
+        `INSERT OR IGNORE INTO framilier_runs (id,state,created,lease,scenario)
+      SELECT ?, 'queued', ?, ?, ? WHERE EXISTS (SELECT 1 FROM framilier_runner WHERE slot=1 AND seen>?)
       AND NOT EXISTS (SELECT 1 FROM framilier_runs WHERE ended>?)`
       )
-      .bind(id, now, now + heartbeatWindow, now - heartbeatWindow, now - cooldown),
+      .bind(id, now, now + heartbeatWindow, scenario, now - heartbeatWindow, now - cooldown),
     db.prepare("SELECT * FROM framilier_runs WHERE state IN ('queued','running')"),
     db.prepare("SELECT seen FROM framilier_runner WHERE slot=1"),
     db.prepare("SELECT MAX(ended) AS ended FROM framilier_runs"),
   ]);
   const current = result[3].results[0];
-  if (current) return json(publicJob(current), 202);
+  if (current) return current.scenario === scenario ? json(publicJob(current), 202)
+    : json({ error: `The runner is busy with a ${current.scenario} comparison. Try this scenario after it finishes.`, activeScenario: current.scenario }, 409);
   if (!(result[4].results[0]?.seen > now - heartbeatWindow)) {
     return json({ error: "The live runner is offline. You can still view the saved comparison." }, 503);
   }
