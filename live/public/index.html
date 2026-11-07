@@ -31,14 +31,31 @@
           <p class="protocol">EIP-8141 <b>/</b> Alternative mempool</p>
           <h1 id="page-title">Admission scheduler</h1>
           <p class="lede">
-            Wallet A submits eight expensive checks. Wallet B submits one cheap
-            check. See when B gets a turn under each policy.
+            Wallet A submits a burst of expensive checks. Wallet B submits one
+            cheap check. See when B gets a turn under each policy.
           </p>
         </div>
         <button type="button" id="run" class="run" disabled>
           <span class="play" aria-hidden="true">▶</span
           ><span id="run-label">Run comparison</span>
         </button>
+      </section>
+      <section class="scenario-panel" aria-label="Comparison setup">
+        <fieldset id="scenario-options" aria-describedby="scenario-description scenario-note">
+          <legend>Who pays the transaction fees?</legend>
+          <div class="scenario-choices">
+            <label class="scenario-choice">
+              <input type="radio" name="scenario" value="self-paid" checked />
+              <span><strong>Each wallet pays</strong><small>Two independent fee payers</small></span>
+            </label>
+            <label class="scenario-choice">
+              <input type="radio" name="scenario" value="shared-paymaster" />
+              <span><strong>Shared paymaster</strong><small>One sponsor for both wallets</small></span>
+            </label>
+          </div>
+        </fieldset>
+        <p id="scenario-description">A and B pay their own fees. Compare how each sender gets a turn.</p>
+        <p id="scenario-note">New live runs use eight heavy checks per burst on private chain 8141337.</p>
       </section>
       <div
         id="feedback"
@@ -52,7 +69,7 @@
           <span id="source-dot" class="dot"></span
           ><strong id="source-label">Loading comparison</strong
           ><span class="separator" aria-hidden="true"></span
-          ><span id="rounds"></span>
+          ><span id="rounds"></span><span id="result-scenario" class="scenario-tag"></span>
         </div>
         <button type="button" id="switch" class="switch" hidden></button>
       </div>
@@ -86,7 +103,25 @@
           <h2 id="metric-title">Admission times</h2>
           <span id="measurement"></span>
         </div>
+        <p class="metric-explanation">B admission is one transaction’s response time. A batch is the time until all of A’s admission responses arrive.</p>
         <div id="metric-cards" class="cards"></div>
+        <section id="evidence" class="evidence" aria-labelledby="evidence-title" hidden>
+          <div class="evidence-heading">
+            <h3 id="evidence-title">Inclusion evidence</h3>
+            <strong id="inclusion-count"></strong>
+          </div>
+          <p id="evidence-scope"></p>
+          <p id="payer-check"></p>
+          <dl id="sponsor-details" hidden>
+            <div><dt>Shared fee payer</dt><dd><code id="payer-address"></code></dd></div>
+            <div><dt>Recorded stake</dt><dd id="payer-stake"></dd></div>
+          </dl>
+          <details id="receipts">
+            <summary>Inspect transaction receipts</summary>
+            <p id="receipt-scope"></p>
+            <div id="receipt-list"></div>
+          </details>
+        </section>
         <details id="detail-panel">
           <summary>Run details &amp; unscheduled baseline</summary>
           <div class="details-body">
@@ -114,7 +149,7 @@
     </main>
     <footer class="wrap">
       <span>Reproduce locally</span
-      ><code>./framilier compare --rounds 1 --bursts 8</code>
+      ><code id="reproduce">./framilier compare --rounds 1 --bursts 8</code>
     </footer>
   </body>
 </html>
