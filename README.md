@@ -14,7 +14,9 @@ To inspect the published experiments from a fresh clone, use Node.js 20.12 or ne
 ./framilier report sidecar/evidence/compare/merged-main-7d052e7 --verify
 ```
 
-![Mac benchmark in the terminal. When wallet B started checking, all eight A simulations had finished under FIFO and six had yet to start under fair scheduling.](docs/assets/cli-report.png)
+The terminal view explains the two-wallet workload, compares admission times and shows when B got a turn. Live runs also show the current policy, stage and elapsed time.
+
+![Mac benchmark in the terminal. When wallet B started checking, all eight A simulations had finished under FIFO and six had yet to start under fair scheduling.](docs/assets/cli-report.svg)
 
 To run a live demo, build the sidecar with Bun and provide the pinned ethrex executable for your platform. The CLI creates and funds its own wallets on a private loopback chain. [One-time setup](docs/OPERATOR.md#prerequisites)
 

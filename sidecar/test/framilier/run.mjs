@@ -29,6 +29,11 @@ const nonceKeyCount = comparing ? checkPlan(sweep.rounds, sweep.bursts) : backgr
 const matched = comparing || process.argv[2] === "--matched-benchmark";
 const benchmark = matched || process.argv[2] === "--builder-benchmark";
 assert.ok(process.argv.length === 2 || (benchmark && process.argv.length === 3), "unexpected fixture arguments");
+// Optional coordinator IPC is outside every timed admission window.
+function progressStage(stage) {
+  if (!comparing || !process.connected || typeof process.send !== "function") return;
+  try { process.send({ type: "framilier:stage", stage }, () => {}); } catch {}
+}
 const chainId = 8141337;
 const sha256 = value => createHash("sha256").update(value).digest("hex");
 async function fileDigest(file) {
@@ -123,6 +128,7 @@ for (const [signal, code] of [["SIGINT", 130], ["SIGTERM", 143]]) {
 }
 
 try {
+  progressStage("chain");
   network = await denyExternalHttp();
   Object.assign(childEnv, network.env);
   const [elPort, enginePort, sidecarPort, peerPort] = await Promise.all([port(), port(), port(), port()]);
@@ -155,6 +161,7 @@ try {
     assert.ok(receipt.contractAddress);
     return receipt.contractAddress;
   }
+  progressStage("deploy");
   const rounds = Number(process.env.FRAMILIER_HASH_ROUNDS || 9664);
   assert.ok(Number.isInteger(rounds) && rounds >= 1 && rounds <= 9664, "rounds must be 1–9664 under the fixed 997200 execution-gas allowance");
   if (benchmark) assert.equal(rounds, 9664, "benchmark uses the recorded workload");
@@ -226,6 +233,7 @@ try {
     }
     throw new Error("Sidecar did not observe the mined setup transaction: " + hash);
   }
+  progressStage("controls");
   const unstakedDeposit = await deposit();
   assert.equal(unstakedDeposit.amountWei, "0");
   const unstaked = await reject(await makeFrameTx(997200n, witness), /BUDGET-010.*limit 100000$/);
@@ -310,6 +318,7 @@ try {
     const setIntervalSeconds = async seconds => {
       assert.equal(await rpc(local, "debug_bundler_setBundleInterval", [seconds]), "ok");
     };
+    progressStage("measure");
     report.benchmark = await measureAdmission({
       local, meter, noisyWallet: wallet, honestWallet: secondWallet,
       sponsorship: paymaster && {
@@ -356,6 +365,7 @@ try {
         deferredIntervalSeconds: deferredSeconds, reconciliationIntervalSeconds: reconciliationSeconds };
     } else console.log("Benchmark summary:", JSON.stringify(report.benchmark.observed));
   }
+  progressStage("save");
   const defaultOutput = matched ? "matched-valid-benchmark.json" : benchmark ? "builder-benchmark.json" : "result.json";
   const output = path.resolve(process.env.FRAMILIER_EVIDENCE || path.join(work, defaultOutput));
   await writeFile(output + ".partial", JSON.stringify(report, null, 2) + "\n");
