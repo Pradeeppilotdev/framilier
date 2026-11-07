@@ -1,0 +1,238 @@
+{
+  "format": 1,
+  "status": "complete",
+  "startedAt": "2026-11-07T00:33:46.914Z",
+  "chainId": 8141337,
+  "preset": "full",
+  "interpretation": "smoke-only",
+  "host": {
+    "os": "darwin",
+    "arch": "arm64",
+    "node": "v26.12.1",
+    "ethrexWorkers": 4
+  },
+  "rounds": 1,
+  "bursts": [
+    8,
+    16
+  ],
+  "sharedPaymaster": true,
+  "requestedModes": [
+    "off",
+    "fifo",
+    "fair"
+  ],
+  "policies": {
+    "off": {
+      "status": "measured",
+      "schedulerReadback": {
+        "mode": "off",
+        "slots": 4,
+        "maxHeavyPerSender": 2,
+        "maxWaiting": 64,
+        "heavyThreshold": 100000,
+        "maxWaitingPerSender": 16
+      },
+      "genesisHash": "0xae67caf4177a53512e70f37d1a4b7921627c5d0ca5aefcb343721657322095e2",
+      "sidecarBuildSha256": "1ae70c2f19aa45dc4ff7d88bee2a4e8553c68b9e490a7bf8492535f1fe4571a2",
+      "ethrexBinarySha256": "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692",
+      "fixtureArtifactSha256": "8427e826d13a46f6b8d7795f99bc7b3c881612ebf3f34ee4224cccd01a922f20",
+      "signedWorkloadSha256": "386b4e6fe76403d837bc7a456e13bea4902b42fa06baba7b798210ba32ac8223",
+      "sponsorship": {
+        "paymaster": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+        "walletA": "0x520b4ee01633feaa267fdd87b3be2bbd4f363e8e",
+        "walletB": "0x36ee18766391fc21d25d79ddca8ace94820489fc",
+        "heavyVerifyGas": 993765,
+        "rejectedHash": "0x7f78e31499b92daec8b26eda07336831551a992811ee5c3b5105fce9c55cf86f",
+        "paymasterStake": {
+          "registry": "0x3549c16571d8dac63839e6071d60eaa4fa248567",
+          "amountWei": "12000000000000000",
+          "delay": 86400
+        }
+      },
+      "evidenceFile": "off.json",
+      "summary": [
+        {
+          "burst": 0,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 18.073,
+            "p95": 18.073
+          },
+          "aBatchMs": null,
+          "aMined": 0,
+          "bMined": 1
+        },
+        {
+          "burst": 8,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 332.661,
+            "p95": 332.661
+          },
+          "aBatchMs": {
+            "p50": 439.153,
+            "p95": 439.153
+          },
+          "aMined": 8,
+          "bMined": 1
+        },
+        {
+          "burst": 16,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 712.074,
+            "p95": 712.074
+          },
+          "aBatchMs": {
+            "p50": 727.038,
+            "p95": 727.038
+          },
+          "aMined": 16,
+          "bMined": 1
+        }
+      ]
+    },
+    "fifo": {
+      "status": "measured",
+      "schedulerReadback": {
+        "mode": "fifo",
+        "slots": 4,
+        "maxHeavyPerSender": 2,
+        "maxWaiting": 64,
+        "heavyThreshold": 100000,
+        "maxWaitingPerSender": 16
+      },
+      "genesisHash": "0xae67caf4177a53512e70f37d1a4b7921627c5d0ca5aefcb343721657322095e2",
+      "sidecarBuildSha256": "1ae70c2f19aa45dc4ff7d88bee2a4e8553c68b9e490a7bf8492535f1fe4571a2",
+      "ethrexBinarySha256": "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692",
+      "fixtureArtifactSha256": "8427e826d13a46f6b8d7795f99bc7b3c881612ebf3f34ee4224cccd01a922f20",
+      "signedWorkloadSha256": "386b4e6fe76403d837bc7a456e13bea4902b42fa06baba7b798210ba32ac8223",
+      "sponsorship": {
+        "paymaster": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+        "walletA": "0x520b4ee01633feaa267fdd87b3be2bbd4f363e8e",
+        "walletB": "0x36ee18766391fc21d25d79ddca8ace94820489fc",
+        "heavyVerifyGas": 993765,
+        "rejectedHash": "0x7f78e31499b92daec8b26eda07336831551a992811ee5c3b5105fce9c55cf86f",
+        "paymasterStake": {
+          "registry": "0x3549c16571d8dac63839e6071d60eaa4fa248567",
+          "amountWei": "12000000000000000",
+          "delay": 86400
+        }
+      },
+      "evidenceFile": "fifo.json",
+      "summary": [
+        {
+          "burst": 0,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 16.608,
+            "p95": 16.608
+          },
+          "aBatchMs": null,
+          "aMined": 0,
+          "bMined": 1
+        },
+        {
+          "burst": 8,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 813.261,
+            "p95": 813.261
+          },
+          "aBatchMs": {
+            "p50": 821.277,
+            "p95": 821.277
+          },
+          "aMined": 8,
+          "bMined": 1
+        },
+        {
+          "burst": 16,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 1186.418,
+            "p95": 1186.418
+          },
+          "aBatchMs": {
+            "p50": 1232.503,
+            "p95": 1232.503
+          },
+          "aMined": 16,
+          "bMined": 1
+        }
+      ]
+    },
+    "fair": {
+      "status": "measured",
+      "schedulerReadback": {
+        "mode": "fair",
+        "slots": 4,
+        "maxHeavyPerSender": 2,
+        "maxWaiting": 64,
+        "heavyThreshold": 100000,
+        "maxWaitingPerSender": 16
+      },
+      "genesisHash": "0xae67caf4177a53512e70f37d1a4b7921627c5d0ca5aefcb343721657322095e2",
+      "sidecarBuildSha256": "1ae70c2f19aa45dc4ff7d88bee2a4e8553c68b9e490a7bf8492535f1fe4571a2",
+      "ethrexBinarySha256": "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692",
+      "fixtureArtifactSha256": "8427e826d13a46f6b8d7795f99bc7b3c881612ebf3f34ee4224cccd01a922f20",
+      "signedWorkloadSha256": "386b4e6fe76403d837bc7a456e13bea4902b42fa06baba7b798210ba32ac8223",
+      "sponsorship": {
+        "paymaster": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+        "walletA": "0x520b4ee01633feaa267fdd87b3be2bbd4f363e8e",
+        "walletB": "0x36ee18766391fc21d25d79ddca8ace94820489fc",
+        "heavyVerifyGas": 993765,
+        "rejectedHash": "0x7f78e31499b92daec8b26eda07336831551a992811ee5c3b5105fce9c55cf86f",
+        "paymasterStake": {
+          "registry": "0x3549c16571d8dac63839e6071d60eaa4fa248567",
+          "amountWei": "12000000000000000",
+          "delay": 86400
+        }
+      },
+      "evidenceFile": "fair.json",
+      "summary": [
+        {
+          "burst": 0,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 17.556,
+            "p95": 17.556
+          },
+          "aBatchMs": null,
+          "aMined": 0,
+          "bMined": 1
+        },
+        {
+          "burst": 8,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 150.127,
+            "p95": 150.127
+          },
+          "aBatchMs": {
+            "p50": 808.275,
+            "p95": 808.275
+          },
+          "aMined": 8,
+          "bMined": 1
+        },
+        {
+          "burst": 16,
+          "n": 1,
+          "bAdmissionMs": {
+            "p50": 143.68,
+            "p95": 143.68
+          },
+          "aBatchMs": {
+            "p50": 1851.099,
+            "p95": 1851.099
+          },
+          "aMined": 16,
+          "bMined": 1
+        }
+      ]
+    }
+  },
+  "completedAt": "2026-11-07T00:37:25.231Z"
+}

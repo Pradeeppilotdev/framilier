@@ -19,9 +19,10 @@ To run a live demo, build the sidecar with Bun and provide the pinned ethrex exe
 ```sh
 ./framilier doctor
 ./framilier compare --rounds 1 --bursts 8
+./framilier compare --shared-paymaster --preset quick
 ```
 
-For 20 measured rounds per condition, use `./framilier compare --preset full`. Read wallet B’s admission time alongside wallet A’s batch completion time. [Operator guide](docs/OPERATOR.md) · [Recorded demo walkthrough](DEMO.md)
+For 20 measured rounds per condition, use `./framilier compare --preset full`. To evaluate admission fairness when competing wallets are sponsored by the same paymaster, pass `--shared-paymaster`. Read wallet B’s admission time alongside wallet A’s batch completion time. [Operator guide](docs/OPERATOR.md) · [Recorded demo walkthrough](DEMO.md)
 
 ## Evidence and scope
 

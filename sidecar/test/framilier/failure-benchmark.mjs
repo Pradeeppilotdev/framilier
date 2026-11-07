@@ -33,7 +33,7 @@ function peakOverlap(events) {
     events.filter(e => e.start <= current.start && current.start < e.end).length), 0);
 }
 
-export async function measureAdmission({ local, meter, noisyWallet, honestWallet, makeNoisy, makeHonest, mine, control, sweep, stakeCall }) {
+export async function measureAdmission({ local, meter, noisyWallet, honestWallet, makeNoisy, makeHonest, mine, control, sweep, stakeCall, sponsorship }) {
   assert.equal(new URL(local).hostname, "127.0.0.1");
   assert.equal(Number(await rpc(local, "eth_chainId")), 8141337);
   assert.notEqual(noisyWallet.toLowerCase(), honestWallet.toLowerCase());
@@ -122,18 +122,45 @@ export async function measureAdmission({ local, meter, noisyWallet, honestWallet
     // Drain every admission before the next trial. The producer checks that each
     // receipt belongs to the canonical block. Mining is outside all timers.
     const admitted = kind === "valid" ? [hash, ...hashes] : [hash];
+    const payerBefore = sponsorship && await sponsorship.balance();
     const mined = await mine(admitted);
+    const payment = {};
+    const feeByHash = new Map();
+    let fees = 0n;
     for (const h of admitted) {
       const { receipt } = mined.get(h);
-      assert.deepEqual(receipt.frameReceipts.map(f => f.status), ["0x1", "0x1"]);
+      assert.deepEqual(receipt.frameReceipts.map(f => f.status), sponsorship ? ["0x1", "0x1", "0x1"] : ["0x1", "0x1"]);
+      if (sponsorship) {
+        assert.equal(receipt.type, "0x6", "expected a frame transaction receipt");
+        assert.equal(receipt.transactionHash, h, "receipt hash mismatch");
+        assert.equal(receipt.from.toLowerCase(), (h === hash ? honestWallet : noisyWallet).toLowerCase(), "receipt sender mismatch");
+        assert.equal(receipt.payer.toLowerCase(), sponsorship.address.toLowerCase(), "unexpected receipt payer");
+        const fee = BigInt(receipt.gasUsed) * BigInt(receipt.effectiveGasPrice);
+        feeByHash.set(h, fee);
+        fees += fee;
+      }
+    }
+    if (sponsorship) {
+      const payerAfter = await sponsorship.balance();
+      assert.ok(fees > 0n, "expected actual sponsor fees");
+      assert.equal(payerBefore - payerAfter, fees, "sponsor balance change differs from receipt fees");
+      payment.honestPayer = mined.get(hash).receipt.payer;
+      payment.honestFeeWei = feeByHash.get(hash).toString();
+      payment.paymasterFeesWei = fees.toString();
+      payment.paymasterBalanceBeforeWei = payerBefore.toString();
+      payment.paymasterBalanceAfterWei = payerAfter.toString();
     }
     if (kind === "valid") {
       for (const item of backgrounds) {
         const { receipt } = mined.get(item.hash);
         const verifyGas = Number(BigInt(receipt.frameReceipts[0].gasUsed));
         assert.ok(verifyGas >= 990000 && verifyGas <= 997200, "valid background skipped the expensive path");
-        if (sweep) assert.equal(verifyGas, 993512, "comparison workload changed");
+        if (sweep && !sponsorship) assert.equal(verifyGas, 993512, "comparison workload changed");
         item.mined = { blockNumber: Number(receipt.blockNumber), blockHash: receipt.blockHash, verifyGas };
+        if (sponsorship) {
+          item.mined.payer = receipt.payer;
+          item.mined.feeWei = feeByHash.get(item.hash).toString();
+        }
       }
     }
     const { receipt } = mined.get(hash);
@@ -144,7 +171,7 @@ export async function measureAdmission({ local, meter, noisyWallet, honestWallet
       assert.ok(e.end !== null, "incomplete stake lookup");
       return roundMs(e.end - e.start);
     });
-    return { round, kind, burst: size, admissionHeadHash, backgroundBatchMs: batchMs === null ? null : roundMs(batchMs),
+    return { round, kind, burst: size, ...payment, admissionHeadHash, backgroundBatchMs: batchMs === null ? null : roundMs(batchMs),
       peakTraces: peakOverlap(capture.events), peakBackgroundTraces: peakOverlap(capture.events.filter(e => e.hash !== hash)),
       honestHash: hash, honestMs: roundMs(answer.end - answer.start), honestStakeLookupRpcMs,
       beforeHonestTraceMs: roundMs(hTrace.start - answer.start), afterHonestTraceMs: roundMs(answer.end - hTrace.end),

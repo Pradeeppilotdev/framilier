@@ -48,7 +48,72 @@ function percentiles(values) {
   return { p50: Number(median.toFixed(3)), p95: sorted[Math.ceil(0.95 * n) - 1] };
 }
 
-export function summarize(trials, rounds, bursts, scheduler) {
+// Verify recorded sponsorship independently of the CLI flag. Legacy archives have no sponsor fields.
+export function sponsorshipEvidence(raw, requested = false) {
+  assert.equal(typeof requested, "boolean", "invalid shared-paymaster setting");
+  const b = raw.benchmark;
+  const control = raw.controls?.sponsoredWrongWitness;
+  const all = [...b.warmup, ...b.trials];
+  if (!requested) {
+    assert.equal(b.sharedPaymaster, undefined, "unexpected paymaster in self-paid evidence");
+    assert.equal(b.paymasterStake, undefined, "unexpected sponsor stake in self-paid evidence");
+    assert.equal(control, undefined, "unexpected sponsored control in self-paid evidence");
+    assert.ok(all.every(t => t.honestPayer === undefined && t.honestFeeWei === undefined && t.paymasterFeesWei === undefined &&
+      t.paymasterBalanceBeforeWei === undefined && t.paymasterBalanceAfterWei === undefined &&
+      t.background.every(a => a.mined?.payer === undefined && a.mined?.feeWei === undefined)), "unexpected sponsorship receipts in self-paid evidence");
+    return null;
+  }
+  const address = value => {
+    assert.match(value, /^0x[0-9a-f]{40}$/i, "missing or invalid sponsorship address");
+    assert.doesNotMatch(value, /^0x0{40}$/i, "zero sponsorship address");
+    return value.toLowerCase();
+  };
+  const paymaster = address(b.sharedPaymaster);
+  const stake = b.paymasterStake;
+  assert.equal(address(stake?.address), paymaster, "stake belongs to a different paymaster");
+  assert.equal(address(stake.registry), address(raw.registry), "sponsor stake registry mismatch");
+  assert.equal(stake.amountWei, "12000000000000000", "expected a 0.012 ETH sponsor stake");
+  assert.equal(stake.delay, 86400, "expected a one-day sponsor unstake delay");
+  assert.equal(stake.withdrawal, "0", "sponsor stake is unlocking");
+  const walletA = address(b.noisyWallet);
+  const walletB = address(b.honestWallet);
+  assert.equal(new Set([paymaster, walletA, walletB]).size, 3, "expected two distinct wallets and a shared paymaster");
+
+  assert.match(control?.hash, /^0x[0-9a-f]{64}$/i, "missing signed sponsored rejection control");
+  assert.notEqual(control.hash, raw.controls.incorrectWitness?.hash, "reused self-paid rejection control");
+  assert.equal(control.code, -32500, "expected a validation failure for the sponsored wrong witness");
+  assert.match(control.reason, /wrong witness|77726f6e67207769746e657373/i, "unexpected sponsored rejection reason");
+
+  const heavyVerifyGas = all.find(t => t.background.length)?.background[0].mined?.verifyGas;
+  assert.ok(Number.isSafeInteger(heavyVerifyGas) && heavyVerifyGas >= 990000 && heavyVerifyGas <= 997200,
+    "sponsored sender did not execute the high-gas workload");
+  const wei = value => {
+    assert.match(value, /^(0|[1-9][0-9]*)$/, "invalid paymaster fee or balance");
+    return BigInt(value);
+  };
+  for (const t of all) {
+    assert.equal(address(t.honestPayer), paymaster, "wallet B receipt payer mismatch");
+    assert.notEqual(t.honestHash, control.hash, "rejected control also appears as mined");
+    let receiptFees = wei(t.honestFeeWei);
+    assert.ok(receiptFees > 0n, "expected a positive wallet B receipt fee");
+    for (const item of t.background) {
+      const fee = wei(item.mined?.feeWei);
+      assert.ok(fee > 0n, "expected a positive wallet A receipt fee");
+      receiptFees += fee;
+      assert.equal(address(item.mined?.payer), paymaster, "wallet A receipt payer mismatch");
+      assert.equal(item.mined.verifyGas, heavyVerifyGas, "sponsored sender VERIFY gas changed across transactions");
+      assert.notEqual(item.hash, control.hash, "rejected control also appears as mined");
+    }
+    const fees = wei(t.paymasterFeesWei);
+    assert.equal(fees, receiptFees, "sponsor fee total differs from individual receipt fees");
+    assert.equal(wei(t.paymasterBalanceBeforeWei) - wei(t.paymasterBalanceAfterWei), fees,
+      "paymaster balance decrease differs from receipt fees");
+  }
+  return { paymaster, walletA, walletB, heavyVerifyGas, rejectedHash: control.hash,
+    paymasterStake: { registry: address(stake.registry), amountWei: stake.amountWei, delay: stake.delay } };
+}
+
+export function summarize(trials, rounds, bursts, scheduler, heavyVerifyGas = 993512) {
   assert.equal(trials.length, rounds * (bursts.length + 1), "incomplete sweep");
   const inputs = new Set();
   for (const trial of trials) {
@@ -62,7 +127,7 @@ export function summarize(trials, rounds, bursts, scheduler) {
     assert.deepEqual(group.map(t => t.round), Array.from({ length: rounds }, (_, i) => i), "missing or duplicate trial");
     for (const trial of group) {
       assert.equal(trial.background.length, burst);
-      assert.ok(trial.honestBlockHash && trial.background.every(b => b.mined?.verifyGas === 993512), "missing verified receipt");
+      assert.ok(trial.honestBlockHash && trial.background.every(b => b.mined?.verifyGas === heavyVerifyGas), "missing verified receipt");
       if (scheduler && scheduler.mode !== "off") {
         assert.ok(trial.peakTraces <= scheduler.slots, "observed more concurrent traces than the scheduler allows");
         if (scheduler.mode === "fair") assert.ok(trial.peakBackgroundTraces <= scheduler.maxHeavyPerSender,
