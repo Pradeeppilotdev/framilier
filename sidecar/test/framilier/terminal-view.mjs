@@ -105,7 +105,7 @@ export function renderTerminalReport(report, trialsByMode, { source = "saved", c
   const maximum = Math.max(...rows.map(({ summary }) => number(summary)));
   const wide = width >= 70;
   const barWidth = wide ? Math.min(32, width - 53) : Math.max(3, Math.min(24, width - 22));
-  if (wide) line(`  ${"Policy".padEnd(8)}${metric.padEnd(barWidth + 11)}${showTail ? "B median".padStart(12) : ""}${batchMetric.padStart(17)}`);
+  if (wide) line(`  ${"Policy".padEnd(8)}${metric.padStart(barWidth + 11)}${showTail ? "B median".padStart(12) : ""}${batchMetric.padStart(17)}`);
   for (const { label, summary } of rows) {
     const value = number(summary);
     const lit = maximum > 0 && value > 0 ? Math.max(1, Math.round(value / maximum * barWidth)) : 0;

@@ -70,6 +70,22 @@ test("single-round demos show an observed admission time and mark the sample as 
   assert.match(view, /18 recorded inclusions/i);
 });
 
+test("admission headings align with the B timing value at wide widths and stay inline at narrow widths", async () => {
+  for (const [directory, metric] of [[publishedDirectory, "B p95"], [new URL("pr4-macos-smoke/", evidence), "B time"]]) {
+    const { report, samples } = await load(directory);
+    for (const columns of [70, 96]) {
+      const lines = renderTerminalReport(report, samples, { ...options, columns }).split("\n");
+      const heading = lines.findIndex(line => line.trimStart().startsWith("Policy "));
+      assert.notEqual(heading, -1);
+      const value = /[\d.]+ ms/.exec(lines[heading + 1]);
+      assert.ok(value);
+      assert.equal(lines[heading].indexOf(metric) + metric.length, value.index + value[0].length);
+    }
+    const narrow = renderTerminalReport(report, samples, { ...options, columns: 50 });
+    assert.match(narrow, new RegExp("Off\\s+" + metric + " [\\d.]+ ms"));
+  }
+});
+
 test("trace boundaries use observed timestamps and incomplete timings never imply a scheduling order", async () => {
   const { report, samples } = await load(publishedDirectory);
   const t = samples.fair[0];
