@@ -66,6 +66,14 @@ test(
     assert.equal((await (await operator("poll", {})).json()).id, null);
     const run = await (await guest()).json();
     assert.equal(run.status, "running");
+    // The deployed edge supplies an empty stream for a browser's bodyless POST.
+    const edgeRequest = new Request("https://demo.example/api/runs", {
+      method: "POST", headers: { "x-framilier-run": "1" }, duplex: "half",
+      body: new ReadableStream({ start(controller) { controller.close(); } }),
+    });
+    const joined = await handleApi(edgeRequest, env);
+    assert.equal(joined.status, 202);
+    assert.equal((await joined.json()).id, run.id);
     assert.equal((await (await guest()).json()).id, run.id);
     assert.equal((await (await operator("poll", {})).json()).id, run.id);
     assert.equal((await (await operator("poll", { runner: rival })).json()).id, null);
