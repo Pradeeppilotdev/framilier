@@ -42,3 +42,48 @@ test("keeps unavailable trace timing distinct from a failed evidence check", asy
   await writeFile(rawFile, JSON.stringify(raw));
   await assert.rejects(readReport(dir, "live"));
 });
+
+test("receipt examples and inclusion totals have explicit scope for both scenarios", async () => {
+  const self = await readReport(archive, "replay");
+  assert.equal(self.scenario, "self-paid");
+  assert.equal(self.evidence.totalMined, 1020);
+  assert.equal(self.evidence.paymaster, null);
+  assert.equal(self.evidence.sponsorshipChecked, false);
+  assert.equal(self.policies.fair.evidence.receipts.length, 9);
+  assert.equal(self.policies.fair.evidence.minedCount, 340);
+  const sponsorArchive = fileURLToPath(new URL("../sidecar/evidence/compare/shared-paymaster-smoke/", import.meta.url));
+  const sponsored = await readReport(sponsorArchive, "replay");
+  assert.equal(sponsored.scenario, "shared-paymaster");
+  assert.equal(sponsored.burst, 16);
+  assert.equal(sponsored.rounds, 1);
+  assert.equal(sponsored.evidence.totalMined, 81);
+  assert.equal(sponsored.evidence.workload, "hash-chain");
+  assert.equal(sponsored.evidence.paymasterStake.amountWei, "12000000000000000");
+  assert.equal(sponsored.evidence.paymasterStake.delay, 86400);
+  assert.ok(sponsored.evidence.sponsorshipChecked);
+  for (const mode of ["off", "fifo", "fair"]) {
+    const evidence = sponsored.policies[mode].evidence;
+    assert.equal(evidence.minedCount, 27);
+    assert.equal(evidence.receipts.length, 17);
+    assert.equal(evidence.receipts.filter(receipt => receipt.wallet === "B").length, 1);
+    for (const receipt of evidence.receipts) {
+      assert.match(receipt.hash, /^0x[0-9a-f]{64}$/i);
+      assert.match(receipt.blockHash, /^0x[0-9a-f]{64}$/i);
+      assert.equal(receipt.payer.toLowerCase(), sponsored.evidence.paymaster);
+      assert.ok(BigInt(receipt.feeWei) > 0n);
+    }
+  }
+  assert.doesNotMatch(JSON.stringify(sponsored), /privateKey|primaryKey|secondKey|jwt|Users\//);
+});
+
+test("a tampered sponsor fee cannot be presented as checked evidence", async t => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), "framilier-web-sponsor-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const sponsorArchive = fileURLToPath(new URL("../sidecar/evidence/compare/shared-paymaster-smoke/", import.meta.url));
+  await cp(sponsorArchive, dir, { recursive: true });
+  const file = path.join(dir, "fair.json");
+  const raw = JSON.parse(await readFile(file, "utf8"));
+  raw.benchmark.trials[0].honestFeeWei = "1";
+  await writeFile(file, JSON.stringify(raw));
+  await assert.rejects(readReport(dir, "replay"), /fee/);
+});

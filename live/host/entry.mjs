@@ -1,7 +1,19 @@
 // The build embeds staticResponses and handleApi in this module. No browser request can pick an upstream.
 export default {
   async fetch(request, env) {
-    const path = new URL(request.url).pathname;
+    const url = new URL(request.url);
+    const path = url.pathname;
+    if (path === "/api/replay") {
+      if (!["GET", "HEAD"].includes(request.method)) return new Response(null, { status: 405, headers: { Allow: "GET, HEAD" } });
+      const scenario = url.searchParams.get("scenario") ?? "self-paid";
+      if ([...url.searchParams.keys()].some(key => key !== "scenario") ||
+          url.searchParams.getAll("scenario").length > 1 || !Object.hasOwn(replayResponses, scenario)) {
+        return Response.json({ error: "Choose self-paid or shared-paymaster." }, { status: 400, headers: { "Cache-Control": "no-store" } });
+      }
+      return new Response(request.method === "HEAD" ? null : replayResponses[scenario], {
+        headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" },
+      });
+    }
     const asset = staticResponses.get(path === "/" ? "/index.html" : path);
     if (asset) {
       if (!["GET", "HEAD"].includes(request.method)) return new Response(null, { status: 405, headers: { Allow: "GET, HEAD" } });
