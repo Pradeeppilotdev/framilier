@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f5ee" />
+    <title>framilier · Admission scheduler</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%231d2823'/%3E%3Cpath d='M9 28h6V13H9zm9 0h6V9h-6zm9-7h6V9h-6z' fill='%23c8fc68'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <header class="mast">
+      <div class="wrap mast-inner">
+        <a href="./" class="brand" aria-label="framilier home"
+          ><span class="brand-mark" aria-hidden="true"
+            ><i></i><i></i><i></i></span
+          >framilier</a
+        >
+        <a class="repo" href="https://github.com/Pradeeppilotdev/framilier"
+          >Source code <span aria-hidden="true">↗</span></a
+        >
+      </div>
+    </header>
+    <main class="wrap">
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="protocol">EIP-8141 <b>/</b> Alternative mempool</p>
+          <h1 id="page-title">Admission scheduler</h1>
+          <p class="lede">
+            Wallet A submits a burst of expensive checks. Wallet B submits one
+            cheap check. See when B gets a turn under each policy.
+          </p>
+        </div>
+        <button type="button" id="run" class="run" disabled>
+          <span class="play" aria-hidden="true">▶</span
+          ><span id="run-label">Run comparison</span>
+        </button>
+      </section>
+      <section class="scenario-panel" aria-label="Comparison setup">
+        <fieldset id="scenario-options" aria-describedby="scenario-description scenario-note">
+          <legend>Who pays the transaction fees?</legend>
+          <div class="scenario-choices">
+            <label class="scenario-choice">
+              <input type="radio" name="scenario" value="self-paid" checked />
+              <span><strong>Each wallet pays</strong><small>Two independent fee payers</small></span>
+            </label>
+            <label class="scenario-choice">
+              <input type="radio" name="scenario" value="shared-paymaster" />
+              <span><strong>Shared paymaster</strong><small>One sponsor for both wallets</small></span>
+            </label>
+          </div>
+        </fieldset>
+        <p id="scenario-description">A and B pay their own fees. Compare how each sender gets a turn.</p>
+        <p id="scenario-note">New live runs use eight heavy checks per burst on private chain 8141337.</p>
+      </section>
+      <div
+        id="feedback"
+        class="feedback"
+        role="status"
+        aria-live="polite"
+        hidden
+      ></div>
+      <div class="context">
+        <div class="source">
+          <span id="source-dot" class="dot"></span
+          ><strong id="source-label">Loading comparison</strong
+          ><span class="separator" aria-hidden="true"></span
+          ><span id="rounds"></span><span id="result-scenario" class="scenario-tag"></span>
+        </div>
+        <button type="button" id="switch" class="switch" hidden></button>
+      </div>
+      <section class="trace-board" aria-labelledby="trace-title">
+        <div class="board-heading">
+          <div>
+            <p class="overline">Verification trace</p>
+            <h2 id="trace-title">Who gets a turn?</h2>
+          </div>
+          <span id="trace-round" class="round"></span>
+        </div>
+        <div class="legend">
+          <span><i class="key a"></i>Wallet A · heavy</span
+          ><span><i class="key b"></i>Wallet B · cheap</span>
+        </div>
+        <div id="lanes">
+          <p class="waiting">Loading measured start order…</p>
+        </div>
+        <div class="order">
+          <span class="order-line" aria-hidden="true"></span
+          ><span>Simulation start order</span><span aria-hidden="true">→</span>
+        </div>
+      </section>
+      <section
+        class="metrics"
+        aria-labelledby="metric-title"
+        hidden
+        id="metrics"
+      >
+        <div class="metric-heading">
+          <h2 id="metric-title">Admission times</h2>
+          <span id="measurement"></span>
+        </div>
+        <p class="metric-explanation">B admission is one transaction’s response time. A batch is the time until all of A’s admission responses arrive.</p>
+        <div id="metric-cards" class="cards"></div>
+        <section id="evidence" class="evidence" aria-labelledby="evidence-title" hidden>
+          <div class="evidence-heading">
+            <h3 id="evidence-title">Inclusion evidence</h3>
+            <strong id="inclusion-count"></strong>
+          </div>
+          <p id="evidence-scope"></p>
+          <p id="payer-check"></p>
+          <dl id="sponsor-details" hidden>
+            <div><dt>Shared fee payer</dt><dd><code id="payer-address"></code></dd></div>
+            <div><dt>Recorded stake</dt><dd id="payer-stake"></dd></div>
+          </dl>
+          <details id="receipts">
+            <summary>Inspect transaction receipts</summary>
+            <p id="receipt-scope"></p>
+            <div id="receipt-list"></div>
+          </details>
+        </section>
+        <details id="detail-panel">
+          <summary>Run details &amp; unscheduled baseline</summary>
+          <div class="details-body">
+            <table>
+              <caption id="baseline-caption">
+                Measured admission times by policy
+              </caption>
+              <thead>
+                <tr>
+                  <th>Policy</th>
+                  <th id="detail-b">B admission</th>
+                  <th id="detail-a">A batch</th>
+                </tr>
+              </thead>
+              <tbody id="baseline"></tbody>
+            </table>
+            <p id="meta"></p>
+          </div>
+        </details>
+      </section>
+      <noscript
+        >Enable JavaScript to load verified measurements and run the
+        comparison.</noscript
+      >
+    </main>
+    <footer class="wrap">
+      <span>Reproduce locally</span
+      ><code id="reproduce">./framilier compare --rounds 1 --bursts 8</code>
+    </footer>
+  </body>
+</html>

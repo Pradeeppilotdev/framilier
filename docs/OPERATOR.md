@@ -117,3 +117,20 @@ cd ..
 ```
 
 The tests cover scheduler capacity/rotation/overflow, shared simulation lanes, duplicate admission, infrastructure-failure retention, transient writes, report tampering and journal recovery. The observer test opens loopback sockets. Historical measurements are retained unchanged; new evidence is stored separately.
+
+## Browser demo
+
+After `./framilier doctor` reports ready, run `./framilier live` and open <http://127.0.0.1:4173>. Choose **Each wallet pays** or **Shared paymaster**, then start a comparison. Both use one measured round and eight heavy frames per burst, an idle control and excluded warm-ups, under off, FIFO and fair. The sponsored option invokes the existing `--shared-paymaster` fixture. The node verifies the evidence before displaying the result. A single round shows observed admission times. Each scenario has its own labelled saved replay: 20 rounds for self-paid, and one round with bursts eight and sixteen for shared sponsorship.
+
+The public website and saved replays are hosted on a Cloudflare Worker. The execution node runs on the operator machine, which makes outgoing HTTPS requests for fixed comparison jobs. Keep that machine awake and these two processes running for fresh measurements. Both saved replays remain available independently. For a longer deployment, use an always-on host with the same pinned toolchain.
+
+The results identify their scenario and whether they came from a fresh live run or a saved replay. The evidence panel includes recorded inclusions across all measured loads and policies, plus transaction and block hashes from round one at the displayed burst. Sponsored results show the actual shared receipt payer, the recorded stake and checked fee evidence. These hashes belong to the private chain. Sponsorship pays transaction fees; each wallet retains its own sender queue. The workload is a hash chain, with no ZK or shielded-payment claim.
+
+1. Start `./framilier live` on loopback port 4173.
+2. On the runner, set `FRAMILIER_HOST_URL` to the public HTTPS origin and `FRAMILIER_RUNNER_TOKEN` to the same secret configured on the hosted Worker (at least 32 characters). Load the token from the operator's secret store.
+3. Run `node live/runner-bridge.mjs` in a second terminal. On a host requiring an HTTP proxy, use a Node version supporting `--use-env-proxy` and preserve the normal loopback exemption.
+
+To deploy your own public endpoint, run `node live/host/build.mjs /tmp/framilier-worker.mjs` and deploy the generated ES module to a Worker with a D1 binding named `DB` and the runner secret above. That build reads and verifies both checked-in replay datasets. The relay coalesces simultaneous requests for the same scenario into one job; a request for a different scenario receives a busy response. Public callers can choose only the two supported scenarios, with no custom RPC, command or gas settings. The runner limits each job to ten minutes and enforces a one-minute cooldown. Raw chain databases and ephemeral signing material stay on the runner and are removed after the run.
+
+
+The website regression suite runs with `node --test live/*.test.mjs live/host/*.test.mjs`. The D1 dialect tests need Node.js 22.13+ for `node:sqlite`; the DOM tests use the existing devnet-ui workspace's pinned `jsdom` dependency.
