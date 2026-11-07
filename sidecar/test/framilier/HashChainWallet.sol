@@ -22,8 +22,8 @@ contract HashChainWallet is HegotaSupport(Devnet.ERC8421_WORKSHOP) {
 
     fallback() external payable {
         require(address(uint160(sigparam(0, SigParam.RESOLVED_SIGNER))) == owner, "owner signature");
-        if (msg.data.length != 0) {
-            require(msg.data.length == 32, "one witness required");
+        if (witnessLength() != 0) {
+            require(witnessLength() == 32, "one witness required");
             bytes32 digest;
             uint256 iterations = rounds;
             assembly ("memory-safe") {
@@ -35,6 +35,14 @@ contract HashChainWallet is HegotaSupport(Devnet.ERC8421_WORKSHOP) {
             }
             require(digest == commitment, "wrong witness");
         }
-        approve(Scope.EXECUTION_AND_PAYMENT);
+        approve(approvalScope());
+    }
+
+    function witnessLength() internal pure virtual returns (uint256) {
+        return msg.data.length;
+    }
+
+    function approvalScope() internal view virtual returns (Scope) {
+        return Scope.EXECUTION_AND_PAYMENT;
     }
 }

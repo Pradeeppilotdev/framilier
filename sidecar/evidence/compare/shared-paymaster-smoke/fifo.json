@@ -1,0 +1,1308 @@
+{
+  "timestamp": "2026-11-07T00:35:08.892Z",
+  "network": "isolated single-node Hegota execution chain",
+  "chainId": 8141337,
+  "genesisHash": "0xae67caf4177a53512e70f37d1a4b7921627c5d0ca5aefcb343721657322095e2",
+  "ethrexSource": "9aa3645d795945c64400f41a70aace0edfa7f383",
+  "sidecarBuildSha256": "1ae70c2f19aa45dc4ff7d88bee2a4e8553c68b9e490a7bf8492535f1fe4571a2",
+  "ethrexBinarySha256": "0d52c5f2c241e20a68040d0a88006299bfca89a414be18a0ea26ca4ec869f692",
+  "fixtureArtifactSha256": "8427e826d13a46f6b8d7795f99bc7b3c881612ebf3f34ee4224cccd01a922f20",
+  "clientVersion": "ethrex/v23.0.0-VERGEN_IDEMPOTENT_OUTPUT-VERGEN_IDEMPOTENT_OUTPUT/aarch64-apple-darwin/rustc-v1.93.1",
+  "compiler": "0.8.28+commit.7893614a.Emscripten.clang",
+  "owner": "0x1A5A7d2D202c8099110605fcF5c4CDB4603FB3A6",
+  "wallet": "0x520b4ee01633feaa267fdd87b3be2bbd4f363e8e",
+  "registry": "0x3549c16571d8dac63839e6071d60eaa4fa248567",
+  "walletCodeHash": "0x6634e2b40921759abc5232ce9c4b9e9910a03759c3ba24dab36eeac6d36def48",
+  "workload": {
+    "algorithm": "Keccak-256 hash chain",
+    "rounds": 9664,
+    "witness": "0x0561fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289",
+    "commitment": "0x369b0408dd1c7a153b0a7a0cc34b4c8b41bf9c36476bddad2af01cd8e8f5238a"
+  },
+  "stake": {
+    "before": {
+      "amountWei": "0",
+      "delay": 0,
+      "withdrawal": "0"
+    },
+    "after": {
+      "amountWei": "12000000000000000",
+      "delay": 86400,
+      "withdrawal": "0"
+    },
+    "transactionHash": "0xbe74ec0a346dbd5703ba791585c5cdb7f5d6ba4bf7610bd06e5d5123447da5b3"
+  },
+  "controls": {
+    "unstaked": {
+      "hash": "0x84c5bc77c29074342205e0909aabfce2038bb17e117ef9a5bf7b63fd3b2290e3",
+      "code": -32602,
+      "reason": "BUDGET-010 exceeded: entity 0x520b4ee01633feaa267fdd87b3be2bbd4f363e8e (sender+payer), frames [0]: 997200 execution + 2800 signature = 1000000; limit 100000"
+    },
+    "stakedOneOver": {
+      "hash": "0xde2c6d785c204c455f00a4c8ac40ed0f7a604c7c3afb9af27b114f99db7a9b0b",
+      "code": -32602,
+      "reason": "BUDGET-010 exceeded: entity 0x520b4ee01633feaa267fdd87b3be2bbd4f363e8e (sender+payer), frames [0]: 997201 execution + 2800 signature = 1000001; limit 1000000"
+    },
+    "incorrectWitness": {
+      "hash": "0x8838d460d7d4c0c3e1871756487ff0377a72e6446182486113ccfb041c7f8fa9",
+      "code": -32500,
+      "reason": "validation frame 0: reverted with data 0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000d77726f6e67207769746e65737300000000000000000000000000000000000000"
+    },
+    "sponsoredWrongWitness": {
+      "hash": "0x7f78e31499b92daec8b26eda07336831551a992811ee5c3b5105fce9c55cf86f",
+      "code": -32500,
+      "reason": "validation frame 0: reverted with data 0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000d77726f6e67207769746e65737300000000000000000000000000000000000000"
+    }
+  },
+  "accepted": {
+    "declaredVerifyGas": 997200,
+    "signatureGas": 2800,
+    "totalDeclaredGas": 1000000,
+    "actualVerifyGas": 993592,
+    "signedTransaction": "0x06f8d6837c3a19c1800994520b4ee01633feaa267fdd87b3be2bbd4f363e8ef84ceb010380c5830f37508080a00561fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289df0280941a5a7d2d202c8099110605fcf5c4cdb4603fb3a6c5830249f0808080f85cf85a01941a5a7d2d202c8099110605fcf5c4cdb4603fb3a680b84101a4ba14d22d34a5f06ace64e6810d6f7d489e15ecfbe99e302856c220ff52ef802e36c2f25cafb3d29f0f508ec2cc9576d5f341f1352e3f82f48b233bdfa090e8cb843b9aca00847735940080c0c0",
+    "receipt": {
+      "blockHash": "0xcdbe8f78b57e79e86825a24bbdf00325ff86f497ad44e7840d5622abdc042d80",
+      "blockNumber": "0x5",
+      "contractAddress": null,
+      "cumulativeGasUsed": "0xf6ea2",
+      "effectiveGasPrice": "0x5c77104e",
+      "frameReceipts": [
+        {
+          "gasUsed": "0xf2938",
+          "logs": [],
+          "stateGasUsed": "0x0",
+          "status": "0x1"
+        },
+        {
+          "gasUsed": "0x64",
+          "logs": [],
+          "stateGasUsed": "0x0",
+          "status": "0x1"
+        }
+      ],
+      "from": "0x520b4ee01633feaa267fdd87b3be2bbd4f363e8e",
+      "gasUsed": "0xf6ea2",
+      "logs": [],
+      "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "payer": "0x520b4ee01633feaa267fdd87b3be2bbd4f363e8e",
+      "status": "0x1",
+      "to": "0x520b4ee01633feaa267fdd87b3be2bbd4f363e8e",
+      "transactionHash": "0x8def051a56ba2dfc4d81cb49db49e2a0baddec13fec1d94fc1b249c99d75356a",
+      "transactionIndex": "0x0",
+      "type": "0x6"
+    },
+    "block": {
+      "number": "0x5",
+      "hash": "0xcdbe8f78b57e79e86825a24bbdf00325ff86f497ad44e7840d5622abdc042d80",
+      "transactions": [
+        "0x8def051a56ba2dfc4d81cb49db49e2a0baddec13fec1d94fc1b249c99d75356a"
+      ]
+    }
+  },
+  "producer": {
+    "forkchoice": "engine_forkchoiceUpdatedV5",
+    "build": "engine_getPayloadV6",
+    "import": "engine_newPayloadV6",
+    "importStatus": "VALID"
+  },
+  "benchmark": {
+    "noisyWallet": "0x520b4ee01633feaa267fdd87b3be2bbd4f363e8e",
+    "honestWallet": "0x36ee18766391fc21d25d79ddca8ace94820489fc",
+    "warmup": [
+      {
+        "round": -1,
+        "kind": "idle",
+        "burst": 0,
+        "honestPayer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+        "honestFeeWei": "44737023899710",
+        "paymasterFeesWei": "44737023899710",
+        "paymasterBalanceBeforeWei": "9988000000000000000",
+        "paymasterBalanceAfterWei": "9987955262976100290",
+        "admissionHeadHash": "0x4d29875a1df4477e8a0722666179d49c3e43ccd38daecc8b47d66f76c4707799",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x8e9c2d2b8d1576e694862bd940d7a49c1d4d7e6759afaa6b8a98a4fa88298c1a",
+        "honestMs": 7.978,
+        "honestStakeLookupRpcMs": [
+          0.348
+        ],
+        "beforeHonestTraceMs": 3.264,
+        "afterHonestTraceMs": 1.622,
+        "honestSimulationRpcMs": 3.092,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 12,
+        "honestBlockHash": "0xf9d47f4ec9df4fdaaf60b616c8f71df023a02bce0de3d0d68af10b95a0634f21",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 5,
+            "included": 5,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 5,
+            "included": 5,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": -1,
+        "kind": "valid",
+        "burst": 8,
+        "honestPayer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+        "honestFeeWei": "39279738639010",
+        "paymasterFeesWei": "9380052583609879",
+        "paymasterBalanceBeforeWei": "9987955262976100290",
+        "paymasterBalanceAfterWei": "9978575210392490411",
+        "admissionHeadHash": "0xf9d47f4ec9df4fdaaf60b616c8f71df023a02bce0de3d0d68af10b95a0634f21",
+        "backgroundBatchMs": 711.622,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x5f9b8c581248b317591f218c669f835ce98df404eceb26b4006ef898723c3e7f",
+        "honestMs": 591.444,
+        "honestStakeLookupRpcMs": [
+          0.309
+        ],
+        "beforeHonestTraceMs": 587.334,
+        "afterHonestTraceMs": 1.423,
+        "honestSimulationRpcMs": 2.687,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 20,
+        "honestBlockHash": "0xddd3b7790a410b546a7e908a72af5bba16b17fffaa66d26ee212ba70a6475d1f",
+        "background": [
+          {
+            "hash": "0x118279fbab9050dab93c9f62c3654766fd5bbab741fb25616b6b2bb7e4a314a6",
+            "nonceKey": "1",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 161.488,
+            "submitStartRelativeToHonestMs": -11.954,
+            "responseEndRelativeToHonestMs": 149.534,
+            "simulationRpcMs": 126.361,
+            "traceStartRelativeToHonestMs": -0.041,
+            "traceEndRelativeToHonestMs": 126.32,
+            "mined": {
+              "blockNumber": 13,
+              "blockHash": "0x602f5f5507234f0d2769afdb4080d99cbed638c6a85254204e2414a7710128a0",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1238549668302573"
+            }
+          },
+          {
+            "hash": "0xe5b3f1e6c9ea331a386da8578fa47ec121199b20d29aa2d56f95bae470ca741d",
+            "nonceKey": "2",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 338.973,
+            "submitStartRelativeToHonestMs": -11.832,
+            "responseEndRelativeToHonestMs": 327.141,
+            "simulationRpcMs": 279.793,
+            "traceStartRelativeToHonestMs": 0.671,
+            "traceEndRelativeToHonestMs": 280.464,
+            "mined": {
+              "blockNumber": 15,
+              "blockHash": "0x83e0eae28f040f8f86a46a977003b09596840dc293557dc88fb4ef467d5e9b9c",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1191756160273449"
+            }
+          },
+          {
+            "hash": "0x380e22dc530ba15d10397de82f1ba73845d7470512ac63120c84a72717711214",
+            "nonceKey": "3",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 470.488,
+            "submitStartRelativeToHonestMs": -11.763,
+            "responseEndRelativeToHonestMs": 458.726,
+            "simulationRpcMs": 278.597,
+            "traceStartRelativeToHonestMs": 1.819,
+            "traceEndRelativeToHonestMs": 280.416,
+            "mined": {
+              "blockNumber": 17,
+              "blockHash": "0x760ab0c8b09cb1445214b7078b7fc4d383d663e3e6a2aff654200abe98584a35",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1155124051673616"
+            }
+          },
+          {
+            "hash": "0x3180002a30ccb11714746592930b9db76d1c73c10627c1ea8ec9aa0a26c6851f",
+            "nonceKey": "4",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 337.014,
+            "submitStartRelativeToHonestMs": -11.684,
+            "responseEndRelativeToHonestMs": 325.33,
+            "simulationRpcMs": 263.489,
+            "traceStartRelativeToHonestMs": 1.284,
+            "traceEndRelativeToHonestMs": 264.773,
+            "mined": {
+              "blockNumber": 14,
+              "blockHash": "0x06dc13172fc9b643805435227fa2b1b4dc589730957735489157aa0eadec0173",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1213729084587249"
+            }
+          },
+          {
+            "hash": "0x49a58aedafe37c376e521cc987e45f5e8cca0d394af6c1725e70d7be4dfe39a9",
+            "nonceKey": "5",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 340.731,
+            "submitStartRelativeToHonestMs": -11.622,
+            "responseEndRelativeToHonestMs": 329.108,
+            "simulationRpcMs": 126.025,
+            "traceStartRelativeToHonestMs": 152.298,
+            "traceEndRelativeToHonestMs": 278.322,
+            "mined": {
+              "blockNumber": 16,
+              "blockHash": "0xb708331dcea9b0057aba08bea671afe57c9e92c3aea7fb51753970a77690fa7d",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1172331547874721"
+            }
+          },
+          {
+            "hash": "0xdef9fcda25d1ed32a75376b87a5f9be0bbabb1ad8bc72fcc4c74c8918146c7ac",
+            "nonceKey": "6",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 472.948,
+            "submitStartRelativeToHonestMs": -11.567,
+            "responseEndRelativeToHonestMs": 461.381,
+            "simulationRpcMs": 115.14,
+            "traceStartRelativeToHonestMs": 328.347,
+            "traceEndRelativeToHonestMs": 443.487,
+            "mined": {
+              "blockNumber": 18,
+              "blockHash": "0xbac77be924ebc625671920629d5e5065ff7394e32fe2629275452cbe7e6b0f64",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1139891561341173"
+            }
+          },
+          {
+            "hash": "0x5972a9c07df463d65c1faae133a5a96b5ae66cd1e7850218707fee0d5fc3c46c",
+            "nonceKey": "7",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 599.674,
+            "submitStartRelativeToHonestMs": -11.517,
+            "responseEndRelativeToHonestMs": 588.157,
+            "simulationRpcMs": 112.618,
+            "traceStartRelativeToHonestMs": 460.329,
+            "traceEndRelativeToHonestMs": 572.947,
+            "mined": {
+              "blockNumber": 19,
+              "blockHash": "0x39f2ad484bf78c8001ed327d3820d14dbdce953632187d06c394643dafcb1bd5",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1126407393465957"
+            }
+          },
+          {
+            "hash": "0xfd3df89e16ae308a2b321ef3228ee464c613e04a08c0d0febbc55683837d5056",
+            "nonceKey": "8",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 711.129,
+            "submitStartRelativeToHonestMs": -11.462,
+            "responseEndRelativeToHonestMs": 699.668,
+            "simulationRpcMs": 224.238,
+            "traceStartRelativeToHonestMs": 460.779,
+            "traceEndRelativeToHonestMs": 685.017,
+            "mined": {
+              "blockNumber": 21,
+              "blockHash": "0x67d8d278af4de1c75e456c2e68e8f2ae06b1d29226d1c54929e70c0478becfa2",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1102983377452131"
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 5,
+            "included": 5,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 13,
+            "included": 5,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": -1,
+        "kind": "valid",
+        "burst": 16,
+        "honestPayer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+        "honestFeeWei": "36359913481276",
+        "paymasterFeesWei": "16918808230476406",
+        "paymasterBalanceBeforeWei": "9978575210392490411",
+        "paymasterBalanceAfterWei": "9961656402162014005",
+        "admissionHeadHash": "0x67d8d278af4de1c75e456c2e68e8f2ae06b1d29226d1c54929e70c0478becfa2",
+        "backgroundBatchMs": 1741.22,
+        "peakTraces": 4,
+        "peakBackgroundTraces": 4,
+        "honestHash": "0x5ac361b75337862112f5639680536598d4ca3c20fe3d1abede4e148be24aebc8",
+        "honestMs": 1733.681,
+        "honestStakeLookupRpcMs": [
+          111.577
+        ],
+        "beforeHonestTraceMs": 1728.175,
+        "afterHonestTraceMs": 2.566,
+        "honestSimulationRpcMs": 2.94,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 39,
+        "honestBlockHash": "0xd8f0cd526a1f81fd38411859506d42c7846c7d2f3a3102c4e7b7857e173c1ce4",
+        "background": [
+          {
+            "hash": "0x3aafeba0932cd0998feac609512a5809bf681b39b8044cf74ea6742dad51d944",
+            "nonceKey": "9",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 148.378,
+            "submitStartRelativeToHonestMs": -8.96,
+            "responseEndRelativeToHonestMs": 139.418,
+            "simulationRpcMs": 120.015,
+            "traceStartRelativeToHonestMs": -0.029,
+            "traceEndRelativeToHonestMs": 119.986,
+            "mined": {
+              "blockNumber": 22,
+              "blockHash": "0xa280aa81a02cff9f02667e55b572744616fc759533a1d318961dff8f69270355",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1093746830369931"
+            }
+          },
+          {
+            "hash": "0x66253286d9d3d7e5aaa1d2748c052089b6de8ce0040235190fb17f0929e97088",
+            "nonceKey": "10",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 329.363,
+            "submitStartRelativeToHonestMs": -8.899,
+            "responseEndRelativeToHonestMs": 320.464,
+            "simulationRpcMs": 253.915,
+            "traceStartRelativeToHonestMs": 0.614,
+            "traceEndRelativeToHonestMs": 254.53,
+            "mined": {
+              "blockNumber": 25,
+              "blockHash": "0xaeb16990aaa8882a7f6449f71339eb8301ba58440cd399c1e1a132dbcc8dbc13",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1071894690600039"
+            }
+          },
+          {
+            "hash": "0x41cb38d40d0b0b8f4fde614536a09e44a2516303956de0c9d163afc28fd645a4",
+            "nonceKey": "11",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 325.068,
+            "submitStartRelativeToHonestMs": -8.858,
+            "responseEndRelativeToHonestMs": 316.209,
+            "simulationRpcMs": 251.725,
+            "traceStartRelativeToHonestMs": 1.566,
+            "traceEndRelativeToHonestMs": 253.291,
+            "mined": {
+              "blockNumber": 23,
+              "blockHash": "0x1a4dcc902d5d57a9c18c02100a3b5635c19bb339e8cee2270039a9161a7a725d",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1085571707234955"
+            }
+          },
+          {
+            "hash": "0xd3b4f1519d02b0d78ef53aca6010c6023a7130bef8f25ba801622449b81068d7",
+            "nonceKey": "12",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 327.01,
+            "submitStartRelativeToHonestMs": -8.823,
+            "responseEndRelativeToHonestMs": 318.187,
+            "simulationRpcMs": 270.393,
+            "traceStartRelativeToHonestMs": 1.056,
+            "traceEndRelativeToHonestMs": 271.449,
+            "mined": {
+              "blockNumber": 24,
+              "blockHash": "0x2b8686770cb33b9b91798a75ca6647d56c3539873b3fc21ab2ab97d0919f3d59",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1078310879624079"
+            }
+          },
+          {
+            "hash": "0x14f55011a64bcc04153a0d989dbd4c22600eb144768aa10a2147d9369515da71",
+            "nonceKey": "13",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 462.895,
+            "submitStartRelativeToHonestMs": -8.79,
+            "responseEndRelativeToHonestMs": 454.104,
+            "simulationRpcMs": 126.415,
+            "traceStartRelativeToHonestMs": 142.09,
+            "traceEndRelativeToHonestMs": 268.505,
+            "mined": {
+              "blockNumber": 26,
+              "blockHash": "0x7f049028b78b186c6e39039e6c8312c197c6d341cf34f09185607099d668ff73",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1066214926420155"
+            }
+          },
+          {
+            "hash": "0x1c0dda2e9a232c11b0a150b72c5bfa41f127220026115751c82eead2721056f5",
+            "nonceKey": "14",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 591.878,
+            "submitStartRelativeToHonestMs": -8.759,
+            "responseEndRelativeToHonestMs": 583.119,
+            "simulationRpcMs": 118.428,
+            "traceStartRelativeToHonestMs": 319.941,
+            "traceEndRelativeToHonestMs": 438.369,
+            "mined": {
+              "blockNumber": 27,
+              "blockHash": "0x96be9509d7193faad640707bd05f5fe854cd2cec2c36f30f38a2a643885f6dbc",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1061174606327610"
+            }
+          },
+          {
+            "hash": "0x4831ca51eeda1b7d6c94a61e6631c1b1ceb1b6cfeaf15a885a3d2ce70d941b78",
+            "nonceKey": "15",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 719.564,
+            "submitStartRelativeToHonestMs": -8.728,
+            "responseEndRelativeToHonestMs": 710.835,
+            "simulationRpcMs": 113.884,
+            "traceStartRelativeToHonestMs": 453.875,
+            "traceEndRelativeToHonestMs": 567.76,
+            "mined": {
+              "blockNumber": 28,
+              "blockHash": "0xfb95390d3b21ebc66f87af23bf9fd96f5454582cc3f56e0ed3da3ad2ccc1d1dc",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1056748672608690"
+            }
+          },
+          {
+            "hash": "0xe0a96b8283576bb77dbf3559d4748b135b9d8c4e36eec2d1fd8b101ebfb65bac",
+            "nonceKey": "16",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 846.702,
+            "submitStartRelativeToHonestMs": -8.698,
+            "responseEndRelativeToHonestMs": 838.003,
+            "simulationRpcMs": 112.95,
+            "traceStartRelativeToHonestMs": 582.209,
+            "traceEndRelativeToHonestMs": 695.16,
+            "mined": {
+              "blockNumber": 29,
+              "blockHash": "0x6daade85b5445661d2af3f1e3ee50c04a5a36241cbf183b9491acd48ab123c16",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1052783974090482"
+            }
+          },
+          {
+            "hash": "0xdaece33d2a894d10fc809f992fcff80e700d473a3cd3faffd267d4053ca91dc2",
+            "nonceKey": "17",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 973.243,
+            "submitStartRelativeToHonestMs": -8.668,
+            "responseEndRelativeToHonestMs": 964.575,
+            "simulationRpcMs": 112.22,
+            "traceStartRelativeToHonestMs": 710.519,
+            "traceEndRelativeToHonestMs": 822.74,
+            "mined": {
+              "blockNumber": 30,
+              "blockHash": "0xd5d36cd7f194efe09f9c8f2fac00815eb421c606eb7e693865d0f4462bb03a4d",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1049308594081317"
+            }
+          },
+          {
+            "hash": "0x2c79ebb8b152eeaf37464867c332d44dfdf54d8dbb2f88bafd7ab2c36e627ce0",
+            "nonceKey": "18",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 1101.271,
+            "submitStartRelativeToHonestMs": -8.638,
+            "responseEndRelativeToHonestMs": 1092.633,
+            "simulationRpcMs": 112.365,
+            "traceStartRelativeToHonestMs": 837.021,
+            "traceEndRelativeToHonestMs": 949.386,
+            "mined": {
+              "blockNumber": 31,
+              "blockHash": "0xc6423b4490ba5ccc8a36b3d391d3ef68ea58867f15ad40f054614c220cfa43cc",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1046233448874618"
+            }
+          },
+          {
+            "hash": "0x33199e4952d0f133c9427c2f37eb4f0ca24671129add5e0d43b1c4d15e9ddceb",
+            "nonceKey": "19",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 1228.134,
+            "submitStartRelativeToHonestMs": -8.586,
+            "responseEndRelativeToHonestMs": 1219.547,
+            "simulationRpcMs": 113.066,
+            "traceStartRelativeToHonestMs": 964.257,
+            "traceEndRelativeToHonestMs": 1077.323,
+            "mined": {
+              "blockNumber": 32,
+              "blockHash": "0xf4129c1f905874e1764b3b89e83cee76c4a9ce52a36ff6a4a031fa53ffeb156f",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1043488109616309"
+            }
+          },
+          {
+            "hash": "0xdcf7711b06181394ec7da76120c047c626eeacbd1a93562af69f264a4b113d9d",
+            "nonceKey": "20",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 1355.417,
+            "submitStartRelativeToHonestMs": -8.548,
+            "responseEndRelativeToHonestMs": 1346.869,
+            "simulationRpcMs": 112.222,
+            "traceStartRelativeToHonestMs": 1091.567,
+            "traceEndRelativeToHonestMs": 1203.79,
+            "mined": {
+              "blockNumber": 34,
+              "blockHash": "0xeaaca61ec7abb15e0df64067901ee3ec1c808e8d8619b7500a64f3a8fd36e284",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1038736269531099"
+            }
+          },
+          {
+            "hash": "0x5691d4884b6f40e04533c5a03571359be122c53f1945e43b73d9256a1cc47788",
+            "nonceKey": "21",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 1482.462,
+            "submitStartRelativeToHonestMs": -8.508,
+            "responseEndRelativeToHonestMs": 1473.955,
+            "simulationRpcMs": 112.131,
+            "traceStartRelativeToHonestMs": 1219.028,
+            "traceEndRelativeToHonestMs": 1331.159,
+            "mined": {
+              "blockNumber": 35,
+              "blockHash": "0x4bb39956509755d03efc05f007acecc89dad69492138e482169254a18bdf7149",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1036874462645868"
+            }
+          },
+          {
+            "hash": "0x0dc38e95b360ad857d955d317e3ff694491cfef433177bfc5a611533b2bfd7f8",
+            "nonceKey": "22",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 1610.398,
+            "submitStartRelativeToHonestMs": -8.475,
+            "responseEndRelativeToHonestMs": 1601.924,
+            "simulationRpcMs": 112.787,
+            "traceStartRelativeToHonestMs": 1345.74,
+            "traceEndRelativeToHonestMs": 1458.527,
+            "mined": {
+              "blockNumber": 36,
+              "blockHash": "0xe827aaa985ab949df966efbd6c6af3dd1dd2a53c9350e9087c51fb8faca631f0",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1035191255610060"
+            }
+          },
+          {
+            "hash": "0x8480c29f79d15523ee62e470cfabb9efa9929fc77e9c8aaf77050ac54dc7c7ae",
+            "nonceKey": "23",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 1737.645,
+            "submitStartRelativeToHonestMs": -8.442,
+            "responseEndRelativeToHonestMs": 1729.203,
+            "simulationRpcMs": 112.48,
+            "traceStartRelativeToHonestMs": 1473.247,
+            "traceEndRelativeToHonestMs": 1585.727,
+            "mined": {
+              "blockNumber": 37,
+              "blockHash": "0x22d3a142b78b64844e1e809dbf3cc023e7c829c1ebbcccc4cfd213aa50441c52",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1033734915641484"
+            }
+          },
+          {
+            "hash": "0x23e56e98e47cf7a224da692938418cda0742c9ffe76c52abd79687f7f9c0cd07",
+            "nonceKey": "24",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 1740.669,
+            "submitStartRelativeToHonestMs": -8.409,
+            "responseEndRelativeToHonestMs": 1732.26,
+            "simulationRpcMs": 112.44,
+            "traceStartRelativeToHonestMs": 1600.862,
+            "traceEndRelativeToHonestMs": 1713.301,
+            "mined": {
+              "blockNumber": 38,
+              "blockHash": "0x8764113b68d53217b316cbed4b5acd5871020fd8dc080f11d2b5170dfe2bc045",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1032434973718434"
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 13,
+            "included": 13,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 29,
+            "included": 13,
+            "status": "ok"
+          }
+        }
+      }
+    ],
+    "trials": [
+      {
+        "round": 0,
+        "kind": "idle",
+        "burst": 0,
+        "honestPayer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+        "honestFeeWei": "36308820920215",
+        "paymasterFeesWei": "36308820920215",
+        "paymasterBalanceBeforeWei": "9961656402162014005",
+        "paymasterBalanceAfterWei": "9961620093341093790",
+        "admissionHeadHash": "0xd8f0cd526a1f81fd38411859506d42c7846c7d2f3a3102c4e7b7857e173c1ce4",
+        "backgroundBatchMs": null,
+        "peakTraces": 1,
+        "peakBackgroundTraces": 0,
+        "honestHash": "0x3fd3410cdcab7f861d61011f1b86a6ecc98e54124bd5bdb1bde1225b75df5cb8",
+        "honestMs": 16.608,
+        "honestStakeLookupRpcMs": [
+          0.72
+        ],
+        "beforeHonestTraceMs": 6.094,
+        "afterHonestTraceMs": 4.008,
+        "honestSimulationRpcMs": 6.505,
+        "backgroundActiveAtHonestSend": 0,
+        "honestBlock": 40,
+        "honestBlockHash": "0xf3121e114fcf4032a23f1486c44aed9665c628ee4189bc33a5c9df0207f222b9",
+        "background": [],
+        "reputation": {
+          "before": {
+            "seen": 29,
+            "included": 29,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 29,
+            "included": 29,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 0,
+        "kind": "valid",
+        "burst": 8,
+        "honestPayer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+        "honestFeeWei": "36137411715614",
+        "paymasterFeesWei": "8252391372939989",
+        "paymasterBalanceBeforeWei": "9961620093341093790",
+        "paymasterBalanceAfterWei": "9953367701968153801",
+        "admissionHeadHash": "0xf3121e114fcf4032a23f1486c44aed9665c628ee4189bc33a5c9df0207f222b9",
+        "backgroundBatchMs": 821.277,
+        "peakTraces": 3,
+        "peakBackgroundTraces": 3,
+        "honestHash": "0xc0e92b0ffb3f49152a19700987f0c572fff8424215a588bf2c3b931812727b19",
+        "honestMs": 813.261,
+        "honestStakeLookupRpcMs": [
+          110.726
+        ],
+        "beforeHonestTraceMs": 807.346,
+        "afterHonestTraceMs": 2.902,
+        "honestSimulationRpcMs": 3.013,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 49,
+        "honestBlockHash": "0x3c8be6c7bc9620c25417b778526c3b7971fd109ee8d7519e8b4d22207d7bbe16",
+        "background": [
+          {
+            "hash": "0x60efcedaae970ac453c1e09db7bdaf3d56ba04ce79aa4dec229f64c7c8568c96",
+            "nonceKey": "25",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 307.719,
+            "submitStartRelativeToHonestMs": -9.598,
+            "responseEndRelativeToHonestMs": 298.121,
+            "simulationRpcMs": 244.345,
+            "traceStartRelativeToHonestMs": 3.74,
+            "traceEndRelativeToHonestMs": 248.084,
+            "mined": {
+              "blockNumber": 43,
+              "blockHash": "0x96d2464ca9270101d64f010220c1635c0493fe1a6fa4b35f30a56b55b15ac6e6",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1027750240637454"
+            }
+          },
+          {
+            "hash": "0x09678d0040cdb41c620ff60cc6f0566d7d0a0b7c96352f3de5532a7d4313f7b8",
+            "nonceKey": "26",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 436.375,
+            "submitStartRelativeToHonestMs": -9.527,
+            "responseEndRelativeToHonestMs": 426.848,
+            "simulationRpcMs": 125.344,
+            "traceStartRelativeToHonestMs": 123.796,
+            "traceEndRelativeToHonestMs": 249.14,
+            "mined": {
+              "blockNumber": 44,
+              "blockHash": "0x8f2260bd2a91bb6393bf6c492ecfa8a8e5b4c43844e2c1984d2a91c480ef870d",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1027126517815080"
+            }
+          },
+          {
+            "hash": "0xea6dae913dc7b7fabeb42e1a7e055505d040ef59f895f170534253d067f73a3c",
+            "nonceKey": "27",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 302.609,
+            "submitStartRelativeToHonestMs": -9.482,
+            "responseEndRelativeToHonestMs": 293.127,
+            "simulationRpcMs": 123.262,
+            "traceStartRelativeToHonestMs": -0.031,
+            "traceEndRelativeToHonestMs": 123.232,
+            "mined": {
+              "blockNumber": 41,
+              "blockHash": "0xf5094cd0b832e5dddba06662b4ab3b18e1386ee2489fd8d56d4f2218eddc6cc8",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1029209700690396"
+            }
+          },
+          {
+            "hash": "0x8296277f610420ae243cf2e6d04c1ceee549097aab1e90e52d7c1619bd462adf",
+            "nonceKey": "28",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 305.165,
+            "submitStartRelativeToHonestMs": -9.438,
+            "responseEndRelativeToHonestMs": 295.727,
+            "simulationRpcMs": 245.162,
+            "traceStartRelativeToHonestMs": 3.226,
+            "traceEndRelativeToHonestMs": 248.388,
+            "mined": {
+              "blockNumber": 42,
+              "blockHash": "0xeb1e7f297397f1ebc38919e6ad647e3e1b8ec23e7bf80102293c03e61c63cab6",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1028441215242516"
+            }
+          },
+          {
+            "hash": "0x8fb2211ff7d1654f21b91995dcdc9c1fe8a59a7171c0736fa4542dee52a906b6",
+            "nonceKey": "29",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 565.39,
+            "submitStartRelativeToHonestMs": -9.375,
+            "responseEndRelativeToHonestMs": 556.015,
+            "simulationRpcMs": 115.682,
+            "traceStartRelativeToHonestMs": 297.175,
+            "traceEndRelativeToHonestMs": 412.857,
+            "mined": {
+              "blockNumber": 45,
+              "blockHash": "0x9139fa80e6d9713e6333d98a4dda68c2183d57861ff3d86c260d146bac76e9f7",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1026597110269551"
+            }
+          },
+          {
+            "hash": "0xb8bd2cb88e4a3a372b1d1fc755386d6ab77150cca7b16e827d81b3ef1001770c",
+            "nonceKey": "30",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 691.231,
+            "submitStartRelativeToHonestMs": -9.341,
+            "responseEndRelativeToHonestMs": 681.89,
+            "simulationRpcMs": 112.956,
+            "traceStartRelativeToHonestMs": 428.011,
+            "traceEndRelativeToHonestMs": 540.968,
+            "mined": {
+              "blockNumber": 46,
+              "blockHash": "0xa949796e3a2438fd13925e6f0376c399429fb6d31eed0e3dec8d32f159ec2a5f",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1026117794192646"
+            }
+          },
+          {
+            "hash": "0x5cdfa9c2ac8a94c96ed854ed95225d9e3a64c5e0c99c5e61653f05fcfbc68ec5",
+            "nonceKey": "31",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 817.757,
+            "submitStartRelativeToHonestMs": -9.308,
+            "responseEndRelativeToHonestMs": 808.449,
+            "simulationRpcMs": 112.1,
+            "traceStartRelativeToHonestMs": 554.856,
+            "traceEndRelativeToHonestMs": 666.956,
+            "mined": {
+              "blockNumber": 47,
+              "blockHash": "0xa9e991da1ee9e7afeb95f608ed18cb97f42b4699cc85e61271910355fbd1d391",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1025693492544909"
+            }
+          },
+          {
+            "hash": "0xe1bf778bf7034e82972bebe48963252538955aa7db8ba9ec826c1fd919062d0d",
+            "nonceKey": "32",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 820.932,
+            "submitStartRelativeToHonestMs": -9.253,
+            "responseEndRelativeToHonestMs": 811.679,
+            "simulationRpcMs": 111.883,
+            "traceStartRelativeToHonestMs": 681.514,
+            "traceEndRelativeToHonestMs": 793.397,
+            "mined": {
+              "blockNumber": 48,
+              "blockHash": "0x791cb7f5b14446fec8028666e9e4629a4efe614fd2ba2ac40e95835b4f3874fb",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1025317889831823"
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 29,
+            "included": 29,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 37,
+            "included": 29,
+            "status": "ok"
+          }
+        }
+      },
+      {
+        "round": 0,
+        "kind": "valid",
+        "burst": 16,
+        "honestPayer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+        "honestFeeWei": "36059712010597",
+        "paymasterFeesWei": "16411383720953179",
+        "paymasterBalanceBeforeWei": "9953367701968153801",
+        "paymasterBalanceAfterWei": "9936956318247200622",
+        "admissionHeadHash": "0x3c8be6c7bc9620c25417b778526c3b7971fd109ee8d7519e8b4d22207d7bbe16",
+        "backgroundBatchMs": 1232.503,
+        "peakTraces": 3,
+        "peakBackgroundTraces": 3,
+        "honestHash": "0xecae8dea0faed8e82760f0dd418ba9c86649bbed207249a6bf7e61cc52feb3b2",
+        "honestMs": 1186.418,
+        "honestStakeLookupRpcMs": [
+          0.306
+        ],
+        "beforeHonestTraceMs": 1179.87,
+        "afterHonestTraceMs": 3.678,
+        "honestSimulationRpcMs": 2.87,
+        "backgroundActiveAtHonestSend": 1,
+        "honestBlock": 65,
+        "honestBlockHash": "0x2b6482b06f45cb0025bd7e6fecf5e67f9fb09a816a985c24e7cd1186bf72b445",
+        "background": [
+          {
+            "hash": "0x02f7aac9c623b0cdf36b5d745d364ac98f227cf19b0494abaafbbb289e01dc5f",
+            "nonceKey": "33",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 295.894,
+            "submitStartRelativeToHonestMs": -10.485,
+            "responseEndRelativeToHonestMs": 285.409,
+            "simulationRpcMs": 123.262,
+            "traceStartRelativeToHonestMs": -0.034,
+            "traceEndRelativeToHonestMs": 123.227,
+            "mined": {
+              "blockNumber": 50,
+              "blockHash": "0x75760ba672d5e7803bb680470e3c8a5a94cb46da4debff49781cb703e99204b8",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1024653745990314"
+            }
+          },
+          {
+            "hash": "0xa6baf8e893be3f08723063c50df84b1a1fb2b16b9c09cd52aa5c3bf51b4c2d19",
+            "nonceKey": "34",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 429.244,
+            "submitStartRelativeToHonestMs": -10.389,
+            "responseEndRelativeToHonestMs": 418.855,
+            "simulationRpcMs": 120.237,
+            "traceStartRelativeToHonestMs": 142.111,
+            "traceEndRelativeToHonestMs": 262.348,
+            "mined": {
+              "blockNumber": 53,
+              "blockHash": "0x35fef51588b69d0695f1e5951c17d878c6b94f9664b916d01305a615316ea338",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1023966139131090"
+            }
+          },
+          {
+            "hash": "0x1339851b9ba4e0f761a1837e199d68f0f9e680185b2360444519e26f8172a30b",
+            "nonceKey": "35",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 298.638,
+            "submitStartRelativeToHonestMs": -10.334,
+            "responseEndRelativeToHonestMs": 288.304,
+            "simulationRpcMs": 240.589,
+            "traceStartRelativeToHonestMs": 0.998,
+            "traceEndRelativeToHonestMs": 241.587,
+            "mined": {
+              "blockNumber": 51,
+              "blockHash": "0x807a823d8220708dab844e1180ea5fffc7d7687c2efa89b72bc79bda0dcfb341",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1024396104034359"
+            }
+          },
+          {
+            "hash": "0x4ec79dd6e2dccafbb3152cd62565a2f7ca5da0f9e3116e547d7ac1631e096b2f",
+            "nonceKey": "36",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 301.683,
+            "submitStartRelativeToHonestMs": -10.294,
+            "responseEndRelativeToHonestMs": 291.39,
+            "simulationRpcMs": 242.221,
+            "traceStartRelativeToHonestMs": 0.519,
+            "traceEndRelativeToHonestMs": 242.74,
+            "mined": {
+              "blockNumber": 52,
+              "blockHash": "0x5b1b31169277be73be1786c64e86b4783d3a1d4e0ddd4ecdf3cad2e0c3219fa4",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1024180053859659"
+            }
+          },
+          {
+            "hash": "0x5771a7140ace58fcfcfc924acda245aa4134d6a6e729fc1170562b3ba238a621",
+            "nonceKey": "37",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 432.21,
+            "submitStartRelativeToHonestMs": -10.256,
+            "responseEndRelativeToHonestMs": 421.954,
+            "simulationRpcMs": 113.11,
+            "traceStartRelativeToHonestMs": 290.203,
+            "traceEndRelativeToHonestMs": 403.313,
+            "mined": {
+              "blockNumber": 54,
+              "blockHash": "0x34f2329472b5b8454eb87336e2c4cfe13377402ec84dbf851e4c018d930a1620",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1023799434126726"
+            }
+          },
+          {
+            "hash": "0xcd7a398e7eff66bdcc492537dff25fd2ddfd6c796bb050b8cd2400324bc17f9b",
+            "nonceKey": "38",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 563.298,
+            "submitStartRelativeToHonestMs": -10.221,
+            "responseEndRelativeToHonestMs": 553.076,
+            "simulationRpcMs": 112.553,
+            "traceStartRelativeToHonestMs": 420.428,
+            "traceEndRelativeToHonestMs": 532.981,
+            "mined": {
+              "blockNumber": 55,
+              "blockHash": "0x0d7cd946920507d3d6f3d6612c795e1690a46f0daf015bdced754528121e73b1",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1023629209357185"
+            }
+          },
+          {
+            "hash": "0x21b85b351224ee6a23a40e8b40a4340c5f1b4b728ae11e270f5f73061bb3868b",
+            "nonceKey": "39",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 700.505,
+            "submitStartRelativeToHonestMs": -10.188,
+            "responseEndRelativeToHonestMs": 690.317,
+            "simulationRpcMs": 226.938,
+            "traceStartRelativeToHonestMs": 420.865,
+            "traceEndRelativeToHonestMs": 647.803,
+            "mined": {
+              "blockNumber": 56,
+              "blockHash": "0xcdb8033324a99f8cea84cb966b32b2f0536eb332968e94b9d9c820a491064be7",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1023501171427764"
+            }
+          },
+          {
+            "hash": "0x84a3cf8198406c1406015142d002538a083df08097ce08a8adba4baf57a31567",
+            "nonceKey": "40",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 790.519,
+            "submitStartRelativeToHonestMs": -10.149,
+            "responseEndRelativeToHonestMs": 780.371,
+            "simulationRpcMs": 115.778,
+            "traceStartRelativeToHonestMs": 551.729,
+            "traceEndRelativeToHonestMs": 667.508,
+            "mined": {
+              "blockNumber": 57,
+              "blockHash": "0x07d4543c523bc4fbb25866964a2ccdfe5e6c27f6e9ab9b1d9fd77b1058e8db41",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1023365183479434"
+            }
+          },
+          {
+            "hash": "0x3e107ff58dffb3d7b9b6fabebb02922bb965b91ec81aecc3049be1613ba7d647",
+            "nonceKey": "41",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 794.841,
+            "submitStartRelativeToHonestMs": -10.111,
+            "responseEndRelativeToHonestMs": 784.73,
+            "simulationRpcMs": 211.181,
+            "traceStartRelativeToHonestMs": 552.163,
+            "traceEndRelativeToHonestMs": 763.344,
+            "mined": {
+              "blockNumber": 58,
+              "blockHash": "0xf965d04bb4f6c0f1a585f31df02128f9ff05c762097d464b93b950bbf156c8ae",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1023255437074965"
+            }
+          },
+          {
+            "hash": "0xc6ec7d5358026d2ca2f08e0454dbedd7fdeeda4592208276a0a6bd819db28497",
+            "nonceKey": "42",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 833.463,
+            "submitStartRelativeToHonestMs": -10.078,
+            "responseEndRelativeToHonestMs": 823.385,
+            "simulationRpcMs": 116.109,
+            "traceStartRelativeToHonestMs": 689.529,
+            "traceEndRelativeToHonestMs": 805.638,
+            "mined": {
+              "blockNumber": 59,
+              "blockHash": "0x35f1e527ee8300e7ef027e1316d25b8b8a9c57d1f09da221b0236c53959681c9",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1023146277955008"
+            }
+          },
+          {
+            "hash": "0x495f95265a57fb6b106c624d90b35b37cffb232027a3baaacdaae473ca101545",
+            "nonceKey": "43",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 966.49,
+            "submitStartRelativeToHonestMs": -10.045,
+            "responseEndRelativeToHonestMs": 956.445,
+            "simulationRpcMs": 116.528,
+            "traceStartRelativeToHonestMs": 782.699,
+            "traceEndRelativeToHonestMs": 899.227,
+            "mined": {
+              "blockNumber": 60,
+              "blockHash": "0x671aacb161ce14d142f7a04225a73fc018c14f226c3f89c5dcfac43b83247a7d",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1023084294601329"
+            }
+          },
+          {
+            "hash": "0x35e6e25a11b108b8ba39cd1b696f4ad05c052aa5b2732fd2d339ad63baa07f68",
+            "nonceKey": "44",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 1057.268,
+            "submitStartRelativeToHonestMs": -10.011,
+            "responseEndRelativeToHonestMs": 1047.257,
+            "simulationRpcMs": 116.486,
+            "traceStartRelativeToHonestMs": 822.613,
+            "traceEndRelativeToHonestMs": 939.099,
+            "mined": {
+              "blockNumber": 61,
+              "blockHash": "0xb9d1323de227357ac9525ee5a1201f97e432729ff61cddf550c92ac30b5579a9",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1022996158242201"
+            }
+          },
+          {
+            "hash": "0x1536caf416e35af266d5c7dad3bf9a65d22ee175ed820a068e7ae4238fcf6266",
+            "nonceKey": "45",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 1097.555,
+            "submitStartRelativeToHonestMs": -9.979,
+            "responseEndRelativeToHonestMs": 1087.576,
+            "simulationRpcMs": 116.31,
+            "traceStartRelativeToHonestMs": 913.807,
+            "traceEndRelativeToHonestMs": 1030.117,
+            "mined": {
+              "blockNumber": 62,
+              "blockHash": "0x6f0e9faa3ce74765b22a82400bdb796513c24220304c9f52a11e131572249cea",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1022940773275875"
+            }
+          },
+          {
+            "hash": "0x581c49e3548f2a0326c14c65132d1c110425134b3f5cdb0b12e65c0998f5f123",
+            "nonceKey": "46",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 1100.654,
+            "submitStartRelativeToHonestMs": -9.948,
+            "responseEndRelativeToHonestMs": 1090.706,
+            "simulationRpcMs": 116.321,
+            "traceStartRelativeToHonestMs": 955.599,
+            "traceEndRelativeToHonestMs": 1071.919,
+            "mined": {
+              "blockNumber": 63,
+              "blockHash": "0xc814b16736587ae040a1e1f096fa8d6881e02bb224ac9e2a0c55755bdacb77ca",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1022869110632634"
+            }
+          },
+          {
+            "hash": "0x77ba03f9602ebd92328dfd6e67cbf59b040bdce0f136d1c6bd36dd2bf7e985e4",
+            "nonceKey": "47",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 1194.294,
+            "submitStartRelativeToHonestMs": -9.916,
+            "responseEndRelativeToHonestMs": 1184.378,
+            "simulationRpcMs": 116.591,
+            "traceStartRelativeToHonestMs": 1048.246,
+            "traceEndRelativeToHonestMs": 1164.838,
+            "mined": {
+              "blockNumber": 64,
+              "blockHash": "0x75cb2dd270882dcd981a123feb7cb4dc4f0c03bcfd8fb048f69ae3f63fcc4fa6",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1022816301162966"
+            }
+          },
+          {
+            "hash": "0x7335f8386b8562fa48c290be6f5be295574c83ed200ad697c17c340fbe8e5a1b",
+            "nonceKey": "48",
+            "nonceSeq": "1",
+            "outcome": "admitted",
+            "admissionMs": 1231.9,
+            "submitStartRelativeToHonestMs": -9.883,
+            "responseEndRelativeToHonestMs": 1222.017,
+            "simulationRpcMs": 116.334,
+            "traceStartRelativeToHonestMs": 1089.362,
+            "traceEndRelativeToHonestMs": 1205.696,
+            "mined": {
+              "blockNumber": 66,
+              "blockHash": "0xcd0bcf4eef5844b4ce6bcc1bc1a3c6c04546ba2bb566e8654127a8c4e9f671d6",
+              "verifyGas": 993765,
+              "payer": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+              "feeWei": "1022724614591073"
+            }
+          }
+        ],
+        "reputation": {
+          "before": {
+            "seen": 37,
+            "included": 37,
+            "status": "ok"
+          },
+          "after": {
+            "seen": 53,
+            "included": 37,
+            "status": "ok"
+          }
+        }
+      }
+    ],
+    "backgroundWitnesses": {
+      "valid": "0x0561fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289",
+      "late": "0x0161fba5e50f309ae6fcd4c6f7b27a2e0225d4befcfe7c5e636308d3ed56a289"
+    },
+    "nonceSetup": {
+      "initializedKeys": 48,
+      "transactions": [
+        "0xb24edb5af3e15d79a2e1686d55888606ecf482b5038b297ffc3d985a036b2ad7",
+        "0xa184e1f4c8cd0e2432328c3be234d929446383c182e8c1e7d8a7281aa77d6705",
+        "0x77bc0224571816ea0c9b43afc2f1c8c1960d2fb0b8e063f3d15be0e42e556f55"
+      ]
+    },
+    "relayBundleSize": 1,
+    "completedAt": "2026-11-07T00:36:10.914Z",
+    "secondStake": {
+      "amountWei": "12000000000000000",
+      "delay": 86400,
+      "withdrawal": "0",
+      "transactionHash": "0xd0618cd72a26f82f08f85f48f55096e81a78f7714fc25e5f97f11602600bcb8d"
+    },
+    "blockedExternalHttp": [
+      {
+        "method": "CONNECT",
+        "authority": "api.github.com:443"
+      }
+    ],
+    "sharedPaymaster": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+    "paymasterStake": {
+      "address": "0x30e3d018d299b4fac43401ac9095883434b6ca9f",
+      "registry": "0x3549c16571d8dac63839e6071d60eaa4fa248567",
+      "amountWei": "12000000000000000",
+      "delay": 86400,
+      "withdrawal": "0"
+    },
+    "schedulerReadback": {
+      "mode": "fifo",
+      "slots": 4,
+      "maxHeavyPerSender": 2,
+      "maxWaiting": 64,
+      "heavyThreshold": 100000,
+      "maxWaitingPerSender": 16
+    },
+    "admissionWindow": {
+      "verifyFixedHead": true,
+      "requireSidecarOnChain": true,
+      "deferredIntervalSeconds": 3600,
+      "reconciliationIntervalSeconds": 2
+    }
+  }
+}

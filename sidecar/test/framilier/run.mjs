@@ -161,7 +161,8 @@ try {
   const { witness, commitment } = hashChain(rounds);
   const registry = await deploy("NaiveStakingRegistry");
   const initialWalletBalance = comparing ? 10n ** 19n : matched ? 10n ** 18n : 10n ** 17n;
-  const wallet = await deploy("HashChainWallet", [owner.address, commitment, BigInt(rounds)], initialWalletBalance);
+  const walletContract = sweep?.sharedPaymaster ? "SponsoredHashChainWallet" : "HashChainWallet";
+  const wallet = await deploy(walletContract, [owner.address, commitment, BigInt(rounds)], initialWalletBalance);
   const settings = JSON.parse(await readFile(path.join(root, "config.framilier.example.json"), "utf8"));
   if (benchmark) meter = await startTraceMeter(el);
   Object.assign(settings, { rpcEndpoint: meter?.url ?? el, rpcEndpointSubmit: el, stakingRegistryAddress: registry });
@@ -193,8 +194,9 @@ try {
     return { amountWei: amount.toString(), delay: Number(delay), withdrawal: withdrawal.toString() };
   };
   const primary = { wallet, owner, key };
-  async function makeFrameTx(gas, verifyData, target = owner.address, value = 0n, bodyData = "0x", identity = primary, nonce) {
+  async function makeFrameTx(gas, verifyData, target = owner.address, value = 0n, bodyData = "0x", identity = primary, nonce, paymaster) {
     return signedWalletFrame({
+      paymaster,
       chainId, wallet: identity.wallet, owner: identity.owner.address, key: identity.key,
       nonceSeq: nonce?.seq ?? BigInt(await rpc(el, "eth_getTransactionCount", [identity.wallet, "latest"])),
       nonceKeys: nonce?.keys, verifyState: nonce?.stateGas, gas, verifyData, target, value, bodyData,
@@ -260,7 +262,7 @@ try {
   if (benchmark) {
     const secondKey = comparing ? sweep.secondKey : generatePrivateKey();
     const secondOwner = privateKeyToAccount(secondKey);
-    const secondWallet = await deploy("HashChainWallet", [secondOwner.address, commitment, BigInt(rounds)], 200000000000000000n);
+    const secondWallet = await deploy(walletContract, [secondOwner.address, commitment, BigInt(rounds)], 200000000000000000n);
     const second = { wallet: secondWallet, owner: secondOwner, key: secondKey };
     // Give the independent wallet the same stake eligibility. Its timed
     // transactions use only the clean owner-signature verification path.
@@ -288,17 +290,33 @@ try {
     // have the same length and calldata gas cost in the matched experiment.
     const incorrectWitness = "0x" + witness.slice(2).replace(/[1-9a-f]/, c => c === "1" ? "2" : "1");
     assert.notEqual(incorrectWitness, witness);
+
+    const paymaster = sweep?.sharedPaymaster
+      ? await deploy("SimplePaymaster", [wallet, secondWallet, registry, stakeWei, 86400], 10n ** 19n)
+      : undefined;
+    const paymasterStake = paymaster && await deposit(paymaster);
+    if (paymaster) {
+      assert.deepEqual(paymasterStake, stakedDeposit, "expected the paymaster to have its own locked registry stake");
+      const badSponsored = await makeFrameTx(997200n, incorrectWitness, owner.address, 0n, "0x", primary, undefined, paymaster);
+      report.controls.sponsoredWrongWitness = await reject(badSponsored, /wrong witness|77726f6e67207769746e657373/i);
+    }
+
     function makeNoisy(kind, serial) {
       if (!matched) return makeFrameTx(997200n, toHex(serial, { size: kind === "early" ? 31 : 32 }));
       return makeFrameTx(997200n, kind === "valid" ? witness : incorrectWitness, owner.address, 0n, "0x", primary,
-        { keys: [BigInt(serial)], seq: 1n, stateGas: 200000n });
+        { keys: [BigInt(serial)], seq: 1n, stateGas: 200000n }, paymaster);
     }
     const headHash = async () => (await rpc(el, "eth_getBlockByNumber", ["latest", false])).hash;
     const setIntervalSeconds = async seconds => {
       assert.equal(await rpc(local, "debug_bundler_setBundleInterval", [seconds]), "ok");
     };
     report.benchmark = await measureAdmission({
-      local, meter, noisyWallet: wallet, honestWallet: secondWallet, control: matched ? "valid" : "early", makeNoisy,
+      local, meter, noisyWallet: wallet, honestWallet: secondWallet,
+      sponsorship: paymaster && {
+        address: paymaster,
+        balance: async () => BigInt(await rpc(el, "eth_getBalance", [paymaster, "latest"])),
+      },
+      control: matched ? "valid" : "early", makeNoisy,
       sweep: sweep && { rounds: sweep.rounds, bursts: sweep.bursts,
         async beginAdmission() {
           // Our own loopback sidecar also revalidates on its timer in manual mode.
@@ -313,7 +331,7 @@ try {
       },
       stakeCall: comparing ? { to: registry.toLowerCase(), data: encodeFunctionData({ abi: contracts.NaiveStakingRegistry.abi,
         functionName: "getDepositInfo", args: [secondWallet] }).toLowerCase() } : undefined,
-      makeHonest: () => makeFrameTx(70000n, "0x", owner.address, 0n, "0x", second),
+      makeHonest: () => makeFrameTx(70000n, "0x", owner.address, 0n, "0x", second, undefined, paymaster),
       async mine(hashes) {
         const mined = await producer.receipts(hashes, () => rpc(local, "debug_bundler_sendBundleNow"));
         if (comparing) await Promise.all(hashes.map(waitForOnChain));
@@ -328,6 +346,10 @@ try {
     report.benchmark.completedAt = new Date().toISOString();
     report.benchmark.secondStake = { ...secondDeposit, transactionHash: secondStake.receipt.transactionHash };
     report.benchmark.blockedExternalHttp = network.denied;
+    if (paymaster) {
+      report.benchmark.sharedPaymaster = paymaster;
+      report.benchmark.paymasterStake = { address: paymaster, registry, ...paymasterStake };
+    }
     if (comparing) {
       report.benchmark.schedulerReadback = activeScheduler;
       report.benchmark.admissionWindow = { verifyFixedHead: true, requireSidecarOnChain: true,

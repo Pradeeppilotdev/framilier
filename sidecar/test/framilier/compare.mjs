@@ -6,19 +6,21 @@ import { arch, platform } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
-import { checkPlan, summarize, workloadDigest } from "./compare-metrics.mjs";
+import { checkPlan, summarize, workloadDigest, sponsorshipEvidence } from "./compare-metrics.mjs";
 import { useTerminalView } from "./terminal-view.mjs";
 
-const help = `Usage: ./framilier compare [--bursts 1,4,8] [--rounds 20] [--baseline-only]
+const help = `Usage: ./framilier compare [--bursts 1,4,8] [--rounds 20] [--baseline-only] [--shared-paymaster]
 
 Options: --preset quick|full, --output <new-directory>, --json, --plain,
-         --order off,fifo,fair (counterbalance order across repeated runs).
+         --order off,fifo,fair (counterbalance order across repeated runs),
+         --shared-paymaster (sponsor both burst and probe via shared SimplePaymaster).
 In a terminal, see what A’s checks were doing when B started. Use --plain for all rows.
 Quick is a smoke check only; full defaults to 20 rounds and bursts 1,4,8.
 
 Start a private loopback chain for each scheduling policy and measure two wallets.
-An idle control and one excluded warm-up per burst size are included. Each heavy
-transaction must mine with 993,512 VERIFY gas. The output includes B's admission
+An idle control and one excluded warm-up per burst size are included. The self-paid
+workload uses 993,512 VERIFY gas. Sponsored runs record the sender's measured VERIFY gas
+and check the payer and fees against receipts. The output includes B's admission
 p50/p95, A's batch completion time, and the path to the JSON evidence.
 
 Use --baseline-only on the original sidecar. The default comparison exits 2 if
@@ -57,6 +59,9 @@ async function save(report, dir) {
 }
 
 function table(report) {
+  if (report.sharedPaymaster) {
+    console.log("\nShared Paymaster Benchmark: SimplePaymaster enabled (multi-sender sponsorship)");
+  }
   const columns = ["Policy", "A burst", "Rounds", "B p50 ms", "B p95 ms", "A batch p50 ms", "A batch p95 ms", "A mined", "B mined"];
   const rows = [columns];
   for (const result of Object.values(report.policies)) {
@@ -79,6 +84,7 @@ async function main() {
   if (command !== "compare") usageError("Expected the compare command.");
   const { values } = parseArgs({ args, options: {
     help: { type: "boolean", short: "h" }, "baseline-only": { type: "boolean" },
+    "shared-paymaster": { type: "boolean" },
     bursts: { type: "string" }, rounds: { type: "string" },
     preset: { type: "string", default: "full" }, output: { type: "string" }, json: { type: "boolean" }, plain: { type: "boolean" },
     order: { type: "string", default: "off,fifo,fair" },
@@ -86,7 +92,8 @@ async function main() {
   if (values.help) return console.log(help);
   assert.ok(["quick", "full"].includes(values.preset), "preset must be quick or full");
   const plan = { rounds: Number(values.rounds ?? (values.preset === "quick" ? 2 : 20)),
-    bursts: (values.bursts ?? (values.preset === "quick" ? "1,4" : "1,4,8")).split(",").map(Number) };
+    bursts: (values.bursts ?? (values.preset === "quick" ? "1,4" : "1,4,8")).split(",").map(Number),
+    sharedPaymaster: Boolean(values["shared-paymaster"]) };
   checkPlan(plan.rounds, plan.bursts);
   const order = values.order.split(",");
   assert.deepEqual([...order].sort(), ["fair", "fifo", "off"], "order must contain off,fifo,fair exactly once");
@@ -132,12 +139,13 @@ async function main() {
       const b = run.benchmark;
       assert.equal(run.chainId, report.chainId);
       assert.ok(b.blockedExternalHttp.some(e => e.authority === "api.github.com:443"), "missing loopback isolation check");
+      const sponsorship = sponsorshipEvidence(run, plan.sharedPaymaster);
       const inputs = { genesisHash: run.genesisHash, sidecarBuildSha256: run.sidecarBuildSha256, ethrexBinarySha256: run.ethrexBinarySha256,
-        fixtureArtifactSha256: run.fixtureArtifactSha256, signedWorkloadSha256: workloadDigest(b) };
+        fixtureArtifactSha256: run.fixtureArtifactSha256, signedWorkloadSha256: workloadDigest(b), ...(sponsorship && { sponsorship }) };
       if (reference) assert.deepEqual(inputs, reference, "mode ran different transactions, genesis, binary or fixtures");
       else reference = inputs;
       report.policies[mode] = { status: "measured", schedulerReadback: b.schedulerReadback, ...inputs,
-        evidenceFile: `${mode}.json`, summary: summarize(b.trials, plan.rounds, plan.bursts, b.schedulerReadback) };
+        evidenceFile: `${mode}.json`, summary: summarize(b.trials, plan.rounds, plan.bursts, b.schedulerReadback, sponsorship?.heavyVerifyGas) };
       await save(report, dir);
       if (trialsByMode) {
         trialsByMode[mode] = selectDisplayTrials(b.trials, plan.bursts);
