@@ -124,7 +124,6 @@ export function selectDisplayTrials(trials, bursts) {
 }
 
 export function printTerminalReport(report, trialsByMode, source) {
-  if (report.sharedPaymaster) console.log("Shared-paymaster workload: both wallets use the same fee payer.");
   console.log(renderTerminalReport(report, trialsByMode, {
     source,
     columns: process.stdout.columns,
