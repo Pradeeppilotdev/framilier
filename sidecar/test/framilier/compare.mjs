@@ -9,10 +9,11 @@ import { parseArgs } from "node:util";
 import { checkPlan, summarize, workloadDigest } from "./compare-metrics.mjs";
 import { useTerminalView } from "./terminal-view.mjs";
 
-const help = `Usage: ./framilier compare [--bursts 1,4,8] [--rounds 20] [--baseline-only]
+const help = `Usage: ./framilier compare [--bursts 1,4,8] [--rounds 20] [--baseline-only] [--shared-paymaster]
 
 Options: --preset quick|full, --output <new-directory>, --json, --plain,
-         --order off,fifo,fair (counterbalance order across repeated runs).
+         --order off,fifo,fair (counterbalance order across repeated runs),
+         --shared-paymaster (sponsor both burst and probe via shared SimplePaymaster).
 In a terminal, see what A’s checks were doing when B started. Use --plain for all rows.
 Quick is a smoke check only; full defaults to 20 rounds and bursts 1,4,8.
 
@@ -57,6 +58,9 @@ async function save(report, dir) {
 }
 
 function table(report) {
+  if (report.sharedPaymaster) {
+    console.log("\nShared Paymaster Benchmark: SimplePaymaster enabled (multi-sender sponsorship)");
+  }
   const columns = ["Policy", "A burst", "Rounds", "B p50 ms", "B p95 ms", "A batch p50 ms", "A batch p95 ms", "A mined", "B mined"];
   const rows = [columns];
   for (const result of Object.values(report.policies)) {
@@ -79,6 +83,7 @@ async function main() {
   if (command !== "compare") usageError("Expected the compare command.");
   const { values } = parseArgs({ args, options: {
     help: { type: "boolean", short: "h" }, "baseline-only": { type: "boolean" },
+    "shared-paymaster": { type: "boolean" },
     bursts: { type: "string" }, rounds: { type: "string" },
     preset: { type: "string", default: "full" }, output: { type: "string" }, json: { type: "boolean" }, plain: { type: "boolean" },
     order: { type: "string", default: "off,fifo,fair" },
@@ -86,7 +91,8 @@ async function main() {
   if (values.help) return console.log(help);
   assert.ok(["quick", "full"].includes(values.preset), "preset must be quick or full");
   const plan = { rounds: Number(values.rounds ?? (values.preset === "quick" ? 2 : 20)),
-    bursts: (values.bursts ?? (values.preset === "quick" ? "1,4" : "1,4,8")).split(",").map(Number) };
+    bursts: (values.bursts ?? (values.preset === "quick" ? "1,4" : "1,4,8")).split(",").map(Number),
+    sharedPaymaster: Boolean(values["shared-paymaster"]) };
   checkPlan(plan.rounds, plan.bursts);
   const order = values.order.split(",");
   assert.deepEqual([...order].sort(), ["fair", "fifo", "off"], "order must contain off,fifo,fair exactly once");

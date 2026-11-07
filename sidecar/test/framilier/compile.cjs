@@ -6,7 +6,7 @@ const support = path.resolve(process.env.FRAMILIER_SUPPORT ||
   path.join(__dirname, "../../../mempool-workshop/node_modules/@forshtat/hegota-support"));
 const expected = "0.8.28+commit.7893614a";
 if (!solc.version().startsWith(expected)) throw new Error("Expected solc " + expected);
-const contracts = ["HashChainWallet", "NaiveStakingRegistry"];
+const contracts = ["HashChainWallet", "NaiveStakingRegistry", "SimplePaymaster"];
 const sources = Object.fromEntries(contracts.map(name => [
   name + ".sol", { content: fs.readFileSync(path.join(__dirname, name + ".sol"), "utf8") }
 ]));

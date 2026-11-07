@@ -13,6 +13,7 @@ const help = `framilier — measure admission latency and its throughput trade-o
 
   ./framilier doctor [--json]                  Check local dependencies; sends nothing
   ./framilier compare --preset quick           Smoke test (2 rounds; not a p95 study)
+  ./framilier compare --shared-paymaster       Shared SimplePaymaster comparison across multiple senders
   ./framilier compare --preset full --output ./results/run-001
   ./framilier report ./results/run-001 --verify [--json|--plain]
 

@@ -13,7 +13,7 @@ import { fileURLToPath } from "node:url";
 import { decodeFunctionResult, encodeDeployData, encodeFunctionData, keccak256, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { encodeRawFrameTx } from "../../packages/executor/lib/services/FrameTxService/codec.js";
-import { hashChain, signedWalletFrame } from "./wallet-frame.mjs";
+import { hashChain, signedWalletFrame, signedSponsoredWalletFrame } from "./wallet-frame.mjs";
 import { privateProducer, rpc, RpcError } from "./producer.mjs";
 import { backgroundCandidateCount, measureAdmission } from "./failure-benchmark.mjs";
 import { startTraceMeter } from "./trace-meter.mjs";
@@ -257,6 +257,23 @@ try {
     producer: { forkchoice: "engine_forkchoiceUpdatedV5", build: "engine_getPayloadV6", import: "engine_newPayloadV6", importStatus: "VALID" },
   };
   if (benchmark) {
+    let sharedPaymasterAddress = null;
+    if (sweep?.sharedPaymaster) {
+      sharedPaymasterAddress = await deploy("SimplePaymaster", [], 10n * 10n ** 18n);
+      const authData = encodeFunctionData({
+        abi: contracts.SimplePaymaster.abi,
+        functionName: "setAuthorizedSender",
+        args: ["0x0000000000000000000000000000000000000000", true],
+      });
+      const authNonce = Number(await rpc(el, "eth_getTransactionCount", [owner.address, "latest"]));
+      const authRaw = await owner.signTransaction({
+        chainId, nonce: authNonce, type: "legacy", gas: 200000n, gasPrice: 2000000000n,
+        to: sharedPaymasterAddress, data: authData, value: 0n,
+      });
+      const authHash = await rpc(el, "eth_sendRawTransaction", [authRaw]);
+      await producer.receipt(authHash);
+      console.log("Shared SimplePaymaster deployed and authorized at:", sharedPaymasterAddress);
+    }
     const secondKey = comparing ? sweep.secondKey : generatePrivateKey();
     const secondOwner = privateKeyToAccount(secondKey);
     const secondWallet = await deploy("HashChainWallet", [secondOwner.address, commitment, BigInt(rounds)], 200000000000000000n);
@@ -287,9 +304,19 @@ try {
     // have the same length and calldata gas cost in the matched experiment.
     const incorrectWitness = "0x" + witness.slice(2).replace(/[1-9a-f]/, c => c === "1" ? "2" : "1");
     assert.notEqual(incorrectWitness, witness);
+
+    async function makeSponsoredFrameTx(gas, verifyData, target = owner.address, value = 0n, bodyData = "0x", identity = primary, nonce) {
+      return signedSponsoredWalletFrame({
+        chainId, wallet: identity.wallet, owner: identity.owner.address, key: identity.key, paymaster: sharedPaymasterAddress,
+        nonceSeq: nonce?.seq ?? BigInt(await rpc(el, "eth_getTransactionCount", [identity.wallet, "latest"])),
+        nonceKeys: nonce?.keys, verifyState: nonce?.stateGas, gas, verifyData, target, value, bodyData,
+      });
+    }
+
     function makeNoisy(kind, serial) {
-      if (!matched) return makeFrameTx(997200n, toHex(serial, { size: kind === "early" ? 31 : 32 }));
-      return makeFrameTx(997200n, kind === "valid" ? witness : incorrectWitness, owner.address, 0n, "0x", primary,
+      const txBuilder = sweep?.sharedPaymaster ? makeSponsoredFrameTx : makeFrameTx;
+      if (!matched) return txBuilder(997200n, toHex(serial, { size: kind === "early" ? 31 : 32 }));
+      return txBuilder(997200n, kind === "valid" ? witness : incorrectWitness, owner.address, 0n, "0x", primary,
         { keys: [BigInt(serial)], seq: 1n, stateGas: 200000n });
     }
     const headHash = async () => (await rpc(el, "eth_getBlockByNumber", ["latest", false])).hash;
@@ -312,7 +339,7 @@ try {
       },
       stakeCall: comparing ? { to: registry.toLowerCase(), data: encodeFunctionData({ abi: contracts.NaiveStakingRegistry.abi,
         functionName: "getDepositInfo", args: [secondWallet] }).toLowerCase() } : undefined,
-      makeHonest: () => makeFrameTx(70000n, "0x", owner.address, 0n, "0x", second),
+      makeHonest: () => (sweep?.sharedPaymaster ? makeSponsoredFrameTx : makeFrameTx)(70000n, "0x", owner.address, 0n, "0x", second),
       async mine(hashes) {
         const mined = await producer.receipts(hashes, () => rpc(local, "debug_bundler_sendBundleNow"));
         if (comparing) await Promise.all(hashes.map(waitForOnChain));
@@ -327,6 +354,9 @@ try {
     report.benchmark.completedAt = new Date().toISOString();
     report.benchmark.secondStake = { ...secondDeposit, transactionHash: secondStake.receipt.transactionHash };
     report.benchmark.blockedExternalHttp = network.denied;
+    if (sharedPaymasterAddress) {
+      report.benchmark.sharedPaymaster = sharedPaymasterAddress;
+    }
     if (comparing) {
       report.benchmark.schedulerReadback = activeScheduler;
       report.benchmark.admissionWindow = { verifyFixedHead: true, requireSidecarOnChain: true,
