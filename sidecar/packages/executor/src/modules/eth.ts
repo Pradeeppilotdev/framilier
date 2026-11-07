@@ -13,6 +13,7 @@ import { PublicClient, Hex, keccak256 } from "viem";
 import { MempoolService, AdmissionScheduler, isHeavyFrameTx } from "../services/index.js";
 import { FrameTxSimulationService } from "../services/FrameTxSimulationService/index.js";
 import { recognizeValidationPrefix } from "../services/UserOpValidation/utils/validationPrefix.js";
+import { calculateDeclaredVerifyGas } from "../services/UserOpValidation/utils/validationBudget.js";
 import { ReceiptService } from "../services/ReceiptService/index.js";
 import {
   AdmissionSource,
@@ -190,12 +191,26 @@ export class Eth {
     }
     collector.pass(EXPLORER_RULES.GAS_LIMIT);
 
+    const prefix = recognizeValidationPrefix(tx.frames, tx.sender);
+    let sponsor = tx.sender;
+    if (prefix && prefix.payerFrameIndex >= 0) {
+      const payerFrame = tx.frames[prefix.payerFrameIndex];
+      if (payerFrame && payerFrame.target) {
+        sponsor = payerFrame.target;
+      }
+    }
+
+    const declaredGas = calculateDeclaredVerifyGas(tx);
     const isHeavy = this.admissionScheduler.mode === "fair" &&
-      isHeavyFrameTx(tx, this.admissionScheduler.heavyThreshold);
+      (declaredGas > this.admissionScheduler.heavyThreshold);
 
     return await this.admissionScheduler.submit(
-      tx.sender,
-      isHeavy,
+      {
+        sender: tx.sender,
+        sponsor,
+        declaredGas,
+        isHeavy,
+      },
       async () => {
         // Keyed replacement checks can scan the pending pool. Bound the reads
         // alongside simulation; the insertion lock still rechecks the nonce slot.

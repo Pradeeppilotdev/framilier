@@ -1,0 +1,8 @@
+node_modules/
+.pnpm-store/
+.frameforge/
+dist/
+artifacts/
+.DS_Store
+*.log
+
