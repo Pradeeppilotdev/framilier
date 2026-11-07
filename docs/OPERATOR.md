@@ -103,3 +103,15 @@ cd ..
 ```
 
 The tests cover scheduler capacity/rotation/overflow, shared simulation lanes, duplicate admission, infrastructure-failure retention, transient writes, report tampering and journal recovery. The observer test opens loopback sockets. Historical measurements are retained unchanged; new evidence is stored separately.
+
+## Browser demo
+
+After `./framilier doctor` reports ready, run `./framilier live` and open <http://127.0.0.1:4173>. The browser starts the existing comparison with one measured round and eight heavy frames per burst, an idle control and excluded warm-ups, under off, FIFO and fair. The node verifies the evidence before displaying the result. A single round shows observed admission times. The saved comparison supplies the 20-round p95 and median figures.
+
+The public demo serves the same UI and a verified replay. A runner makes outgoing HTTPS requests for fixed comparison jobs. Keep the runner machine awake and these two processes running for fresh measurements. The replay is available independently. For a longer deployment, use an always-on host with the same pinned toolchain.
+
+1. Start `./framilier live` on loopback port 4173.
+2. On the runner, set `FRAMILIER_HOST_URL` to the public HTTPS origin and `FRAMILIER_RUNNER_TOKEN` to the same secret configured on the hosted Worker (at least 32 characters). Load the token from the operator's secret store.
+3. Run `node live/runner-bridge.mjs` in a second terminal. On a host requiring an HTTP proxy, use a Node version supporting `--use-env-proxy` and preserve the normal loopback exemption.
+
+To deploy your own public endpoint, run `node live/host/build.mjs /tmp/framilier-worker.mjs` and deploy the generated ES module to a Worker with a D1 binding named `DB` and the runner secret above. That build reads and verifies the checked-in replay. The relay coalesces simultaneous requests into one job. The runner limits each job to ten minutes and enforces a one-minute cooldown. Raw chain databases and ephemeral signing material stay on the runner and are removed after the run.

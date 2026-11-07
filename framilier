@@ -3,4 +3,17 @@ if ! command -v node >/dev/null 2>&1; then
   echo "framilier requires Node.js 20.12+ (24 LTS recommended). Install Node, then run ./framilier doctor." >&2
   exit 2
 fi
+if [ "${1:-}" = live ]; then
+  shift
+  if [ "$#" -eq 0 ]; then
+    exec node "$(dirname "$0")/live/server.mjs"
+  fi
+  if [ "$#" -eq 1 ] && [ "$1" = --help ]; then
+    echo 'Usage: ./framilier live'
+    echo 'Open http://127.0.0.1:4173 to run a fixed comparison or view the saved benchmark.'
+    exit 0
+  fi
+  echo 'Usage: ./framilier live' >&2
+  exit 2
+fi
 exec node "$(dirname "$0")/sidecar/test/framilier/operator.mjs" "$@"

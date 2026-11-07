@@ -11,6 +11,7 @@ import { renderTerminalReport, useTerminalView } from "./terminal-view.mjs";
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const help = `framilier — measure admission latency and its throughput trade-off
 
+  ./framilier live                            Serve the browser demo on localhost
   ./framilier doctor [--json]                  Check local dependencies; sends nothing
   ./framilier compare --preset quick           Smoke test (2 rounds; not a p95 study)
   ./framilier compare --preset full --output ./results/run-001
