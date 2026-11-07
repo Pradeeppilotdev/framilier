@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="948" viewBox="0 0 1024 948" role="img" aria-labelledby="title desc">
+<title id="title">Framilier compare CLI</title>
+<desc id="desc">Current report renderer with the archived 20-round Mac results. FIFO B p95 678.0 ms, Fair 238.2 ms; A batch median 593.2 ms and 622.1 ms.</desc>
+<rect width="100%" height="100%" fill="#11191d"/>
+<g font-family="Menlo, monospace" font-size="16" xml:space="preserve">
+<text x="32" y="52" fill="#e3e9ee" font-weight="700" textLength="210" lengthAdjust="spacingAndGlyphs">framilier  /  compare</text>
+<text x="242" y="52" fill="#e3e9ee" font-weight="400" textLength="520" lengthAdjust="spacingAndGlyphs">                                                    </text>
+<text x="762" y="52" fill="#9aa9b3" font-weight="400" textLength="230" lengthAdjust="spacingAndGlyphs">Saved report · Complete</text>
+<text x="32" y="78" fill="#79cdd1" font-weight="700" textLength="960" lengthAdjust="spacingAndGlyphs">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text>
+<text x="32" y="104" fill="#e3e9ee" font-weight="400" textLength="490" lengthAdjust="spacingAndGlyphs">Local chain 8141337 · 20 measured rounds per load</text>
+<text x="32" y="130" fill="#e3e9ee" font-weight="700" textLength="540" lengthAdjust="spacingAndGlyphs">Wallet A: 8 heavy checks   +   Wallet B: 1 cheap check</text>
+<text x="32" y="156" fill="#e3e9ee" font-weight="400" textLength="300" lengthAdjust="spacingAndGlyphs">Fees: each wallet pays its own</text>
+<text x="32" y="182" fill="#9aa9b3" font-weight="400" textLength="420" lengthAdjust="spacingAndGlyphs">Showing burst 8. All loads: idle, 1, 4, 8.</text>
+<text x="32" y="234" fill="#e3e9ee" font-weight="400" textLength="720" lengthAdjust="spacingAndGlyphs">Off = scheduler disabled · FIFO = arrival order · Fair = sender rotation</text>
+<text x="32" y="286" fill="#e3e9ee" font-weight="700" textLength="200" lengthAdjust="spacingAndGlyphs">1  Admission latency</text>
+<text x="232" y="286" fill="#e3e9ee" font-weight="400" textLength="610" lengthAdjust="spacingAndGlyphs">                                                             </text>
+<text x="842" y="286" fill="#9aa9b3" font-weight="400" textLength="150" lengthAdjust="spacingAndGlyphs">Lower is faster</text>
+<text x="32" y="312" fill="#e3e9ee" font-weight="400" textLength="440" lengthAdjust="spacingAndGlyphs">B = one response. A batch = all A responses.</text>
+<text x="32" y="338" fill="#9aa9b3" font-weight="400" textLength="650" lengthAdjust="spacingAndGlyphs">Timed from submission to acceptance; mining is checked afterward.</text>
+<text x="32" y="390" fill="#e3e9ee" font-weight="400" textLength="820" lengthAdjust="spacingAndGlyphs">  Policy                                        B p95    B median   A batch median</text>
+<text x="32" y="416" fill="#e3e9ee" font-weight="400" textLength="100" lengthAdjust="spacingAndGlyphs">  Off     </text>
+<text x="132" y="416" fill="#86b3ee" font-weight="400" textLength="190" lengthAdjust="spacingAndGlyphs">███████████████████</text>
+<text x="322" y="416" fill="#9aa9b3" font-weight="400" textLength="130" lengthAdjust="spacingAndGlyphs">░░░░░░░░░░░░░</text>
+<text x="452" y="416" fill="#e3e9ee" font-weight="400" textLength="400" lengthAdjust="spacingAndGlyphs">   400.5 ms    301.4 ms         367.5 ms</text>
+<text x="32" y="442" fill="#e3e9ee" font-weight="400" textLength="100" lengthAdjust="spacingAndGlyphs">  FIFO    </text>
+<text x="132" y="442" fill="#86b3ee" font-weight="400" textLength="320" lengthAdjust="spacingAndGlyphs">████████████████████████████████</text>
+<text x="452" y="442" fill="#e3e9ee" font-weight="400" textLength="400" lengthAdjust="spacingAndGlyphs">   678.0 ms    590.8 ms         593.2 ms</text>
+<text x="32" y="468" fill="#e3e9ee" font-weight="400" textLength="100" lengthAdjust="spacingAndGlyphs">  Fair    </text>
+<text x="132" y="468" fill="#79cdd1" font-weight="400" textLength="110" lengthAdjust="spacingAndGlyphs">███████████</text>
+<text x="242" y="468" fill="#9aa9b3" font-weight="400" textLength="210" lengthAdjust="spacingAndGlyphs">░░░░░░░░░░░░░░░░░░░░░</text>
+<text x="452" y="468" fill="#e3e9ee" font-weight="400" textLength="400" lengthAdjust="spacingAndGlyphs">   238.2 ms    133.6 ms         622.1 ms</text>
+<text x="32" y="520" fill="#e3e9ee" font-weight="700" textLength="250" lengthAdjust="spacingAndGlyphs">Fair vs FIFO at this load</text>
+<text x="32" y="546" fill="#e3e9ee" font-weight="400" textLength="350" lengthAdjust="spacingAndGlyphs">B p95: 64.9% lower (439.8 ms less).</text>
+<text x="32" y="572" fill="#e3e9ee" font-weight="400" textLength="430" lengthAdjust="spacingAndGlyphs">A batch median: 4.9% longer (28.9 ms more).</text>
+<text x="32" y="624" fill="#e3e9ee" font-weight="700" textLength="200" lengthAdjust="spacingAndGlyphs">2  When B got a turn</text>
+<text x="232" y="624" fill="#e3e9ee" font-weight="400" textLength="630" lengthAdjust="spacingAndGlyphs">                                                               </text>
+<text x="862" y="624" fill="#9aa9b3" font-weight="400" textLength="130" lengthAdjust="spacingAndGlyphs">Round 1 of 20</text>
+<text x="32" y="650" fill="#e3e9ee" font-weight="400" textLength="670" lengthAdjust="spacingAndGlyphs">Each tile is an A check, grouped by its state when B's check began.</text>
+<text x="32" y="676" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="42" y="676" fill="#e3e9ee" font-weight="400" textLength="120" lengthAdjust="spacingAndGlyphs"> finished   </text>
+<text x="162" y="676" fill="#e7bd75" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">▒</text>
+<text x="172" y="676" fill="#e3e9ee" font-weight="400" textLength="110" lengthAdjust="spacingAndGlyphs"> running   </text>
+<text x="282" y="676" fill="#9aa9b3" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">░</text>
+<text x="292" y="676" fill="#e3e9ee" font-weight="400" textLength="130" lengthAdjust="spacingAndGlyphs"> yet to start</text>
+<text x="32" y="728" fill="#e3e9ee" font-weight="400" textLength="20" lengthAdjust="spacingAndGlyphs">  </text>
+<text x="52" y="728" fill="#e3e9ee" font-weight="700" textLength="80" lengthAdjust="spacingAndGlyphs">Off     </text>
+<text x="132" y="728" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="142" y="728" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="152" y="728" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="162" y="728" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="172" y="728" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="182" y="728" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="192" y="728" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="202" y="728" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="212" y="728" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="222" y="728" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="232" y="728" fill="#e7bd75" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">▒</text>
+<text x="242" y="728" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="252" y="728" fill="#e7bd75" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">▒</text>
+<text x="262" y="728" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="272" y="728" fill="#e7bd75" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">▒</text>
+<text x="282" y="728" fill="#e3e9ee" font-weight="400" textLength="420" lengthAdjust="spacingAndGlyphs">   5 finished · 3 running · 0 yet to start</text>
+<text x="32" y="754" fill="#e3e9ee" font-weight="400" textLength="20" lengthAdjust="spacingAndGlyphs">  </text>
+<text x="52" y="754" fill="#e3e9ee" font-weight="700" textLength="80" lengthAdjust="spacingAndGlyphs">FIFO    </text>
+<text x="132" y="754" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="142" y="754" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="152" y="754" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="162" y="754" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="172" y="754" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="182" y="754" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="192" y="754" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="202" y="754" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="212" y="754" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="222" y="754" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="232" y="754" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="242" y="754" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="252" y="754" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="262" y="754" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="272" y="754" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="282" y="754" fill="#e3e9ee" font-weight="400" textLength="420" lengthAdjust="spacingAndGlyphs">   8 finished · 0 running · 0 yet to start</text>
+<text x="32" y="780" fill="#e3e9ee" font-weight="400" textLength="20" lengthAdjust="spacingAndGlyphs">  </text>
+<text x="52" y="780" fill="#e3e9ee" font-weight="700" textLength="80" lengthAdjust="spacingAndGlyphs">Fair    </text>
+<text x="132" y="780" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="142" y="780" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="152" y="780" fill="#79cdd1" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">█</text>
+<text x="162" y="780" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="172" y="780" fill="#9aa9b3" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">░</text>
+<text x="182" y="780" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="192" y="780" fill="#9aa9b3" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">░</text>
+<text x="202" y="780" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="212" y="780" fill="#9aa9b3" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">░</text>
+<text x="222" y="780" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="232" y="780" fill="#9aa9b3" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">░</text>
+<text x="242" y="780" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="252" y="780" fill="#9aa9b3" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">░</text>
+<text x="262" y="780" fill="#e3e9ee" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="272" y="780" fill="#9aa9b3" font-weight="400" textLength="10" lengthAdjust="spacingAndGlyphs">░</text>
+<text x="282" y="780" fill="#e3e9ee" font-weight="400" textLength="420" lengthAdjust="spacingAndGlyphs">   2 finished · 0 running · 6 yet to start</text>
+<text x="32" y="832" fill="#e3e9ee" font-weight="700" textLength="110" lengthAdjust="spacingAndGlyphs">3  Evidence</text>
+<text x="142" y="832" fill="#e3e9ee" font-weight="400" textLength="670" lengthAdjust="spacingAndGlyphs">                                                                   </text>
+<text x="812" y="832" fill="#9aa9b3" font-weight="400" textLength="180" lengthAdjust="spacingAndGlyphs">Saved measurements</text>
+<text x="32" y="858" fill="#e3e9ee" font-weight="400" textLength="810" lengthAdjust="spacingAndGlyphs">1,020 recorded inclusions across all measured loads and policies, including idle.</text>
+<text x="32" y="884" fill="#9aa9b3" font-weight="400" textLength="620" lengthAdjust="spacingAndGlyphs">Local workload measurements; p95 is taken across these rounds.</text>
+<text x="32" y="910" fill="#9aa9b3" font-weight="400" textLength="430" lengthAdjust="spacingAndGlyphs">Use --plain for every burst and percentile.</text>
+</g>
+</svg>

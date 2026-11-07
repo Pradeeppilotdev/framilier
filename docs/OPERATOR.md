@@ -44,9 +44,15 @@ This starts fresh disposable loopback execution nodes and sidecars for off, FIFO
 
 ## Read the terminal view
 
-`compare` shows progress as each policy finishes. `report` replays a saved run immediately. In a terminal, both show the first measured round at the largest burst size. Each tile represents one of wallet A’s simulations, grouped by its state when wallet B’s simulation started. The counts come from the recorded trace timestamps.
+`compare` opens with the workload, chain and fee-payer setup. In a terminal, it shows the current policy, real setup/measurement stage and elapsed time. Fixture diagnostics are saved to `off.log`, `fifo.log` and `fair.log` in the evidence directory. A failed policy leaves its log and partial evidence available for inspection. `report` opens a saved result immediately.
 
-The latency bars below the tiles aggregate all measured rounds at that burst. A full run shows B’s p95 alongside B’s median and A’s median batch time. A one-round smoke run shows the observed times. `--plain` prints every burst as text, and `--json` emits the machine-readable report. Redirected output uses the plain format by default. Set `NO_COLOR=1` to keep the visual layout in monochrome.
+The completed view has three parts:
+
+1. **Admission latency.** B is the wallet sending one cheap transaction; A sends the heavy burst. B time is its response latency, and A batch is the time until all A admission responses arrive. Headers sit over their numeric values. The Fair/FIFO summary shows B's change alongside A's batch-time cost, including slower results.
+2. **When B got a turn.** Each tile is an A simulation, grouped by its state when B's simulation began: finished, running or yet to start. This is a snapshot from the first measured round, using recorded trace timestamps.
+3. **Evidence.** Recorded inclusions cover every measured load, the idle control and all policies. Sponsored runs identify the shared payer and check recorded fees and stake. Admission timers stop before mining; receipts are checked afterward.
+
+The view displays the largest burst, labelled explicitly. Its latency bars aggregate all measured rounds at that load. A full run shows B's p95 alongside B's median and A's median batch time. A one-round smoke run shows observed times; shorter multi-round runs show medians. `--plain` prints every burst as text, and `--json` emits the machine-readable report. Redirected output uses the plain format by default. Set `NO_COLOR=1` to keep the visual layout in monochrome.
 
 ## Full comparison
 
